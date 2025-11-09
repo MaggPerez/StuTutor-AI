@@ -1,15 +1,18 @@
-import { Request, Response } from 'express';
+import express from 'express';
 import { supabaseAdmin } from '../lib/supabaseAdmin';
 
-export const uploadPDF = async (req: Request, res: Response) => {
+const router = express.Router();
+
+router.post('/upload-pdf', async (req, res) => {
   try {
+    // Check if file exists
     if (!req.files || !req.files.pdf) {
       return res.status(400).json({ error: 'No PDF file uploaded' });
     }
 
     const file = req.files.pdf as any;
-
-    // Validate MIME type
+    
+    // Validate it's a PDF
     if (file.mimetype !== 'application/pdf') {
       return res.status(400).json({ error: 'Only PDF files are allowed' });
     }
@@ -17,9 +20,9 @@ export const uploadPDF = async (req: Request, res: Response) => {
     // Generate unique filename
     const fileExt = file.name.split('.').pop();
     const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
-    const filePath = `${fileName}`; // stored directly in root of "pdfs" bucket
+    const filePath = `pdfs/${fileName}`;
 
-    // Upload directly from memory buffer
+    // Upload directly from buffer (no temp file needed)
     const { data, error } = await supabaseAdmin.storage
       .from('pdfs')
       .upload(filePath, file.data, {
@@ -33,19 +36,20 @@ export const uploadPDF = async (req: Request, res: Response) => {
     }
 
     // Get public URL
-    const { data: urlData } = supabaseAdmin.storage
+    const { data: { publicUrl } } = supabaseAdmin.storage
       .from('pdfs')
       .getPublicUrl(filePath);
 
-    return res.json({
+    res.json({
       success: true,
-      message: 'PDF uploaded successfully',
-      url: urlData.publicUrl,
+      url: publicUrl,
       path: filePath,
     });
 
   } catch (err: any) {
-    console.error('Unexpected error:', err);
-    return res.status(500).json({ error: err.message || 'Upload failed' });
+    console.error('Upload route error:', err);
+    res.status(500).json({ error: err.message || 'Upload failed' });
   }
-};
+});
+
+export default router;
