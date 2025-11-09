@@ -98,6 +98,20 @@ export async function getMessages(
 }
 
 /**
+ * Add a message to a conversation
+ */
+export async function addMessageToConversation(
+  conversationId: string,
+  role: 'user' | 'assistant',
+  content: string
+): Promise<ApiResponse<Message>> {
+  return apiFetch<Message>(`/api/conversations/${conversationId}/messages`, {
+    method: 'POST',
+    body: JSON.stringify({ role, content }),
+  });
+}
+
+/**
  * Send a message and get AI response
  */
 export async function sendMessage(

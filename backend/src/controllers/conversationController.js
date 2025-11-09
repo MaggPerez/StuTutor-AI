@@ -130,3 +130,54 @@ export const getConversation = async (req, res, next) => {
   }
 };
 
+/**
+ * Add a message to a conversation
+ */
+export const addMessage = async (req, res, next) => {
+  try {
+    const { conversationId } = req.params;
+    const { role, content } = req.body;
+
+    // Validate input
+    if (!role || !content) {
+      return sendError(res, 'Role and content are required.', 400);
+    }
+
+    if (!['user', 'assistant'].includes(role)) {
+      return sendError(res, 'Role must be either "user" or "assistant".', 400);
+    }
+
+    // Check if conversation exists
+    const { data: conversation, error: convError } = await supabase
+      .from('conversations')
+      .select('id')
+      .eq('id', conversationId)
+      .single();
+
+    if (convError || !conversation) {
+      return sendError(res, 'Conversation not found.', 404);
+    }
+
+    // Insert message
+    const { data: message, error: insertError } = await supabase
+      .from('messages')
+      .insert({
+        conversation_id: conversationId,
+        role,
+        content,
+      })
+      .select()
+      .single();
+
+    if (insertError) {
+      console.error('Supabase error:', insertError);
+      return sendError(res, 'Failed to add message.', 500);
+    }
+
+    return res.status(201).json(message);
+  } catch (error) {
+    console.error('Add message error:', error);
+    next(error);
+  }
+};
+

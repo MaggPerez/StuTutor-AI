@@ -4,6 +4,7 @@ import {
   createConversation as apiCreateConversation,
   getConversations as apiGetConversations,
   getMessages as apiGetMessages,
+  addMessageToConversation as apiAddMessage,
 } from '@/lib/api';
 
 interface PDFState {
@@ -19,7 +20,7 @@ interface ChatContextType {
   currentPDF: PDFState | null;
   createNewConversation: () => Promise<void>;
   setCurrentConversation: (id: string) => Promise<void>;
-  addMessage: (message: Omit<Message, 'id' | 'timestamp'>) => void;
+  addMessage: (message: Omit<Message, 'id' | 'timestamp'>) => Promise<void>;
   setIsTyping: (isTyping: boolean) => void;
   getCurrentConversation: () => Conversation | null;
   refreshConversations: () => Promise<void>;
@@ -205,13 +206,14 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     setCurrentConversationId(id);
   };
 
-  const addMessage = (message: Omit<Message, 'id' | 'timestamp'>) => {
+  const addMessage = async (message: Omit<Message, 'id' | 'timestamp'>) => {
     if (!currentConversationId) {
       console.error('No conversation selected');
       return;
     }
 
-    const newMessage: Message = {
+    // Add message to UI immediately for instant feedback
+    const tempMessage: Message = {
       ...message,
       id: `temp-${Date.now()}-${Math.random()}`,
       timestamp: new Date(),
@@ -220,7 +222,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     setConversations((prev) =>
       prev.map((conv) => {
         if (conv.id === currentConversationId) {
-          const updatedMessages = [...conv.messages, newMessage];
+          const updatedMessages = [...conv.messages, tempMessage];
 
           // Update title based on first user message
           const title =
@@ -238,6 +240,46 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
         return conv;
       })
     );
+
+    // Save message to Supabase in the background
+    try {
+      const { data, error } = await apiAddMessage(
+        currentConversationId,
+        message.role,
+        message.content
+      );
+
+      if (error) {
+        console.error('Failed to save message to Supabase:', error);
+        // Message is still visible in UI, just not persisted
+        return;
+      }
+
+      // Update the temp message with the real ID from Supabase
+      if (data) {
+        setConversations((prev) =>
+          prev.map((conv) => {
+            if (conv.id === currentConversationId) {
+              return {
+                ...conv,
+                messages: conv.messages.map((msg) =>
+                  msg.id === tempMessage.id
+                    ? {
+                        ...msg,
+                        id: data.id,
+                        timestamp: new Date(data.timestamp),
+                      }
+                    : msg
+                ),
+              };
+            }
+            return conv;
+          })
+        );
+      }
+    } catch (error) {
+      console.error('Error saving message:', error);
+    }
   };
 
   const getCurrentConversation = () => {
