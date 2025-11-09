@@ -96,7 +96,7 @@ Successfully integrated Google Gemini AI for native PDF reading capabilities alo
 
 **Python Server** (`server/.env`):
 ```bash
-GEMINI_API_KEY=AIzaSyBd8lDK-GOTZWWq85QbbSzIV1cYXbETmr0
+GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
 **Frontend** (optional `.env`):
