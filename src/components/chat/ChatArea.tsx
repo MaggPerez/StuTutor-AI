@@ -49,6 +49,12 @@ export const ChatArea: React.FC = () => {
     try {
       // If a PDF file is uploaded, use Gemini AI (Python backend)
       if (file) {
+        // Add user message to UI FIRST
+        addMessage({
+          content,
+          role: 'user',
+        });
+
         // Call Gemini AI to process the PDF
         const geminiResponse = await sendPDFToGemini(file, content || '');
 
