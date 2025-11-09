@@ -13,12 +13,20 @@ export interface FileAttachment {
   url?: string;
 }
 
+export interface PDFMetadata {
+  fileName: string;
+  fileSize: number;
+  storageUrl: string;
+  filePath: string;
+}
+
 export interface Conversation {
   id: string;
   title: string;
   messages: Message[];
   createdAt: Date;
   updatedAt: Date;
+  pdfMetadata?: PDFMetadata;
 }
 
 export interface ChatState {

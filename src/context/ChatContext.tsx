@@ -1,9 +1,10 @@
 import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import type { Conversation, Message } from '@/types/chat';
+import type { Conversation, Message, PDFMetadata } from '@/types/chat';
 import {
   createConversation as apiCreateConversation,
   getConversations as apiGetConversations,
   getMessages as apiGetMessages,
+  addMessageToConversation as apiAddMessage,
 } from '@/lib/api';
 
 interface PDFState {
@@ -19,11 +20,12 @@ interface ChatContextType {
   currentPDF: PDFState | null;
   createNewConversation: () => Promise<void>;
   setCurrentConversation: (id: string) => Promise<void>;
-  addMessage: (message: Omit<Message, 'id' | 'timestamp'>) => void;
+  addMessage: (message: Omit<Message, 'id' | 'timestamp'>) => Promise<void>;
   setIsTyping: (isTyping: boolean) => void;
   getCurrentConversation: () => Conversation | null;
   refreshConversations: () => Promise<void>;
   setCurrentPDF: (pdf: PDFState | null) => void;
+  updateConversationPDFMetadata: (conversationId: string, pdfMetadata: PDFMetadata) => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -59,6 +61,44 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     }
   }, [currentConversationId]);
 
+  // Auto-load PDF when conversation ID changes
+  useEffect(() => {
+    if (currentConversationId) {
+      const currentConv = conversations.find((conv) => conv.id === currentConversationId);
+      if (currentConv?.pdfMetadata) {
+        // Load PDF from storage
+        setCurrentPDF({
+          fileUrl: currentConv.pdfMetadata.storageUrl,
+          fileName: currentConv.pdfMetadata.fileName,
+        });
+      } else {
+        // Clear PDF when switching to conversation without one
+        setCurrentPDF(null);
+      }
+    }
+  }, [currentConversationId]); // Only run when conversation ID changes
+
+  // Update PDF URL when metadata is added to current conversation
+  // This handles the case where PDF is uploaded after initial display
+  useEffect(() => {
+    if (currentConversationId) {
+      const currentConv = conversations.find((conv) => conv.id === currentConversationId);
+      // If conversation has PDF metadata and we have a current PDF that's different (blob URL vs storage URL)
+      if (currentConv?.pdfMetadata) {
+        setCurrentPDF((prevPDF) => {
+          // Only update if URL changed (from blob to storage) or PDF wasn't set
+          if (!prevPDF || prevPDF.fileUrl !== currentConv.pdfMetadata!.storageUrl) {
+            return {
+              fileUrl: currentConv.pdfMetadata!.storageUrl,
+              fileName: currentConv.pdfMetadata!.fileName,
+            };
+          }
+          return prevPDF; // No change needed
+        });
+      }
+    }
+  }, [conversations, currentConversationId]); // Only depend on conversations and conversation ID
+
   const loadConversations = async () => {
     try {
       setIsLoading(true);
@@ -71,13 +111,27 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
 
       if (data) {
         // Convert API data to Conversation type
-        const conversationsData: Conversation[] = data.map((conv) => ({
-          id: conv.id,
-          title: conv.title,
-          messages: [], // Messages loaded separately
-          createdAt: new Date(conv.created_at),
-          updatedAt: new Date(conv.updated_at),
-        }));
+        const conversationsData: Conversation[] = data.map((conv: any) => {
+          const conversation: Conversation = {
+            id: conv.id,
+            title: conv.title,
+            messages: [], // Messages loaded separately
+            createdAt: new Date(conv.created_at),
+            updatedAt: new Date(conv.updated_at),
+          };
+
+          // Add PDF metadata if available
+          if (conv.pdf_storage_url && conv.pdf_file_name) {
+            conversation.pdfMetadata = {
+              fileName: conv.pdf_file_name,
+              fileSize: conv.pdf_file_size || 0,
+              storageUrl: conv.pdf_storage_url,
+              filePath: conv.pdf_file_path || '',
+            };
+          }
+
+          return conversation;
+        });
 
         setConversations(conversationsData);
 
@@ -152,13 +206,14 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     setCurrentConversationId(id);
   };
 
-  const addMessage = (message: Omit<Message, 'id' | 'timestamp'>) => {
+  const addMessage = async (message: Omit<Message, 'id' | 'timestamp'>) => {
     if (!currentConversationId) {
       console.error('No conversation selected');
       return;
     }
 
-    const newMessage: Message = {
+    // Add message to UI immediately for instant feedback
+    const tempMessage: Message = {
       ...message,
       id: `temp-${Date.now()}-${Math.random()}`,
       timestamp: new Date(),
@@ -167,7 +222,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     setConversations((prev) =>
       prev.map((conv) => {
         if (conv.id === currentConversationId) {
-          const updatedMessages = [...conv.messages, newMessage];
+          const updatedMessages = [...conv.messages, tempMessage];
 
           // Update title based on first user message
           const title =
@@ -185,6 +240,46 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
         return conv;
       })
     );
+
+    // Save message to Supabase in the background
+    try {
+      const { data, error } = await apiAddMessage(
+        currentConversationId,
+        message.role,
+        message.content
+      );
+
+      if (error) {
+        console.error('Failed to save message to Supabase:', error);
+        // Message is still visible in UI, just not persisted
+        return;
+      }
+
+      // Update the temp message with the real ID from Supabase
+      if (data) {
+        setConversations((prev) =>
+          prev.map((conv) => {
+            if (conv.id === currentConversationId) {
+              return {
+                ...conv,
+                messages: conv.messages.map((msg) =>
+                  msg.id === tempMessage.id
+                    ? {
+                        ...msg,
+                        id: data.id,
+                        timestamp: new Date(data.timestamp),
+                      }
+                    : msg
+                ),
+              };
+            }
+            return conv;
+          })
+        );
+      }
+    } catch (error) {
+      console.error('Error saving message:', error);
+    }
   };
 
   const getCurrentConversation = () => {
@@ -193,6 +288,21 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
 
   const refreshConversations = async () => {
     await loadConversations();
+  };
+
+  const updateConversationPDFMetadata = (conversationId: string, pdfMetadata: PDFMetadata) => {
+    setConversations((prev) =>
+      prev.map((conv) => {
+        if (conv.id === conversationId) {
+          return {
+            ...conv,
+            pdfMetadata,
+            updatedAt: new Date(),
+          };
+        }
+        return conv;
+      })
+    );
   };
 
   return (
@@ -210,6 +320,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
         getCurrentConversation,
         refreshConversations,
         setCurrentPDF,
+        updateConversationPDFMetadata,
       }}
     >
       {children}
