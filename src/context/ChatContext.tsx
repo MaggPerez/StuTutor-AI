@@ -18,7 +18,7 @@ interface ChatContextType {
   isTyping: boolean;
   isLoading: boolean;
   currentPDF: PDFState | null;
-  createNewConversation: () => Promise<void>;
+  createNewConversation: (title?: string) => Promise<string>;
   setCurrentConversation: (id: string) => Promise<void>;
   addMessage: (message: Omit<Message, 'id' | 'timestamp'>) => Promise<void>;
   setIsTyping: (isTyping: boolean) => void;
@@ -178,13 +178,13 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     }
   };
 
-  const createNewConversation = async () => {
+  const createNewConversation = async (title: string = 'New Chat'): Promise<string> => {
     try {
-      const { data, error } = await apiCreateConversation('New Chat');
+      const { data, error } = await apiCreateConversation(title);
 
       if (error || !data) {
         console.error('Failed to create conversation:', error);
-        return;
+        throw new Error('Failed to create conversation');
       }
 
       const newConversation: Conversation = {
@@ -197,8 +197,11 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
 
       setConversations((prev) => [newConversation, ...prev]);
       setCurrentConversationId(newConversation.id);
+
+      return newConversation.id;
     } catch (error) {
       console.error('Error creating conversation:', error);
+      throw error;
     }
   };
 

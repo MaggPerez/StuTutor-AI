@@ -1,12 +1,7 @@
-import React from 'react'
-import { ChatPage } from './pages/ChatPage'
+import { Navigate } from 'react-router-dom'
 
 function App() {
-  return (
-    <div>
-      <ChatPage />
-    </div>
-  )
+  return <Navigate to="/" replace />
 }
 
 export default App
