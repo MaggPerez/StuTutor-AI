@@ -1,4 +1,6 @@
 # StuTutor-AI 📚
+<img width="1800" height="1046" alt="Screenshot 2025-11-09 at 4 24 10 AM" src="https://github.com/user-attachments/assets/12492a58-a2e3-4f9e-ba8a-4012c11905dd" />
+
 
 An intelligent AI-powered tutoring platform that helps students with their assignments by analyzing PDF documents and providing interactive study assistance.
 
