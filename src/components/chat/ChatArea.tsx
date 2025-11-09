@@ -3,9 +3,11 @@ import { MessageList } from './MessageList';
 import { MessageInput } from './MessageInput';
 import { useChatContext } from '@/context/ChatContext';
 import { sendMessageToAI, sendPDFToGemini } from '@/services/chatService';
+import { uploadPDFToStorage } from '@/lib/api';
+import { toast } from 'sonner';
 
 export const ChatArea: React.FC = () => {
-  const { getCurrentConversation, addMessage, isTyping, setIsTyping, currentConversationId, createNewConversation, setCurrentPDF } = useChatContext();
+  const { getCurrentConversation, addMessage, isTyping, setIsTyping, currentConversationId, createNewConversation, setCurrentPDF, updateConversationPDFMetadata } = useChatContext();
   const currentConversation = getCurrentConversation();
 
   // Handle when user attaches a PDF - show it immediately
@@ -63,6 +65,31 @@ export const ChatArea: React.FC = () => {
           content: geminiResponse,
           role: 'assistant',
         });
+
+        // Upload PDF to Supabase Storage for persistence
+        try {
+          const uploadResult = await uploadPDFToStorage(file, conversationId);
+          
+          if (uploadResult.error) {
+            console.error('Failed to upload PDF to storage:', uploadResult.error);
+            toast.error('PDF processed but failed to save for later. It will be available during this session only.');
+          } else if (uploadResult.data) {
+            // Update conversation with PDF metadata
+            updateConversationPDFMetadata(conversationId, uploadResult.data.pdfMetadata);
+            
+            // Update current PDF to use storage URL instead of blob URL
+            setCurrentPDF({
+              fileUrl: uploadResult.data.pdfMetadata.storageUrl,
+              fileName: uploadResult.data.pdfMetadata.fileName,
+            });
+            
+            toast.success('PDF saved successfully!');
+          }
+        } catch (uploadError) {
+          console.error('Error uploading PDF to storage:', uploadError);
+          // Don't fail the entire operation, just log and notify
+          toast.warning('PDF processed successfully but not saved permanently');
+        }
       } else {
         // No PDF - use regular chat flow with OpenAI (Node.js backend)
         // Add user message to UI

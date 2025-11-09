@@ -213,6 +213,53 @@ export async function analyzePDF(
   }
 }
 
+/**
+ * Upload PDF to Supabase Storage and link to conversation
+ */
+interface PDFMetadata {
+  fileName: string;
+  fileSize: number;
+  storageUrl: string;
+  filePath: string;
+}
+
+interface UploadPDFResponse {
+  message: string;
+  pdfMetadata: PDFMetadata;
+}
+
+export async function uploadPDFToStorage(
+  pdfFile: File,
+  conversationId: string
+): Promise<ApiResponse<UploadPDFResponse>> {
+  try {
+    const formData = new FormData();
+    formData.append('pdf', pdfFile);
+    formData.append('conversationId', conversationId);
+
+    const response = await fetch(`${API_BASE_URL}/api/upload/storage`, {
+      method: 'POST',
+      body: formData,
+      // Note: Don't set Content-Type header for FormData, browser will set it with boundary
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        error: data.error || `Request failed with status ${response.status}`,
+      };
+    }
+
+    return { data };
+  } catch (error) {
+    console.error('PDF Upload Error:', error);
+    return {
+      error: error instanceof Error ? error.message : 'Network error occurred',
+    };
+  }
+}
+
 // Export types for use in other files
 export type {
   Conversation,
@@ -222,4 +269,6 @@ export type {
   ApiResponse,
   GeminiPDFResponse,
   GeminiPDFAnalysisResponse,
+  PDFMetadata,
+  UploadPDFResponse,
 };

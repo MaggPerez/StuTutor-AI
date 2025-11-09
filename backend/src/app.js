@@ -11,6 +11,7 @@ import { errorHandler, notFound } from './middleware/errorHandler.js';
 import authRoutes from './routes/authRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
 import pdfRoutes from './routes/pdfRoutes.js';
+import conversationRoutes from './routes/conversationRoutes.js';
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.get('/health', (req, res) => {
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/conversations', conversationRoutes);
 app.use('/api', pdfRoutes);
 
 // 404 handler
