@@ -1,15 +1,22 @@
-import React, { createContext, useContext, useState, type ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import type { Conversation, Message } from '@/types/chat';
+import {
+  createConversation as apiCreateConversation,
+  getConversations as apiGetConversations,
+  getMessages as apiGetMessages,
+} from '@/lib/api';
 
 interface ChatContextType {
   conversations: Conversation[];
   currentConversationId: string | null;
   isTyping: boolean;
-  createNewConversation: () => void;
-  setCurrentConversation: (id: string) => void;
+  isLoading: boolean;
+  createNewConversation: () => Promise<void>;
+  setCurrentConversation: (id: string) => Promise<void>;
   addMessage: (message: Omit<Message, 'id' | 'timestamp'>) => void;
   setIsTyping: (isTyping: boolean) => void;
   getCurrentConversation: () => Conversation | null;
+  refreshConversations: () => Promise<void>;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -30,35 +37,122 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [isTyping, setIsTyping] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const createNewConversation = () => {
-    const newConversation: Conversation = {
-      id: `conv-${Date.now()}`,
-      title: 'New Chat',
-      messages: [],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    setConversations((prev) => [newConversation, ...prev]);
-    setCurrentConversationId(newConversation.id);
+  // Load conversations from backend on mount
+  useEffect(() => {
+    loadConversations();
+  }, []);
+
+  // Load messages when conversation changes
+  useEffect(() => {
+    if (currentConversationId) {
+      loadMessages(currentConversationId);
+    }
+  }, [currentConversationId]);
+
+  const loadConversations = async () => {
+    try {
+      setIsLoading(true);
+      const { data, error } = await apiGetConversations();
+
+      if (error) {
+        console.error('Failed to load conversations:', error);
+        return;
+      }
+
+      if (data) {
+        // Convert API data to Conversation type
+        const conversationsData: Conversation[] = data.map((conv) => ({
+          id: conv.id,
+          title: conv.title,
+          messages: [], // Messages loaded separately
+          createdAt: new Date(conv.created_at),
+          updatedAt: new Date(conv.updated_at),
+        }));
+
+        setConversations(conversationsData);
+
+        // Set current conversation to the most recent one if none selected
+        if (!currentConversationId && conversationsData.length > 0) {
+          setCurrentConversationId(conversationsData[0].id);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading conversations:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const setCurrentConversation = (id: string) => {
+  const loadMessages = async (conversationId: string) => {
+    try {
+      const { data, error } = await apiGetMessages(conversationId);
+
+      if (error) {
+        console.error('Failed to load messages:', error);
+        return;
+      }
+
+      if (data) {
+        // Update conversation with messages
+        setConversations((prev) =>
+          prev.map((conv) => {
+            if (conv.id === conversationId) {
+              const messages: Message[] = data.map((msg) => ({
+                id: msg.id,
+                content: msg.content,
+                role: msg.role,
+                timestamp: new Date(msg.timestamp),
+              }));
+              return { ...conv, messages };
+            }
+            return conv;
+          })
+        );
+      }
+    } catch (error) {
+      console.error('Error loading messages:', error);
+    }
+  };
+
+  const createNewConversation = async () => {
+    try {
+      const { data, error } = await apiCreateConversation('New Chat');
+
+      if (error || !data) {
+        console.error('Failed to create conversation:', error);
+        return;
+      }
+
+      const newConversation: Conversation = {
+        id: data.id,
+        title: data.title,
+        messages: [],
+        createdAt: new Date(data.created_at),
+        updatedAt: new Date(data.updated_at),
+      };
+
+      setConversations((prev) => [newConversation, ...prev]);
+      setCurrentConversationId(newConversation.id);
+    } catch (error) {
+      console.error('Error creating conversation:', error);
+    }
+  };
+
+  const setCurrentConversation = async (id: string) => {
     setCurrentConversationId(id);
   };
 
   const addMessage = (message: Omit<Message, 'id' | 'timestamp'>) => {
     if (!currentConversationId) {
-      // If no conversation exists, create one
-      createNewConversation();
-      // We'll add the message in the next render cycle
-      setTimeout(() => addMessage(message), 0);
+      console.error('No conversation selected');
       return;
     }
 
     const newMessage: Message = {
       ...message,
-      id: `msg-${Date.now()}-${Math.random()}`,
+      id: `temp-${Date.now()}-${Math.random()}`,
       timestamp: new Date(),
     };
 
@@ -66,6 +160,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
       prev.map((conv) => {
         if (conv.id === currentConversationId) {
           const updatedMessages = [...conv.messages, newMessage];
+
           // Update title based on first user message
           const title =
             conv.messages.length === 0 && message.role === 'user'
@@ -88,17 +183,23 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     return conversations.find((conv) => conv.id === currentConversationId) || null;
   };
 
+  const refreshConversations = async () => {
+    await loadConversations();
+  };
+
   return (
     <ChatContext.Provider
       value={{
         conversations,
         currentConversationId,
         isTyping,
+        isLoading,
         createNewConversation,
         setCurrentConversation,
         addMessage,
         setIsTyping,
         getCurrentConversation,
+        refreshConversations,
       }}
     >
       {children}
