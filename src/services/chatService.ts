@@ -1,5 +1,10 @@
 import { Message } from '@/types/chat';
-import { sendMessage as apiSendMessage, type ConversationHistoryItem } from '@/lib/api';
+import {
+  sendMessage as apiSendMessage,
+  askPDFQuestion,
+  analyzePDF,
+  type ConversationHistoryItem
+} from '@/lib/api';
 
 export const sendMessageToAI = async (
   userMessage: string,
@@ -49,4 +54,38 @@ export const uploadPDF = async (file: File): Promise<{ success: boolean; url?: s
     success: true,
     url: URL.createObjectURL(file),
   };
+};
+
+/**
+ * Send PDF to Gemini AI for question answering
+ * Uses Python backend with Gemini AI (native PDF support)
+ */
+export const sendPDFToGemini = async (
+  pdfFile: File,
+  question: string
+): Promise<string> => {
+  // Validate PDF file
+  if (pdfFile.type !== 'application/pdf') {
+    throw new Error('Only PDF files are allowed');
+  }
+
+  // If no question is provided, ask Gemini to analyze the document
+  if (!question || !question.trim()) {
+    const { data, error } = await analyzePDF(pdfFile);
+
+    if (error || !data) {
+      throw new Error(error || 'Failed to analyze PDF with Gemini AI');
+    }
+
+    return data.summary;
+  }
+
+  // Ask specific question about the PDF
+  const { data, error } = await askPDFQuestion(pdfFile, question.trim());
+
+  if (error || !data) {
+    throw new Error(error || 'Failed to get response from Gemini AI');
+  }
+
+  return data.answer;
 };

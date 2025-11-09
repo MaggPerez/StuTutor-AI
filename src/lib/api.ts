@@ -1,9 +1,10 @@
 /**
  * API Client for StuTutor-AI Backend
- * Handles all HTTP requests to the backend server
+ * Handles all HTTP requests to the backend servers
  */
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const PYTHON_API_BASE_URL = import.meta.env.VITE_PYTHON_API_URL || 'http://localhost:8000';
 
 interface ApiResponse<T> {
   data?: T;
@@ -132,6 +133,86 @@ export async function healthCheck(): Promise<ApiResponse<{ message: string }>> {
   return apiFetch<{ message: string }>('/api/health');
 }
 
+/**
+ * Ask a question about a PDF using Gemini AI (Python server)
+ */
+interface GeminiPDFResponse {
+  success: boolean;
+  answer: string;
+  model_used: string;
+  timestamp: string;
+}
+
+export async function askPDFQuestion(
+  pdfFile: File,
+  question: string
+): Promise<ApiResponse<GeminiPDFResponse>> {
+  try {
+    const formData = new FormData();
+    formData.append('pdf', pdfFile);
+    formData.append('question', question);
+
+    const response = await fetch(`${PYTHON_API_BASE_URL}/api/pdf/ask`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        error: data.detail || data.error || `Request failed with status ${response.status}`,
+      };
+    }
+
+    return { data };
+  } catch (error) {
+    console.error('Gemini PDF API Error:', error);
+    return {
+      error: error instanceof Error ? error.message : 'Network error occurred',
+    };
+  }
+}
+
+/**
+ * Analyze/summarize a PDF using Gemini AI (Python server)
+ */
+interface GeminiPDFAnalysisResponse {
+  success: boolean;
+  summary: string;
+  model_used: string;
+  timestamp: string;
+}
+
+export async function analyzePDF(
+  pdfFile: File
+): Promise<ApiResponse<GeminiPDFAnalysisResponse>> {
+  try {
+    const formData = new FormData();
+    formData.append('pdf', pdfFile);
+
+    const response = await fetch(`${PYTHON_API_BASE_URL}/api/pdf/analyze`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        error: data.detail || data.error || `Request failed with status ${response.status}`,
+      };
+    }
+
+    return { data };
+  } catch (error) {
+    console.error('Gemini PDF Analysis API Error:', error);
+    return {
+      error: error instanceof Error ? error.message : 'Network error occurred',
+    };
+  }
+}
+
 // Export types for use in other files
 export type {
   Conversation,
@@ -139,4 +220,6 @@ export type {
   SendMessageResponse,
   ConversationHistoryItem,
   ApiResponse,
+  GeminiPDFResponse,
+  GeminiPDFAnalysisResponse,
 };

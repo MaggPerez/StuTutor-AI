@@ -2,8 +2,7 @@ import React from 'react';
 import { MessageList } from './MessageList';
 import { MessageInput } from './MessageInput';
 import { useChatContext } from '@/context/ChatContext';
-import { sendMessageToAI } from '@/services/chatService';
-import type { FileAttachment } from '@/types/chat';
+import { sendMessageToAI, sendPDFToGemini } from '@/services/chatService';
 
 export const ChatArea: React.FC = () => {
   const { getCurrentConversation, addMessage, isTyping, setIsTyping, currentConversationId, createNewConversation, setCurrentPDF } = useChatContext();
@@ -35,51 +34,53 @@ export const ChatArea: React.FC = () => {
       }
     }
 
-    // Create file attachment if file is provided
-    let fileAttachment: FileAttachment | undefined;
+    // If file is provided, keep the PDF displayed in the viewer
     if (file) {
       const fileUrl = URL.createObjectURL(file);
-      fileAttachment = {
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        url: fileUrl,
-      };
-
-      // Keep the PDF displayed in the viewer after sending
       setCurrentPDF({
         fileUrl: fileUrl,
         fileName: file.name,
       });
     }
 
-    // Add user message to UI immediately
-    addMessage({
-      content,
-      role: 'user',
-      fileAttachment,
-    });
-
     // Set typing indicator
     setIsTyping(true);
 
     try {
-      // Get conversation history (exclude the message we just added as it's already included)
-      const conversationHistory = currentConversation?.messages || [];
+      // If a PDF file is uploaded, use Gemini AI (Python backend)
+      if (file) {
+        // Call Gemini AI to process the PDF
+        const geminiResponse = await sendPDFToGemini(file, content || '');
 
-      // Get AI response - this will save both user and AI messages to backend
-      const aiResponse = await sendMessageToAI(
-        content,
-        conversationId,
-        conversationHistory,
-        file
-      );
+        // Add AI message to UI
+        addMessage({
+          content: geminiResponse,
+          role: 'assistant',
+        });
+      } else {
+        // No PDF - use regular chat flow with OpenAI (Node.js backend)
+        // Add user message to UI
+        addMessage({
+          content,
+          role: 'user',
+        });
 
-      // Add AI message to UI
-      addMessage({
-        content: aiResponse.content,
-        role: 'assistant',
-      });
+        // Get conversation history
+        const conversationHistory = currentConversation?.messages || [];
+
+        // Get AI response from OpenAI
+        const aiResponse = await sendMessageToAI(
+          content,
+          conversationId,
+          conversationHistory
+        );
+
+        // Add AI message to UI
+        addMessage({
+          content: aiResponse.content,
+          role: 'assistant',
+        });
+      }
     } catch (error) {
       console.error('Error sending message:', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
