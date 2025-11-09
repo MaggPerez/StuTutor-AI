@@ -12,4 +12,15 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  optimizeDeps: {
+    include: ['pdfjs-dist'],
+    esbuildOptions: {
+      supported: {
+        'top-level-await': true,
+      },
+    },
+  },
+  worker: {
+    format: 'es',
+  },
 })
