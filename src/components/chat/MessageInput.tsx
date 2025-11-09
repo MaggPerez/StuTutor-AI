@@ -7,10 +7,17 @@ import { toast } from 'sonner';
 
 interface MessageInputProps {
   onSendMessage: (message: string, file?: File) => void;
+  onFileAttach?: (file: File) => void;
+  onFileRemove?: () => void;
   disabled?: boolean;
 }
 
-export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, disabled }) => {
+export const MessageInput: React.FC<MessageInputProps> = ({ 
+  onSendMessage, 
+  onFileAttach,
+  onFileRemove,
+  disabled 
+}) => {
   const [message, setMessage] = useState('');
   const [attachedFile, setAttachedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -35,12 +42,22 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, disab
 
     setAttachedFile(file);
     toast.success('PDF file attached successfully');
+    
+    // Immediately notify parent component to show PDF viewer
+    if (onFileAttach) {
+      onFileAttach(file);
+    }
   };
 
   const handleRemoveFile = () => {
     setAttachedFile(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
+    }
+    
+    // Notify parent to hide PDF viewer
+    if (onFileRemove) {
+      onFileRemove();
     }
   };
 

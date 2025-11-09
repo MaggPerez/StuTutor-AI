@@ -6,8 +6,22 @@ import { sendMessageToAI } from '@/services/chatService';
 import type { FileAttachment } from '@/types/chat';
 
 export const ChatArea: React.FC = () => {
-  const { getCurrentConversation, addMessage, isTyping, setIsTyping, currentConversationId, createNewConversation } = useChatContext();
+  const { getCurrentConversation, addMessage, isTyping, setIsTyping, currentConversationId, createNewConversation, setCurrentPDF } = useChatContext();
   const currentConversation = getCurrentConversation();
+
+  // Handle when user attaches a PDF - show it immediately
+  const handleFileAttach = (file: File) => {
+    const fileUrl = URL.createObjectURL(file);
+    setCurrentPDF({
+      fileUrl: fileUrl,
+      fileName: file.name,
+    });
+  };
+
+  // Handle when user removes the attached PDF - hide viewer
+  const handleFileRemove = () => {
+    setCurrentPDF(null);
+  };
 
   const handleSendMessage = async (content: string, file?: File) => {
     // Ensure we have a conversation
@@ -24,12 +38,19 @@ export const ChatArea: React.FC = () => {
     // Create file attachment if file is provided
     let fileAttachment: FileAttachment | undefined;
     if (file) {
+      const fileUrl = URL.createObjectURL(file);
       fileAttachment = {
         name: file.name,
         size: file.size,
         type: file.type,
-        url: URL.createObjectURL(file),
+        url: fileUrl,
       };
+
+      // Keep the PDF displayed in the viewer after sending
+      setCurrentPDF({
+        fileUrl: fileUrl,
+        fileName: file.name,
+      });
     }
 
     // Add user message to UI immediately
@@ -80,7 +101,12 @@ export const ChatArea: React.FC = () => {
       />
 
       {/* Input Area */}
-      <MessageInput onSendMessage={handleSendMessage} disabled={isTyping} />
+      <MessageInput 
+        onSendMessage={handleSendMessage}
+        onFileAttach={handleFileAttach}
+        onFileRemove={handleFileRemove}
+        disabled={isTyping} 
+      />
     </div>
   );
 };

@@ -6,17 +6,24 @@ import {
   getMessages as apiGetMessages,
 } from '@/lib/api';
 
+interface PDFState {
+  fileUrl: string;
+  fileName: string;
+}
+
 interface ChatContextType {
   conversations: Conversation[];
   currentConversationId: string | null;
   isTyping: boolean;
   isLoading: boolean;
+  currentPDF: PDFState | null;
   createNewConversation: () => Promise<void>;
   setCurrentConversation: (id: string) => Promise<void>;
   addMessage: (message: Omit<Message, 'id' | 'timestamp'>) => void;
   setIsTyping: (isTyping: boolean) => void;
   getCurrentConversation: () => Conversation | null;
   refreshConversations: () => Promise<void>;
+  setCurrentPDF: (pdf: PDFState | null) => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -38,6 +45,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [isTyping, setIsTyping] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPDF, setCurrentPDF] = useState<PDFState | null>(null);
 
   // Load conversations from backend on mount
   useEffect(() => {
@@ -194,12 +202,14 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
         currentConversationId,
         isTyping,
         isLoading,
+        currentPDF,
         createNewConversation,
         setCurrentConversation,
         addMessage,
         setIsTyping,
         getCurrentConversation,
         refreshConversations,
+        setCurrentPDF,
       }}
     >
       {children}
