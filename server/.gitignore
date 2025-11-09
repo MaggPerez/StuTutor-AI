@@ -43,3 +43,5 @@ htmlcov/
 # Logs
 *.log
 
+
+.venv

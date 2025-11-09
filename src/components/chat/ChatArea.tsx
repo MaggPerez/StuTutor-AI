@@ -28,8 +28,7 @@ export const ChatArea: React.FC = () => {
     // Ensure we have a conversation
     let conversationId = currentConversationId;
     if (!conversationId) {
-      await createNewConversation();
-      conversationId = currentConversationId;
+      conversationId = await createNewConversation();
       if (!conversationId) {
         console.error('Failed to create conversation');
         return;

@@ -10,6 +10,14 @@ export const ChatHistory: React.FC = () => {
   const { conversations, currentConversationId, createNewConversation, setCurrentConversation } =
     useChatContext();
 
+  const handleNewChat = async () => {
+    try {
+      await createNewConversation();
+    } catch (error) {
+      console.error('Failed to create new conversation:', error);
+    }
+  };
+
   const formatDate = (date: Date) => {
     const now = new Date();
     const messageDate = new Date(date);
@@ -47,7 +55,7 @@ export const ChatHistory: React.FC = () => {
       <div className="p-4 space-y-2">
         <h2 className="text-lg font-semibold">Chat History</h2>
         <Button
-          onClick={createNewConversation}
+          onClick={handleNewChat}
           className="w-full"
           variant="default"
         >

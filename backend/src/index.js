@@ -1,8 +1,10 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import multer from 'multer';
 import { supabase } from './supabaseClient.js';
 import { getAIResponse } from './services/aiService.js';
+import { extractTextFromPDF } from './services/pdfService.js';
 
 dotenv.config();
 
@@ -11,6 +13,18 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors({ origin: 'http://localhost:5173' }));
 app.use(express.json());
+
+// In-memory storage for PDF content (conversationId -> PDF text)
+const pdfContentStore = new Map();
+
+// Configure multer for PDF uploads
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit
+  },
+});
 
 app.get('/api/health', (req, res) => {
   res.json({ message: 'Backend + Supabase OK!' });
@@ -115,11 +129,23 @@ app.post('/api/chat/send', async (req, res) => {
       return res.status(400).json({ error: userMessageError.message });
     }
 
-    // Get AI response
+    // Get PDF content for this conversation if available
+    const pdfContent = pdfContentStore.get(conversationId);
+    const documentContext = pdfContent ? pdfContent.text : null;
+
+    if (pdfContent) {
+      console.log('📄 Using PDF context for AI response:', {
+        conversationId,
+        fileName: pdfContent.fileName,
+        textLength: pdfContent.text.length,
+      });
+    }
+
+    // Get AI response with PDF context
     const aiResponseText = await getAIResponse(
       message,
       conversationHistory || [],
-      null // documentContext - can be added later
+      documentContext
     );
 
     // Save AI response to database
@@ -175,6 +201,104 @@ app.delete('/api/conversations/:id', async (req, res) => {
   }
 });
 
+// ===== PDF UPLOAD ENDPOINT =====
+app.post('/api/upload/storage', upload.single('pdf'), async (req, res) => {
+  try {
+    const { conversationId } = req.body;
+
+    console.log('📤 Upload request received:', {
+      conversationId,
+      hasFile: !!req.file,
+      fileName: req.file?.originalname
+    });
+
+    if (!conversationId) {
+      return res.status(400).json({
+        success: false,
+        error: 'Conversation ID is required.',
+      });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        error: 'No PDF file provided.',
+      });
+    }
+
+    // Check if file is PDF
+    if (req.file.mimetype !== 'application/pdf') {
+      return res.status(400).json({
+        success: false,
+        error: 'File must be a PDF.',
+      });
+    }
+
+    // Extract text from PDF
+    const pdfBuffer = req.file.buffer;
+    const extractedText = await extractTextFromPDF(pdfBuffer);
+
+    // Store PDF text in memory for this conversation
+    pdfContentStore.set(conversationId, {
+      text: extractedText,
+      fileName: req.file.originalname,
+      uploadedAt: new Date().toISOString(),
+    });
+
+    console.log('✅ PDF upload successful:', {
+      fileName: req.file.originalname,
+      fileSize: req.file.size,
+      conversationId,
+      textLength: extractedText.length,
+    });
+
+    // Return success - frontend will handle the PDF using blob URLs
+    res.json({
+      success: true,
+      data: {
+        message: 'PDF uploaded successfully.',
+        pdfMetadata: {
+          fileName: req.file.originalname,
+          fileSize: req.file.size,
+          storageUrl: `local://${conversationId}/${req.file.originalname}`,
+          filePath: `${conversationId}/${req.file.originalname}`,
+        },
+      },
+    });
+  } catch (error) {
+    console.error('❌ Upload PDF error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+    });
+  }
+});
+
+// Get PDF info for a conversation
+app.get('/api/conversations/:id/pdf', (req, res) => {
+  try {
+    const { id } = req.params;
+    const pdfContent = pdfContentStore.get(id);
+
+    if (!pdfContent) {
+      return res.json({
+        hasPDF: false,
+      });
+    }
+
+    res.json({
+      hasPDF: true,
+      fileName: pdfContent.fileName,
+      uploadedAt: pdfContent.uploadedAt,
+      textLength: pdfContent.text.length,
+    });
+  } catch (error) {
+    console.error('Error getting PDF info:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Backend live → http://localhost:${PORT}`);
+  console.log(`📚 PDF content storage ready (in-memory)`);
 });
