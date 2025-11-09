@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from 'react';
 import type { Message } from '@/types/chat';
 import { MessageBubble } from './MessageBubble';
 import { TypingIndicator } from './TypingIndicator';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Empty, EmptyMedia, EmptyTitle, EmptyDescription } from '@/components/ui/empty';
 import { MessageSquare } from 'lucide-react';
 
@@ -12,7 +11,7 @@ interface MessageListProps {
 }
 
 export const MessageList: React.FC<MessageListProps> = ({ messages, isTyping }) => {
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom when new messages arrive
@@ -37,8 +36,8 @@ export const MessageList: React.FC<MessageListProps> = ({ messages, isTyping }) 
   }
 
   return (
-    <ScrollArea className="flex-1 h-full">
-      <div ref={scrollRef} className="p-4 space-y-4">
+    <div ref={scrollContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden">
+      <div className="p-4 space-y-4">
         {messages.map((message) => (
           <MessageBubble key={message.id} message={message} />
         ))}
@@ -47,6 +46,6 @@ export const MessageList: React.FC<MessageListProps> = ({ messages, isTyping }) 
 
         <div ref={bottomRef} />
       </div>
-    </ScrollArea>
+    </div>
   );
 };
