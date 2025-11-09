@@ -2,7 +2,7 @@ import React, { useState, useRef, type KeyboardEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Send, Paperclip, X, FileText } from 'lucide-react';
+import { Send, Paperclip, X, FileText, Sparkles, NotebookPen, MessageCircleQuestion } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface MessageInputProps {
@@ -10,6 +10,14 @@ interface MessageInputProps {
   onFileAttach?: (file: File) => void;
   onFileRemove?: () => void;
   disabled?: boolean;
+}
+
+interface QuickAction {
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+  prompt: string;
+  color: string;
 }
 
 export const MessageInput: React.FC<MessageInputProps> = ({ 
@@ -22,6 +30,31 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   const [attachedFile, setAttachedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Quick action shortcuts for PDF documents
+  const quickActions: QuickAction[] = [
+    {
+      id: 'summarize',
+      label: 'Summarize',
+      icon: <Sparkles className="h-4 w-4" />,
+      prompt: 'Please provide a comprehensive summary of this document, highlighting the key points and main ideas.',
+      color: 'bg-blue-500/10 hover:bg-blue-500/20 text-blue-700 dark:text-blue-400 border-blue-500/20',
+    },
+    {
+      id: 'notes',
+      label: 'Create Notes',
+      icon: <NotebookPen className="h-4 w-4" />,
+      prompt: 'Please create detailed study notes from this document, organizing the information into clear sections with bullet points.',
+      color: 'bg-purple-500/10 hover:bg-purple-500/20 text-purple-700 dark:text-purple-400 border-purple-500/20',
+    },
+    {
+      id: 'questions',
+      label: 'Study Questions',
+      icon: <MessageCircleQuestion className="h-4 w-4" />,
+      prompt: 'Please generate a list of study questions based on this document that would help me understand the material better.',
+      color: 'bg-green-500/10 hover:bg-green-500/20 text-green-700 dark:text-green-400 border-green-500/20',
+    },
+  ];
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -97,11 +130,24 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     textarea.style.height = `${Math.min(textarea.scrollHeight, 200)}px`;
   };
 
+  const handleQuickAction = (action: QuickAction) => {
+    if (!attachedFile) return;
+    
+    // Send the pre-defined prompt with the attached file
+    onSendMessage(action.prompt, attachedFile);
+    
+    // Clear the attached file
+    setAttachedFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   return (
     <div className="border-t border-border bg-background p-4">
       {/* File Attachment Preview */}
       {attachedFile && (
-        <div className="mb-2">
+        <div className="mb-3">
           <Badge variant="secondary" className="gap-2 py-2 px-3">
             <FileText className="h-4 w-4" />
             <span className="text-sm">{attachedFile.name}</span>
@@ -114,6 +160,28 @@ export const MessageInput: React.FC<MessageInputProps> = ({
               <X className="h-3 w-3" />
             </Button>
           </Badge>
+        </div>
+      )}
+
+      {/* Quick Actions - Show when PDF is attached */}
+      {attachedFile && (
+        <div className="mb-3">
+          <p className="text-xs text-muted-foreground mb-2">Quick actions:</p>
+          <div className="flex flex-wrap gap-2">
+            {quickActions.map((action) => (
+              <Button
+                key={action.id}
+                variant="outline"
+                size="sm"
+                onClick={() => handleQuickAction(action)}
+                disabled={disabled}
+                className={`gap-2 transition-all ${action.color}`}
+              >
+                {action.icon}
+                <span className="font-medium">{action.label}</span>
+              </Button>
+            ))}
+          </div>
         </div>
       )}
 
