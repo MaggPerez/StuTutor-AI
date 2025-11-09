@@ -258,15 +258,17 @@ export async function uploadPDFToStorage(
       // Note: Don't set Content-Type header for FormData, browser will set it with boundary
     });
 
-    const data = await response.json();
+    const result = await response.json();
 
     if (!response.ok) {
       return {
-        error: data.error || `Request failed with status ${response.status}`,
+        error: result.error || `Request failed with status ${response.status}`,
       };
     }
 
-    return { data };
+    // Backend wraps response in { success: true, data: {...} }
+    // We need to extract the inner data
+    return { data: result.data };
   } catch (error) {
     console.error('PDF Upload Error:', error);
     return {

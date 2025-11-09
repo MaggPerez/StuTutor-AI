@@ -46,26 +46,24 @@ export const UploadSection = () => {
       // Upload PDF to Supabase Storage
       const uploadResult = await uploadPDFToStorage(file, conversationId);
 
-      if (!uploadResult.success) {
+      if (uploadResult.error || !uploadResult.data) {
         throw new Error(uploadResult.error || 'Failed to upload PDF');
       }
 
-      // Set the current PDF in context
+      // Set the current PDF in context using blob URL
       const fileUrl = URL.createObjectURL(file);
       setCurrentPDF({
         fileUrl,
         fileName: file.name,
       });
 
-      // Update conversation with PDF metadata
-      if (uploadResult.storageUrl && uploadResult.filePath) {
-        await updateConversationPDFMetadata(conversationId, {
-          fileName: file.name,
-          fileSize: file.size,
-          storageUrl: uploadResult.storageUrl,
-          filePath: uploadResult.filePath,
-        });
-      }
+      // Note: PDF is stored locally in browser memory via blob URL
+      // No need to update conversation metadata in database
+      console.log('PDF uploaded and stored locally:', {
+        fileName: file.name,
+        fileSize: file.size,
+        conversationId,
+      });
 
       setUploadSuccess(true);
       toast.success('PDF uploaded successfully!');

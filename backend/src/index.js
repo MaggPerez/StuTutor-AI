@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import multer from 'multer';
 import { supabase } from './supabaseClient.js';
 import { getAIResponse } from './services/aiService.js';
 
@@ -11,6 +12,15 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors({ origin: 'http://localhost:5173' }));
 app.use(express.json());
+
+// Configure multer for PDF uploads
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit
+  },
+});
 
 app.get('/api/health', (req, res) => {
   res.json({ message: 'Backend + Supabase OK!' });
@@ -172,6 +182,67 @@ app.delete('/api/conversations/:id', async (req, res) => {
   } catch (error) {
     console.error('Server error deleting conversation:', error);
     res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// ===== PDF UPLOAD ENDPOINT =====
+app.post('/api/upload/storage', upload.single('pdf'), async (req, res) => {
+  try {
+    const { conversationId } = req.body;
+
+    console.log('📤 Upload request received:', {
+      conversationId,
+      hasFile: !!req.file,
+      fileName: req.file?.originalname
+    });
+
+    if (!conversationId) {
+      return res.status(400).json({
+        success: false,
+        error: 'Conversation ID is required.',
+      });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        error: 'No PDF file provided.',
+      });
+    }
+
+    // Check if file is PDF
+    if (req.file.mimetype !== 'application/pdf') {
+      return res.status(400).json({
+        success: false,
+        error: 'File must be a PDF.',
+      });
+    }
+
+    console.log('✅ PDF upload successful:', {
+      fileName: req.file.originalname,
+      fileSize: req.file.size,
+      conversationId
+    });
+
+    // Return success - frontend will handle the PDF using blob URLs
+    res.json({
+      success: true,
+      data: {
+        message: 'PDF uploaded successfully.',
+        pdfMetadata: {
+          fileName: req.file.originalname,
+          fileSize: req.file.size,
+          storageUrl: `local://${conversationId}/${req.file.originalname}`,
+          filePath: `${conversationId}/${req.file.originalname}`,
+        },
+      },
+    });
+  } catch (error) {
+    console.error('❌ Upload PDF error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+    });
   }
 });
 
