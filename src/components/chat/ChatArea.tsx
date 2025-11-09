@@ -6,10 +6,21 @@ import { sendMessageToAI } from '@/services/chatService';
 import type { FileAttachment } from '@/types/chat';
 
 export const ChatArea: React.FC = () => {
-  const { getCurrentConversation, addMessage, isTyping, setIsTyping } = useChatContext();
+  const { getCurrentConversation, addMessage, isTyping, setIsTyping, currentConversationId, createNewConversation } = useChatContext();
   const currentConversation = getCurrentConversation();
 
   const handleSendMessage = async (content: string, file?: File) => {
+    // Ensure we have a conversation
+    let conversationId = currentConversationId;
+    if (!conversationId) {
+      await createNewConversation();
+      conversationId = currentConversationId;
+      if (!conversationId) {
+        console.error('Failed to create conversation');
+        return;
+      }
+    }
+
     // Create file attachment if file is provided
     let fileAttachment: FileAttachment | undefined;
     if (file) {
@@ -21,7 +32,7 @@ export const ChatArea: React.FC = () => {
       };
     }
 
-    // Add user message
+    // Add user message to UI immediately
     addMessage({
       content,
       role: 'user',
@@ -32,18 +43,27 @@ export const ChatArea: React.FC = () => {
     setIsTyping(true);
 
     try {
-      // Get AI response
-      const aiResponse = await sendMessageToAI(content, file);
+      // Get conversation history (exclude the message we just added as it's already included)
+      const conversationHistory = currentConversation?.messages || [];
 
-      // Add AI message
+      // Get AI response - this will save both user and AI messages to backend
+      const aiResponse = await sendMessageToAI(
+        content,
+        conversationId,
+        conversationHistory,
+        file
+      );
+
+      // Add AI message to UI
       addMessage({
         content: aiResponse.content,
         role: 'assistant',
       });
     } catch (error) {
       console.error('Error sending message:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       addMessage({
-        content: 'Sorry, I encountered an error. Please try again.',
+        content: `Sorry, I encountered an error: ${errorMessage}. Please try again.`,
         role: 'assistant',
       });
     } finally {

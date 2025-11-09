@@ -1,8 +1,13 @@
 /**
  * AI service
  * Handles external AI API calls (OpenAI, Claude, DeepSeek, etc.)
- * Currently implements a mock response, ready to integrate with real AI APIs
  */
+
+import OpenAI from 'openai';
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 /**
  * Get AI response for user message
@@ -13,50 +18,57 @@
  */
 export const getAIResponse = async (userMessage, conversationHistory = [], documentContext = null) => {
   try {
-    // TODO: Integrate with actual AI API (OpenAI, Claude, DeepSeek, etc.)
-    // For now, return a mock response
-    
-    // Mock AI response - replace with actual API call
-    const mockResponse = `This is a mock AI response to your message: "${userMessage}". 
-    ${documentContext ? 'I have access to your document for context.' : ''}
-    In production, this would be replaced with an actual AI API call.`;
+    // Build messages array for OpenAI
+    const messages = [];
 
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    return mockResponse;
-
-    // Example OpenAI integration (uncomment and configure):
-    /*
-    const OpenAI = require('openai');
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
-
-    const messages = [
-      ...(documentContext ? [{
+    // Add system message with document context if provided
+    if (documentContext) {
+      messages.push({
         role: 'system',
-        content: `You are a helpful tutor. Use the following document context to answer questions: ${documentContext.substring(0, 2000)}`
-      }] : []),
-      ...conversationHistory.map(msg => ({
+        content: `You are a helpful AI tutor. Use the following document context to answer questions: ${documentContext.substring(0, 2000)}`
+      });
+    } else {
+      messages.push({
+        role: 'system',
+        content: 'You are a helpful AI tutor. Provide clear, concise, and educational responses to student questions.'
+      });
+    }
+
+    // Add conversation history
+    conversationHistory.forEach(msg => {
+      messages.push({
         role: msg.role,
         content: msg.content
-      })),
-      {
-        role: 'user',
-        content: userMessage
-      }
-    ];
+      });
+    });
 
+    // Add current user message
+    messages.push({
+      role: 'user',
+      content: userMessage
+    });
+
+    // Call OpenAI API
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model: process.env.OPENAI_MODEL || 'gpt-3.5-turbo',
       messages: messages,
+      temperature: 0.7,
+      max_tokens: 1000,
     });
 
     return completion.choices[0].message.content;
-    */
   } catch (error) {
     console.error('AI Service Error:', error);
+
+    // Provide more specific error messages
+    if (error.status === 401) {
+      throw new Error('Invalid OpenAI API key. Please check your configuration.');
+    } else if (error.status === 429) {
+      throw new Error('OpenAI rate limit exceeded. Please try again later.');
+    } else if (error.status === 500) {
+      throw new Error('OpenAI service error. Please try again later.');
+    }
+
     throw new Error('Failed to get AI response. Please try again.');
   }
 };
