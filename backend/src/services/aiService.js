@@ -23,9 +23,15 @@ export const getAIResponse = async (userMessage, conversationHistory = [], docum
 
     // Add system message with document context if provided
     if (documentContext) {
+      // Limit context to avoid token limits (keep first 4000 chars for gpt-3.5-turbo)
+      const contextLimit = 4000;
+      const truncatedContext = documentContext.length > contextLimit
+        ? documentContext.substring(0, contextLimit) + '...[truncated]'
+        : documentContext;
+
       messages.push({
         role: 'system',
-        content: `You are a helpful AI tutor. Use the following document context to answer questions: ${documentContext.substring(0, 2000)}`
+        content: `You are a helpful AI tutor analyzing a PDF document. Use the following document content to answer questions accurately and helpfully.\n\nDocument Content:\n${truncatedContext}\n\nProvide detailed answers based on this document. If a question cannot be answered from the document, let the user know.`
       });
     } else {
       messages.push({
