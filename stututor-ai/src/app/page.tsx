@@ -1,10 +1,17 @@
 import React from 'react'
 import { Button } from '@/components/ui/button'
+import { Hero } from '@/components/landing-page/Hero'
+import { Features } from '@/components/landing-page/Features'
+import { HowItWorks } from '@/components/landing-page/HowItWorks'
+import { UploadSection } from '@/components/landing-page/UploadSection'
 
-export default function Home() {
+export default function LandingPage() {
   return (
-    <div className='flex justify-center items-center h-screen'>
-      <Button>Click me</Button>
+    <div className="min-h-screen">
+      <Hero />
+      <HowItWorks />
+      {/* <UploadSection /> */}
+      <Features />
     </div>
   )
 }
