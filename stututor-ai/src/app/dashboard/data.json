@@ -1,0 +1,202 @@
+[
+  {
+    "id": 1,
+    "title": "Calculus II Problem Set 5",
+    "course": "Calculus II",
+    "type": "Assignment",
+    "status": "In Progress",
+    "dueDate": "2025-11-15",
+    "priority": "High",
+    "progress": 60
+  },
+  {
+    "id": 2,
+    "title": "Physics Lab Report - Kinematics",
+    "course": "Physics I",
+    "type": "Lab Report",
+    "status": "Completed",
+    "dueDate": "2025-11-12",
+    "priority": "Medium",
+    "progress": 100
+  },
+  {
+    "id": 3,
+    "title": "Data Structures - Binary Trees",
+    "course": "Computer Science",
+    "type": "Assignment",
+    "status": "Not Started",
+    "dueDate": "2025-11-18",
+    "priority": "High",
+    "progress": 0
+  },
+  {
+    "id": 4,
+    "title": "English Essay - Shakespeare Analysis",
+    "course": "English Literature",
+    "type": "Essay",
+    "status": "In Progress",
+    "dueDate": "2025-11-20",
+    "priority": "Medium",
+    "progress": 40
+  },
+  {
+    "id": 5,
+    "title": "Chemistry Chapter 8 Review",
+    "course": "Chemistry",
+    "type": "Study Notes",
+    "status": "Completed",
+    "dueDate": "2025-11-10",
+    "priority": "Low",
+    "progress": 100
+  },
+  {
+    "id": 6,
+    "title": "Midterm Exam Preparation",
+    "course": "Calculus II",
+    "type": "Exam Prep",
+    "status": "In Progress",
+    "dueDate": "2025-11-22",
+    "priority": "High",
+    "progress": 45
+  },
+  {
+    "id": 7,
+    "title": "History Research Paper",
+    "course": "World History",
+    "type": "Research Paper",
+    "status": "In Progress",
+    "dueDate": "2025-11-25",
+    "priority": "High",
+    "progress": 30
+  },
+  {
+    "id": 8,
+    "title": "Spanish Vocabulary Quiz",
+    "course": "Spanish II",
+    "type": "Quiz",
+    "status": "Completed",
+    "dueDate": "2025-11-11",
+    "priority": "Low",
+    "progress": 100
+  },
+  {
+    "id": 9,
+    "title": "Programming Project - Web App",
+    "course": "Computer Science",
+    "type": "Project",
+    "status": "In Progress",
+    "dueDate": "2025-11-28",
+    "priority": "High",
+    "progress": 55
+  },
+  {
+    "id": 10,
+    "title": "Biology Cell Structure Notes",
+    "course": "Biology",
+    "type": "Study Notes",
+    "status": "Completed",
+    "dueDate": "2025-11-09",
+    "priority": "Low",
+    "progress": 100
+  },
+  {
+    "id": 11,
+    "title": "Physics Quiz - Newton's Laws",
+    "course": "Physics I",
+    "type": "Quiz",
+    "status": "Not Started",
+    "dueDate": "2025-11-16",
+    "priority": "Medium",
+    "progress": 0
+  },
+  {
+    "id": 12,
+    "title": "Calculus Practice Problems",
+    "course": "Calculus II",
+    "type": "Practice",
+    "status": "In Progress",
+    "dueDate": "2025-11-14",
+    "priority": "Medium",
+    "progress": 70
+  },
+  {
+    "id": 13,
+    "title": "English Poetry Analysis",
+    "course": "English Literature",
+    "type": "Assignment",
+    "status": "Completed",
+    "dueDate": "2025-11-08",
+    "priority": "Medium",
+    "progress": 100
+  },
+  {
+    "id": 14,
+    "title": "Chemistry Lab - Titration",
+    "course": "Chemistry",
+    "type": "Lab Report",
+    "status": "In Progress",
+    "dueDate": "2025-11-19",
+    "priority": "High",
+    "progress": 25
+  },
+  {
+    "id": 15,
+    "title": "Group Project Presentation",
+    "course": "World History",
+    "type": "Presentation",
+    "status": "In Progress",
+    "dueDate": "2025-11-21",
+    "priority": "High",
+    "progress": 50
+  },
+  {
+    "id": 16,
+    "title": "Spanish Conversation Practice",
+    "course": "Spanish II",
+    "type": "Practice",
+    "status": "Not Started",
+    "dueDate": "2025-11-17",
+    "priority": "Low",
+    "progress": 0
+  },
+  {
+    "id": 17,
+    "title": "Algorithm Analysis Assignment",
+    "course": "Computer Science",
+    "type": "Assignment",
+    "status": "Not Started",
+    "dueDate": "2025-11-23",
+    "priority": "High",
+    "progress": 0
+  },
+  {
+    "id": 18,
+    "title": "Biology Exam Study Guide",
+    "course": "Biology",
+    "type": "Exam Prep",
+    "status": "In Progress",
+    "dueDate": "2025-11-24",
+    "priority": "High",
+    "progress": 35
+  },
+  {
+    "id": 19,
+    "title": "Physics Problem Set 6",
+    "course": "Physics I",
+    "type": "Assignment",
+    "status": "Completed",
+    "dueDate": "2025-11-13",
+    "priority": "Medium",
+    "progress": 100
+  },
+  {
+    "id": 20,
+    "title": "Reading Summary - Classic Novel",
+    "course": "English Literature",
+    "type": "Reading",
+    "status": "In Progress",
+    "dueDate": "2025-11-26",
+    "priority": "Low",
+    "progress": 60
+  }
+]
