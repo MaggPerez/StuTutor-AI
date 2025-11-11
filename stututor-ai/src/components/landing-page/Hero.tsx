@@ -1,6 +1,7 @@
 'use client'
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Sparkles } from 'lucide-react';
+import Link from 'next/link';
 
 export const Hero = () => {
   const scrollToUpload = () => {
@@ -39,7 +40,7 @@ export const Hero = () => {
               className="group h-12 gap-2 px-8 text-base font-semibold"
               onClick={scrollToUpload}
             >
-              Get Started Free
+              <Link href="/login">Get Started Free</Link>
               <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Button>
             <Button
