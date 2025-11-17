@@ -30,7 +30,7 @@ export default function Dashboard() {
       </div>
 
       {/* Hero Section - Glassmorphic Welcome Panel */}
-      <div className="mb-8 animate-fade-in">
+      <div className="my-8 animate-fade-in">
         <div className="glass-gradient rounded-2xl p-6 md:p-8 border border-white/10 relative overflow-hidden group">
           {/* Subtle animated gradient border effect */}
           <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 via-pink-600/20 to-cyan-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" />
