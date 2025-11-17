@@ -69,11 +69,12 @@ export default function Dashboard() {
         </section>
 
         {/* Three-Column Layout */}
-        <div className="grid gap-6 lg:grid-cols-12">
+        <div className="grid gap-6 lg:grid-cols-3">
           {/* Left Column - Performance (40%) */}
           <div className="lg:col-span-5 space-y-6">
             <section className="animate-fade-in animation-delay-200">
-              <PerformanceChart />
+              <QuickActions />
+              
             </section>
           </div>
 
@@ -83,7 +84,7 @@ export default function Dashboard() {
               <StudyProgress />
             </section>
             <section className="animate-fade-in animation-delay-400">
-              <QuickActions />
+              <PerformanceChart />
             </section>
           </div>
 
