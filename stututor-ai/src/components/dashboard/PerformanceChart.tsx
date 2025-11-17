@@ -31,25 +31,34 @@ const weeklyProgressData = [
 
 export default function PerformanceChart() {
   return (
-    <Card className="glass-card border-white/40 dark:border-white/10 shadow-xl">
+    <Card variant="glass" className="border-white/10 shadow-2xl">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent">
+        <CardTitle className="text-2xl font-bold gradient-text-emerald">
           Performance Analytics
         </CardTitle>
-        <CardDescription className="text-gray-600 dark:text-gray-400">
+        <CardDescription className="text-white/60">
           Track your study patterns and progress over time
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="studytime" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3 glass-card p-1 border-white/30 dark:border-white/10">
-            <TabsTrigger value="studytime" className="data-[state=active]:glass-strong">
+        <Tabs defaultValue="studytime" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3 glass-strong p-1.5 border-white/10 gap-1">
+            <TabsTrigger
+              value="studytime"
+              className="data-[state=active]:glass-gradient data-[state=active]:text-white text-white/60 transition-all duration-300"
+            >
               Study Time
             </TabsTrigger>
-            <TabsTrigger value="performance" className="data-[state=active]:glass-strong">
+            <TabsTrigger
+              value="performance"
+              className="data-[state=active]:glass-gradient data-[state=active]:text-white text-white/60 transition-all duration-300"
+            >
               Subject Scores
             </TabsTrigger>
-            <TabsTrigger value="progress" className="data-[state=active]:glass-strong">
+            <TabsTrigger
+              value="progress"
+              className="data-[state=active]:glass-gradient data-[state=active]:text-white text-white/60 transition-all duration-300"
+            >
               Weekly Progress
             </TabsTrigger>
           </TabsList>
@@ -60,34 +69,38 @@ export default function PerformanceChart() {
                 <AreaChart data={studyTimeData}>
                   <defs>
                     <linearGradient id="colorHours" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#a855f7" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#ec4899" stopOpacity={0.2}/>
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-700" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#ffffff" opacity={0.1} />
                   <XAxis
                     dataKey="day"
                     className="text-xs"
-                    stroke="#9ca3af"
+                    stroke="#ffffff"
+                    opacity={0.6}
                   />
                   <YAxis
                     className="text-xs"
-                    stroke="#9ca3af"
-                    label={{ value: 'Hours', angle: -90, position: 'insideLeft' }}
+                    stroke="#ffffff"
+                    opacity={0.6}
+                    label={{ value: 'Hours', angle: -90, position: 'insideLeft', fill: '#ffffff', opacity: 0.6 }}
                   />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#ffffff',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '6px'
+                      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '12px',
+                      backdropFilter: 'blur(12px)',
+                      color: '#ffffff'
                     }}
                   />
-                  <Legend />
+                  <Legend wrapperStyle={{ color: '#ffffff' }} />
                   <Area
                     type="monotone"
                     dataKey="hours"
-                    stroke="#8b5cf6"
-                    strokeWidth={2}
+                    stroke="#a855f7"
+                    strokeWidth={3}
                     fillOpacity={1}
                     fill="url(#colorHours)"
                     name="Study Hours"
@@ -95,7 +108,7 @@ export default function PerformanceChart() {
                   <Line
                     type="monotone"
                     dataKey="target"
-                    stroke="#ef4444"
+                    stroke="#f59e0b"
                     strokeWidth={2}
                     strokeDasharray="5 5"
                     name="Target"
@@ -103,7 +116,7 @@ export default function PerformanceChart() {
                 </AreaChart>
               </ResponsiveContainer>
             </div>
-            <p className="text-sm text-muted-foreground text-center">
+            <p className="text-sm text-white/50 text-center">
               Daily study time vs target (4 hours/day)
             </p>
           </TabsContent>
@@ -112,35 +125,45 @@ export default function PerformanceChart() {
             <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={subjectPerformanceData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-700" />
+                  <defs>
+                    <linearGradient id="colorBar" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#06b6d4" stopOpacity={1}/>
+                      <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.8}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#ffffff" opacity={0.1} />
                   <XAxis
                     dataKey="subject"
                     className="text-xs"
-                    stroke="#9ca3af"
+                    stroke="#ffffff"
+                    opacity={0.6}
                   />
                   <YAxis
                     className="text-xs"
-                    stroke="#9ca3af"
+                    stroke="#ffffff"
+                    opacity={0.6}
                     domain={[0, 100]}
-                    label={{ value: 'Score (%)', angle: -90, position: 'insideLeft' }}
+                    label={{ value: 'Score (%)', angle: -90, position: 'insideLeft', fill: '#ffffff', opacity: 0.6 }}
                   />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#ffffff',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '6px'
+                      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '12px',
+                      backdropFilter: 'blur(12px)',
+                      color: '#ffffff'
                     }}
                   />
                   <Bar
                     dataKey="score"
-                    fill="#8b5cf6"
-                    radius={[8, 8, 0, 0]}
+                    fill="url(#colorBar)"
+                    radius={[12, 12, 0, 0]}
                     name="Average Score"
                   />
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            <p className="text-sm text-muted-foreground text-center">
+            <p className="text-sm text-white/50 text-center">
               Average scores across all subjects
             </p>
           </TabsContent>
@@ -149,48 +172,52 @@ export default function PerformanceChart() {
             <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={weeklyProgressData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-700" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#ffffff" opacity={0.1} />
                   <XAxis
                     dataKey="week"
                     className="text-xs"
-                    stroke="#9ca3af"
+                    stroke="#ffffff"
+                    opacity={0.6}
                   />
                   <YAxis
                     className="text-xs"
-                    stroke="#9ca3af"
-                    label={{ value: 'Tasks', angle: -90, position: 'insideLeft' }}
+                    stroke="#ffffff"
+                    opacity={0.6}
+                    label={{ value: 'Tasks', angle: -90, position: 'insideLeft', fill: '#ffffff', opacity: 0.6 }}
                   />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#ffffff',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '6px'
+                      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '12px',
+                      backdropFilter: 'blur(12px)',
+                      color: '#ffffff'
                     }}
                   />
-                  <Legend />
+                  <Legend wrapperStyle={{ color: '#ffffff' }} />
                   <Line
                     type="monotone"
                     dataKey="completed"
-                    stroke="#8b5cf6"
-                    strokeWidth={2}
+                    stroke="#10b981"
+                    strokeWidth={3}
                     name="Completed Tasks"
-                    dot={{ fill: '#8b5cf6', r: 4 }}
-                    activeDot={{ r: 6 }}
+                    dot={{ fill: '#10b981', r: 5, strokeWidth: 2, stroke: '#ffffff' }}
+                    activeDot={{ r: 7 }}
                   />
                   <Line
                     type="monotone"
                     dataKey="planned"
-                    stroke="#9ca3af"
+                    stroke="#f59e0b"
                     strokeDasharray="5 5"
                     strokeWidth={2}
                     name="Planned Tasks"
-                    dot={{ fill: '#9ca3af', r: 4 }}
-                    activeDot={{ r: 6 }}
+                    dot={{ fill: '#f59e0b', r: 5, strokeWidth: 2, stroke: '#ffffff' }}
+                    activeDot={{ r: 7 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
             </div>
-            <p className="text-sm text-muted-foreground text-center">
+            <p className="text-sm text-white/50 text-center">
               Completed vs planned tasks per week
             </p>
           </TabsContent>

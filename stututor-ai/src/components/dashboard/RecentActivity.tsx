@@ -20,11 +20,23 @@ const activityIcons = {
   question: MessageSquare
 }
 
-const activityColors = {
-  study: "text-blue-500",
-  upload: "text-purple-500",
-  complete: "text-green-500",
-  question: "text-orange-500"
+const activityConfig = {
+  study: {
+    gradient: "gradient-cyan-blue",
+    glow: "glow-cyan"
+  },
+  upload: {
+    gradient: "gradient-purple-pink",
+    glow: "glow-purple"
+  },
+  complete: {
+    gradient: "gradient-emerald-teal",
+    glow: "glow-emerald"
+  },
+  question: {
+    gradient: "gradient-orange-yellow",
+    glow: "glow-orange"
+  }
 }
 
 export default function RecentActivity() {
@@ -80,47 +92,55 @@ export default function RecentActivity() {
   ]
 
   return (
-    <Card className="glass-card border-white/40 dark:border-white/10 shadow-xl">
+    <Card variant="glass" className="border-white/10 shadow-2xl">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-yellow-600 dark:from-orange-400 dark:to-yellow-400 bg-clip-text text-transparent">
+        <CardTitle className="text-xl font-bold gradient-text-orange">
           Recent Activity
         </CardTitle>
-        <CardDescription className="text-gray-600 dark:text-gray-400">
-          Your latest study sessions and interactions
+        <CardDescription className="text-white/60 text-sm">
+          Your latest study sessions
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2">
+        <div className="relative space-y-3 max-h-[500px] overflow-y-auto pr-1">
+          {/* Gradient timeline connector */}
+          <div className="absolute left-[18px] top-2 bottom-2 w-0.5 bg-gradient-to-b from-purple-500 via-pink-500 to-transparent opacity-30" />
+
           {activities.map((activity) => {
             const Icon = activityIcons[activity.type]
-            const colorClass = activityColors[activity.type]
+            const config = activityConfig[activity.type]
 
             return (
               <div
                 key={activity.id}
-                className="flex gap-4 p-3 rounded-lg glass-card hover:glass-strong transition-all duration-300 border border-white/30 dark:border-white/10"
+                className="relative flex gap-3 group"
               >
-                <div className={`mt-1 p-2 rounded-lg bg-white/50 dark:bg-gray-800/50 ${colorClass}`}>
-                  <Icon className="h-5 w-5" />
+                {/* Gradient icon with glow */}
+                <div className={`relative z-10 flex-shrink-0 p-2 rounded-lg ${config.gradient} text-white shadow-lg ${config.glow} group-hover:scale-110 transition-transform duration-300`}>
+                  <Icon className="h-4 w-4" />
                 </div>
-                <div className="flex-1 space-y-1">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1.5 flex-1">
-                      <p className="text-sm font-semibold leading-none text-gray-800 dark:text-gray-100">
-                        {activity.title}
-                      </p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
+
+                {/* Activity content */}
+                <div className="flex-1 pb-2">
+                  <div className="glass-card glass-hover p-3 rounded-lg border border-white/10 transition-all duration-300">
+                    <div className="space-y-1.5">
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="text-xs font-semibold leading-tight text-white">
+                          {activity.title}
+                        </p>
+                        <span className="text-[10px] text-white/40 whitespace-nowrap font-medium">
+                          {activity.timestamp}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-white/60 leading-snug">
                         {activity.description}
                       </p>
                       {activity.course && (
-                        <Badge variant="outline" className="text-xs mt-1 glass border-white/30 dark:border-white/10">
+                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 mt-1 glass-strong border-white/20 text-white/70">
                           {activity.course}
                         </Badge>
                       )}
                     </div>
-                    <span className="text-xs text-gray-500 dark:text-gray-500 whitespace-nowrap ml-2 font-medium">
-                      {activity.timestamp}
-                    </span>
                   </div>
                 </div>
               </div>

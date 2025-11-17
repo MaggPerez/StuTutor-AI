@@ -17,71 +17,83 @@ export default function Dashboard() {
 
   return (
     <div className="relative w-full">
-      {/* Animated Gradient Background - adjusted for layout */}
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-gray-900 dark:via-purple-900/20 dark:to-blue-900/20" />
-        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] dark:opacity-10" />
-        {/* Floating gradient orbs */}
-        <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob dark:bg-purple-700 dark:opacity-30" />
-        <div className="absolute top-0 -right-4 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000 dark:bg-yellow-700 dark:opacity-30" />
-        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000 dark:bg-pink-700 dark:opacity-30" />
+      {/* Enhanced Animated Gradient Background */}
+      <div className="fixed inset-0 -z-10 bg-black">
+        {/* Floating gradient orbs with enhanced glow */}
+        <div className="absolute top-20 left-[10%] w-96 h-96 bg-purple-600 rounded-full mix-blend-screen filter blur-3xl opacity-20 animate-blob" />
+        <div className="absolute top-40 right-[15%] w-96 h-96 bg-pink-600 rounded-full mix-blend-screen filter blur-3xl opacity-20 animate-blob animation-delay-2000" />
+        <div className="absolute bottom-20 left-[20%] w-96 h-96 bg-cyan-500 rounded-full mix-blend-screen filter blur-3xl opacity-15 animate-blob animation-delay-4000" />
+        <div className="absolute bottom-40 right-[25%] w-80 h-80 bg-emerald-500 rounded-full mix-blend-screen filter blur-3xl opacity-10 animate-blob animation-delay-3000" />
+
+        {/* Gradient overlay for depth */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black opacity-60" />
       </div>
 
-      {/* Welcome Section */}
-      <div className="mb-6">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div className="space-y-2">
-            <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
-              Good {timeOfDay}, Student!
-            </h1>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Calendar className="h-4 w-4" />
-              <p>{format(currentDate, 'EEEE, MMMM d, yyyy')}</p>
+      {/* Hero Section - Glassmorphic Welcome Panel */}
+      <div className="mb-8 animate-fade-in">
+        <div className="glass-gradient rounded-2xl p-6 md:p-8 border border-white/10 relative overflow-hidden group">
+          {/* Subtle animated gradient border effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 via-pink-600/20 to-cyan-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" />
+
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div className="space-y-3">
+              <h1 className="text-5xl md:text-6xl font-bold tracking-tight">
+                <span className="gradient-text-purple-pink">
+                  Good {timeOfDay}!
+                </span>
+              </h1>
+              <div className="flex items-center gap-3 text-white/70">
+                <Calendar className="h-5 w-5" />
+                <p className="text-lg">{format(currentDate, 'EEEE, MMMM d, yyyy')}</p>
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <Badge
-              variant="secondary"
-              className="gap-1.5 px-4 py-2 glass-card border-white/40 dark:border-white/10 shadow-md hover:shadow-lg transition-all"
-            >
-              <Sparkles className="h-4 w-4 text-yellow-500" />
-              <span className="font-semibold">5-day streak</span>
-            </Badge>
+
+            <div className="flex items-center gap-3">
+              <Badge
+                variant="secondary"
+                className="gap-2 px-6 py-3 glass-strong border-white/20 shadow-xl hover:shadow-2xl transition-all hover:scale-105 glow-hover"
+              >
+                <Sparkles className="h-5 w-5 text-yellow-400 animate-pulse" />
+                <span className="text-lg font-bold gradient-text-orange">5-day streak</span>
+              </Badge>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Main Dashboard Content */}
-      <div className="space-y-6">
-        {/* Stats Overview */}
-        <section className="animate-fade-in">
+      <div className="space-y-8">
+        {/* Stats Overview - Large Cards */}
+        <section className="animate-fade-in animation-delay-100">
           <StatsCards />
         </section>
 
-        {/* Quick Actions */}
-        <section className="animate-fade-in animation-delay-100">
-          <QuickActions />
-        </section>
-
-        {/* Improved Layout - Better Visual Hierarchy */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          {/* Left Column - Primary Content */}
-          <div className="lg:col-span-2 space-y-6">
+        {/* Three-Column Layout */}
+        <div className="grid gap-6 lg:grid-cols-12">
+          {/* Left Column - Performance (40%) */}
+          <div className="lg:col-span-5 space-y-6">
             <section className="animate-fade-in animation-delay-200">
               <PerformanceChart />
             </section>
+          </div>
+
+          {/* Middle Column - Progress & Actions (35%) */}
+          <div className="lg:col-span-4 space-y-6">
             <section className="animate-fade-in animation-delay-300">
               <StudyProgress />
             </section>
+            <section className="animate-fade-in animation-delay-400">
+              <QuickActions />
+            </section>
           </div>
 
-          {/* Right Column - Secondary Content */}
-          <div className="lg:col-span-1 space-y-6">
-            <section className="animate-fade-in animation-delay-400">
-              <UpcomingTasks />
-            </section>
-            <section className="animate-fade-in animation-delay-500">
-              <RecentActivity />
+          {/* Right Column - Activity Feed (25%) */}
+          <div className="lg:col-span-3 space-y-6">
+            <section className="animate-fade-in animation-delay-500 lg:sticky lg:top-6">
+              <div className="space-y-6">
+                <UpcomingTasks />
+                <RecentActivity />
+              </div>
             </section>
           </div>
         </div>
@@ -106,6 +118,10 @@ export default function Dashboard() {
 
         .animation-delay-2000 {
           animation-delay: 2s;
+        }
+
+        .animation-delay-3000 {
+          animation-delay: 3s;
         }
 
         .animation-delay-4000 {

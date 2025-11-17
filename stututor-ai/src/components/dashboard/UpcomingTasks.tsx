@@ -16,10 +16,19 @@ interface Task {
   type: "assignment" | "exam" | "quiz" | "reading" | "project"
 }
 
-const priorityColors = {
-  high: "bg-red-500 text-white",
-  medium: "bg-orange-500 text-white",
-  low: "bg-green-500 text-white"
+const priorityConfig = {
+  high: {
+    bg: "gradient-pink",
+    glow: "glow-pink"
+  },
+  medium: {
+    bg: "gradient-orange-yellow",
+    glow: "glow-orange"
+  },
+  low: {
+    bg: "gradient-emerald-teal",
+    glow: "glow-emerald"
+  }
 }
 
 const typeLabels = {
@@ -98,63 +107,68 @@ export default function UpcomingTasks() {
   const completedTasks = tasks.filter(task => task.completed)
 
   return (
-    <Card className="glass-card border-white/40 dark:border-white/10 shadow-xl">
+    <Card variant="glass" className="border-white/10 shadow-2xl">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400 bg-clip-text text-transparent">
+            <CardTitle className="text-xl font-bold gradient-text-cyan-blue">
               Upcoming Tasks
             </CardTitle>
-            <CardDescription className="text-gray-600 dark:text-gray-400">
-              {incompleteTasks.length} pending tasks, {completedTasks.length} completed
+            <CardDescription className="text-white/60 text-sm">
+              {incompleteTasks.length} pending, {completedTasks.length} done
             </CardDescription>
           </div>
-          <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 text-white">
-            <Calendar className="h-5 w-5" />
+          <div className="p-2.5 rounded-xl gradient-cyan-blue text-white shadow-xl">
+            <Calendar className="h-4 w-4" />
           </div>
         </div>
       </CardHeader>
       <CardContent>
-        <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2">
+        <div className="space-y-2.5 max-h-[500px] overflow-y-auto pr-1">
           {tasks.map((task) => (
             <div
               key={task.id}
-              className={`flex items-start gap-3 p-4 rounded-lg border transition-all duration-300 ${
+              className={`group relative flex items-start gap-3 p-3 rounded-lg border transition-all duration-300 ${
                 task.completed
-                  ? 'glass opacity-60'
-                  : 'glass-card hover:glass-strong hover:shadow-md border-white/30 dark:border-white/10'
+                  ? 'glass opacity-50'
+                  : 'glass-card glass-hover border-white/10'
               }`}
             >
+              {/* Priority glow indicator */}
+              {!task.completed && (
+                <div className={`absolute -left-1 top-1/2 -translate-y-1/2 w-1 h-3/4 rounded-full ${priorityConfig[task.priority].bg} ${priorityConfig[task.priority].glow}`} />
+              )}
+
               <Checkbox
                 id={task.id}
                 checked={task.completed}
                 onCheckedChange={() => toggleTask(task.id)}
-                className="mt-1"
+                className="mt-0.5"
               />
-              <div className="flex-1 space-y-2">
+              <div className="flex-1 space-y-1.5 min-w-0">
                 <label
                   htmlFor={task.id}
-                  className={`text-sm font-semibold leading-none cursor-pointer block ${
-                    task.completed ? 'line-through text-gray-500 dark:text-gray-600' : 'text-gray-800 dark:text-gray-100'
+                  className={`text-xs font-semibold leading-tight cursor-pointer block ${
+                    task.completed ? 'line-through text-white/40' : 'text-white'
                   }`}
                 >
                   {task.title}
                 </label>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <Badge variant="outline" className="text-xs glass border-white/30 dark:border-white/10">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <Badge variant="outline" className="text-[10px] px-1.5 py-0 glass-strong border-white/20 text-white/70">
                     {task.course}
                   </Badge>
-                  <Badge variant="outline" className="text-xs glass border-white/30 dark:border-white/10">
+                  <Badge variant="outline" className="text-[10px] px-1.5 py-0 glass-strong border-white/20 text-white/70">
                     {typeLabels[task.type]}
                   </Badge>
-                  <div className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400">
-                    <Calendar className="h-3 w-3" />
+                  <div className="flex items-center gap-1 text-[10px] text-white/50">
+                    <Calendar className="h-2.5 w-2.5" />
                     <span>{task.dueDate}</span>
                   </div>
                 </div>
               </div>
-              <Badge className={`text-xs font-semibold ${priorityColors[task.priority]} shadow-md`}>
-                {task.priority === "high" && <AlertCircle className="h-3 w-3 mr-1" />}
+              <Badge className={`text-[10px] font-semibold ${priorityConfig[task.priority].bg} text-white shadow-lg border-0 px-2 py-0.5 flex items-center gap-1`}>
+                {task.priority === "high" && <AlertCircle className="h-2.5 w-2.5" />}
                 {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
               </Badge>
             </div>

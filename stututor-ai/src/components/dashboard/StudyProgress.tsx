@@ -1,7 +1,6 @@
 "use client"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
 
 interface Course {
@@ -11,7 +10,7 @@ interface Course {
   progress: number
   totalHours: number
   completedHours: number
-  color: string
+  gradient: string
   nextDeadline?: string
 }
 
@@ -24,7 +23,7 @@ export default function StudyProgress() {
       progress: 75,
       totalHours: 40,
       completedHours: 30,
-      color: "bg-blue-500",
+      gradient: "gradient-cyan-blue",
       nextDeadline: "Midterm in 5 days"
     },
     {
@@ -34,7 +33,7 @@ export default function StudyProgress() {
       progress: 60,
       totalHours: 45,
       completedHours: 27,
-      color: "bg-purple-500",
+      gradient: "gradient-purple-pink",
       nextDeadline: "Assignment due in 2 days"
     },
     {
@@ -44,7 +43,7 @@ export default function StudyProgress() {
       progress: 85,
       totalHours: 30,
       completedHours: 25.5,
-      color: "bg-green-500"
+      gradient: "gradient-emerald-teal"
     },
     {
       id: "4",
@@ -53,7 +52,7 @@ export default function StudyProgress() {
       progress: 45,
       totalHours: 50,
       completedHours: 22.5,
-      color: "bg-orange-500",
+      gradient: "gradient-orange-yellow",
       nextDeadline: "Lab report due tomorrow"
     },
     {
@@ -63,46 +62,64 @@ export default function StudyProgress() {
       progress: 90,
       totalHours: 35,
       completedHours: 31.5,
-      color: "bg-pink-500"
+      gradient: "gradient-pink"
     }
   ]
 
   return (
-    <Card className="glass-card border-white/40 dark:border-white/10 shadow-xl">
+    <Card variant="glass" className="border-white/10 shadow-2xl">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
+        <CardTitle className="text-2xl font-bold gradient-text-purple-pink">
           Course Progress
         </CardTitle>
-        <CardDescription className="text-gray-600 dark:text-gray-400">
+        <CardDescription className="text-white/60">
           Track your progress across all active courses
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-4">
         {courses.map((course) => (
-          <div key={course.id} className="space-y-3 p-4 rounded-lg glass hover:glass-strong transition-all duration-300 border border-white/20 dark:border-white/10">
-            <div className="flex items-center justify-between">
-              <div className="space-y-1 flex-1">
+          <div
+            key={course.id}
+            className="group space-y-3 p-4 rounded-xl glass-card glass-hover transition-all duration-300 border border-white/10 relative overflow-hidden"
+          >
+            {/* Gradient glow on hover */}
+            <div className={`absolute inset-0 ${course.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
+
+            <div className="relative z-10 flex items-center justify-between">
+              <div className="space-y-2 flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h4 className="text-sm font-bold text-gray-800 dark:text-gray-100">{course.name}</h4>
-                  <Badge variant="secondary" className="text-xs glass border-white/30 dark:border-white/10">
+                  <h4 className="text-sm font-bold text-white">{course.name}</h4>
+                  <Badge variant="secondary" className="text-xs glass-strong border-white/20 text-white/80">
                     {course.subject}
                   </Badge>
                 </div>
                 {course.nextDeadline && (
-                  <p className="text-xs text-orange-600 dark:text-orange-400 font-medium">{course.nextDeadline}</p>
+                  <p className="text-xs text-orange-400 font-medium flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
+                    {course.nextDeadline}
+                  </p>
                 )}
               </div>
               <div className="text-right ml-4">
-                <p className="text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
+                <p className={`text-2xl font-bold gradient-text-${course.gradient.replace('gradient-', '')}`}>
                   {course.progress}%
                 </p>
-                <p className="text-xs text-gray-600 dark:text-gray-400">
+                <p className="text-xs text-white/50">
                   {course.completedHours}/{course.totalHours}h
                 </p>
               </div>
             </div>
-            <div className="relative">
-              <Progress value={course.progress} className="h-2.5" />
+
+            {/* Custom gradient progress bar */}
+            <div className="relative z-10">
+              <div className="h-2 rounded-full bg-white/10 overflow-hidden">
+                <div
+                  className={`h-full ${course.gradient} rounded-full transition-all duration-500 relative overflow-hidden`}
+                  style={{ width: `${course.progress}%` }}
+                >
+                  <div className="absolute inset-0 shimmer" />
+                </div>
+              </div>
             </div>
           </div>
         ))}
