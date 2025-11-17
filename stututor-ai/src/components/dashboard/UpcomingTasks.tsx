@@ -98,25 +98,31 @@ export default function UpcomingTasks() {
   const completedTasks = tasks.filter(task => task.completed)
 
   return (
-    <Card>
+    <Card className="glass-card border-white/40 dark:border-white/10 shadow-xl">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>Upcoming Tasks</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400 bg-clip-text text-transparent">
+              Upcoming Tasks
+            </CardTitle>
+            <CardDescription className="text-gray-600 dark:text-gray-400">
               {incompleteTasks.length} pending tasks, {completedTasks.length} completed
             </CardDescription>
           </div>
-          <Calendar className="h-5 w-5 text-muted-foreground" />
+          <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 text-white">
+            <Calendar className="h-5 w-5" />
+          </div>
         </div>
       </CardHeader>
       <CardContent>
-        <div className="space-y-3">
+        <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2">
           {tasks.map((task) => (
             <div
               key={task.id}
-              className={`flex items-start gap-3 p-3 rounded-lg border ${
-                task.completed ? 'bg-muted/50 opacity-60' : 'bg-card'
+              className={`flex items-start gap-3 p-4 rounded-lg border transition-all duration-300 ${
+                task.completed
+                  ? 'glass opacity-60'
+                  : 'glass-card hover:glass-strong hover:shadow-md border-white/30 dark:border-white/10'
               }`}
             >
               <Checkbox
@@ -125,29 +131,29 @@ export default function UpcomingTasks() {
                 onCheckedChange={() => toggleTask(task.id)}
                 className="mt-1"
               />
-              <div className="flex-1 space-y-1">
+              <div className="flex-1 space-y-2">
                 <label
                   htmlFor={task.id}
-                  className={`text-sm font-medium leading-none cursor-pointer ${
-                    task.completed ? 'line-through text-muted-foreground' : ''
+                  className={`text-sm font-semibold leading-none cursor-pointer block ${
+                    task.completed ? 'line-through text-gray-500 dark:text-gray-600' : 'text-gray-800 dark:text-gray-100'
                   }`}
                 >
                   {task.title}
                 </label>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-xs glass border-white/30 dark:border-white/10">
                     {task.course}
                   </Badge>
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-xs glass border-white/30 dark:border-white/10">
                     {typeLabels[task.type]}
                   </Badge>
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400">
                     <Calendar className="h-3 w-3" />
                     <span>{task.dueDate}</span>
                   </div>
                 </div>
               </div>
-              <Badge className={`text-xs ${priorityColors[task.priority]}`}>
+              <Badge className={`text-xs font-semibold ${priorityColors[task.priority]} shadow-md`}>
                 {task.priority === "high" && <AlertCircle className="h-3 w-3 mr-1" />}
                 {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
               </Badge>

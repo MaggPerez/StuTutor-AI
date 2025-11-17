@@ -31,17 +31,27 @@ const weeklyProgressData = [
 
 export default function PerformanceChart() {
   return (
-    <Card>
+    <Card className="glass-card border-white/40 dark:border-white/10 shadow-xl">
       <CardHeader>
-        <CardTitle>Performance Analytics</CardTitle>
-        <CardDescription>Track your study patterns and progress over time</CardDescription>
+        <CardTitle className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent">
+          Performance Analytics
+        </CardTitle>
+        <CardDescription className="text-gray-600 dark:text-gray-400">
+          Track your study patterns and progress over time
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="studytime" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="studytime">Study Time</TabsTrigger>
-            <TabsTrigger value="performance">Subject Scores</TabsTrigger>
-            <TabsTrigger value="progress">Weekly Progress</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 glass-card p-1 border-white/30 dark:border-white/10">
+            <TabsTrigger value="studytime" className="data-[state=active]:glass-strong">
+              Study Time
+            </TabsTrigger>
+            <TabsTrigger value="performance" className="data-[state=active]:glass-strong">
+              Subject Scores
+            </TabsTrigger>
+            <TabsTrigger value="progress" className="data-[state=active]:glass-strong">
+              Weekly Progress
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="studytime" className="space-y-4">
