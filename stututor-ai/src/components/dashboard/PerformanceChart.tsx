@@ -60,25 +60,25 @@ export default function PerformanceChart() {
                 <AreaChart data={studyTimeData}>
                   <defs>
                     <linearGradient id="colorHours" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-700" />
                   <XAxis
                     dataKey="day"
                     className="text-xs"
-                    stroke="hsl(var(--muted-foreground))"
+                    stroke="#9ca3af"
                   />
                   <YAxis
                     className="text-xs"
-                    stroke="hsl(var(--muted-foreground))"
+                    stroke="#9ca3af"
                     label={{ value: 'Hours', angle: -90, position: 'insideLeft' }}
                   />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: 'hsl(var(--popover))',
-                      border: '1px solid hsl(var(--border))',
+                      backgroundColor: '#ffffff',
+                      border: '1px solid #e5e7eb',
                       borderRadius: '6px'
                     }}
                   />
@@ -86,7 +86,8 @@ export default function PerformanceChart() {
                   <Area
                     type="monotone"
                     dataKey="hours"
-                    stroke="hsl(var(--primary))"
+                    stroke="#8b5cf6"
+                    strokeWidth={2}
                     fillOpacity={1}
                     fill="url(#colorHours)"
                     name="Study Hours"
@@ -94,7 +95,8 @@ export default function PerformanceChart() {
                   <Line
                     type="monotone"
                     dataKey="target"
-                    stroke="hsl(var(--destructive))"
+                    stroke="#ef4444"
+                    strokeWidth={2}
                     strokeDasharray="5 5"
                     name="Target"
                   />
@@ -110,28 +112,28 @@ export default function PerformanceChart() {
             <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={subjectPerformanceData}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-700" />
                   <XAxis
                     dataKey="subject"
                     className="text-xs"
-                    stroke="hsl(var(--muted-foreground))"
+                    stroke="#9ca3af"
                   />
                   <YAxis
                     className="text-xs"
-                    stroke="hsl(var(--muted-foreground))"
+                    stroke="#9ca3af"
                     domain={[0, 100]}
                     label={{ value: 'Score (%)', angle: -90, position: 'insideLeft' }}
                   />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: 'hsl(var(--popover))',
-                      border: '1px solid hsl(var(--border))',
+                      backgroundColor: '#ffffff',
+                      border: '1px solid #e5e7eb',
                       borderRadius: '6px'
                     }}
                   />
                   <Bar
                     dataKey="score"
-                    fill="hsl(var(--primary))"
+                    fill="#8b5cf6"
                     radius={[8, 8, 0, 0]}
                     name="Average Score"
                   />
@@ -147,21 +149,21 @@ export default function PerformanceChart() {
             <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={weeklyProgressData}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-700" />
                   <XAxis
                     dataKey="week"
                     className="text-xs"
-                    stroke="hsl(var(--muted-foreground))"
+                    stroke="#9ca3af"
                   />
                   <YAxis
                     className="text-xs"
-                    stroke="hsl(var(--muted-foreground))"
+                    stroke="#9ca3af"
                     label={{ value: 'Tasks', angle: -90, position: 'insideLeft' }}
                   />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: 'hsl(var(--popover))',
-                      border: '1px solid hsl(var(--border))',
+                      backgroundColor: '#ffffff',
+                      border: '1px solid #e5e7eb',
                       borderRadius: '6px'
                     }}
                   />
@@ -169,17 +171,21 @@ export default function PerformanceChart() {
                   <Line
                     type="monotone"
                     dataKey="completed"
-                    stroke="hsl(var(--primary))"
+                    stroke="#8b5cf6"
                     strokeWidth={2}
                     name="Completed Tasks"
+                    dot={{ fill: '#8b5cf6', r: 4 }}
+                    activeDot={{ r: 6 }}
                   />
                   <Line
                     type="monotone"
                     dataKey="planned"
-                    stroke="hsl(var(--muted-foreground))"
+                    stroke="#9ca3af"
                     strokeDasharray="5 5"
                     strokeWidth={2}
                     name="Planned Tasks"
+                    dot={{ fill: '#9ca3af', r: 4 }}
+                    activeDot={{ r: 6 }}
                   />
                 </LineChart>
               </ResponsiveContainer>

@@ -23,7 +23,7 @@ export default function QuickActions() {
       label: "Upload Materials",
       description: "Add notes, PDFs, or documents",
       icon: <Upload className="h-5 w-5" />,
-      variant: "default",
+      variant: "secondary",
       onClick: () => router.push("/dashboard/materials")
     },
     {
@@ -31,7 +31,7 @@ export default function QuickActions() {
       label: "Start Study Session",
       description: "Begin a focused study period",
       icon: <BookOpen className="h-5 w-5" />,
-      variant: "default",
+      variant: "secondary",
       onClick: () => router.push("/dashboard/courses")
     },
     {
@@ -39,7 +39,7 @@ export default function QuickActions() {
       label: "Ask AI Tutor",
       description: "Get help with any subject",
       icon: <MessageSquare className="h-5 w-5" />,
-      variant: "secondary",
+      variant: "outline",
       onClick: () => router.push("/dashboard/ai-tutor")
     },
     {
