@@ -179,33 +179,44 @@
 }
 
 @layer utilities {
-  /* Enhanced Glassmorphism utilities */
+  /* Enhanced Glassmorphism utilities - Optimized for performance */
   .glass {
     background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(12px) saturate(150%);
-    -webkit-backdrop-filter: blur(12px) saturate(150%);
+    backdrop-filter: blur(8px) saturate(150%);
+    -webkit-backdrop-filter: blur(8px) saturate(150%);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+    contain: layout style paint;
   }
 
   .glass-card {
     background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
     border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow:
       0 8px 32px 0 rgba(0, 0, 0, 0.3),
       inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+    contain: layout style paint;
+  }
+
+  /* Lightweight alternative for nested items - no backdrop-filter for better performance */
+  .glass-light {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2);
+    contain: layout style paint;
   }
 
   .glass-strong {
     background: rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(24px) saturate(200%);
-    -webkit-backdrop-filter: blur(24px) saturate(200%);
+    backdrop-filter: blur(16px) saturate(200%);
+    -webkit-backdrop-filter: blur(16px) saturate(200%);
     border: 1px solid rgba(255, 255, 255, 0.12);
     box-shadow:
       0 8px 32px 0 rgba(0, 0, 0, 0.4),
       inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+    contain: layout style paint;
   }
 
   .glass-gradient {
@@ -224,30 +235,40 @@
 
   .dark .glass {
     background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(12px) saturate(150%);
-    -webkit-backdrop-filter: blur(12px) saturate(150%);
+    backdrop-filter: blur(8px) saturate(150%);
+    -webkit-backdrop-filter: blur(8px) saturate(150%);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+    contain: layout style paint;
   }
 
   .dark .glass-card {
     background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
     border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow:
       0 8px 32px 0 rgba(0, 0, 0, 0.6),
       inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+    contain: layout style paint;
+  }
+
+  .dark .glass-light {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.4);
+    contain: layout style paint;
   }
 
   .dark .glass-strong {
     background: rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(24px) saturate(200%);
-    -webkit-backdrop-filter: blur(24px) saturate(200%);
+    backdrop-filter: blur(16px) saturate(200%);
+    -webkit-backdrop-filter: blur(16px) saturate(200%);
     border: 1px solid rgba(255, 255, 255, 0.12);
     box-shadow:
       0 8px 32px 0 rgba(0, 0, 0, 0.7),
       inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+    contain: layout style paint;
   }
 
   .dark .glass-gradient {
@@ -374,6 +395,7 @@
   /* Enhanced hover effects for glass elements */
   .glass-hover {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, opacity;
   }
 
   .glass-hover:hover {
@@ -435,6 +457,7 @@
   /* Card lift effect */
   .card-lift {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
   }
 
   .card-lift:hover {

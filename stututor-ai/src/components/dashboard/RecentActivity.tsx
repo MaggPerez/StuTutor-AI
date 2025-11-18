@@ -122,7 +122,7 @@ export default function RecentActivity() {
 
                 {/* Activity content */}
                 <div className="flex-1 pb-2">
-                  <div className="glass-card glass-hover p-3 rounded-lg border border-white/10 transition-all duration-300">
+                  <div className="glass-light glass-hover p-3 rounded-lg border border-white/10 transition-all duration-300">
                     <div className="space-y-1.5">
                       <div className="flex items-start justify-between gap-2">
                         <p className="text-xs font-semibold leading-tight text-white">

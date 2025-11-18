@@ -131,7 +131,7 @@ export default function UpcomingTasks() {
               className={`group relative flex items-start gap-3 p-3 rounded-lg border transition-all duration-300 ${
                 task.completed
                   ? 'glass opacity-50'
-                  : 'glass-card glass-hover border-white/10'
+                  : 'glass-light glass-hover border-white/10'
               }`}
             >
               {/* Priority glow indicator */}

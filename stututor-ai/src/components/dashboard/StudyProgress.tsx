@@ -80,7 +80,7 @@ export default function StudyProgress() {
         {courses.map((course) => (
           <div
             key={course.id}
-            className="group space-y-3 p-4 rounded-xl glass-card glass-hover transition-all duration-300 border border-white/10 relative overflow-hidden"
+            className="group space-y-3 p-4 rounded-xl glass-light glass-hover transition-all duration-300 border border-white/10 relative overflow-hidden"
           >
             {/* Gradient glow on hover */}
             <div className={`absolute inset-0 ${course.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
@@ -117,7 +117,8 @@ export default function StudyProgress() {
                   className={`h-full ${course.gradient} rounded-full transition-all duration-500 relative overflow-hidden`}
                   style={{ width: `${course.progress}%` }}
                 >
-                  <div className="absolute inset-0 shimmer" />
+                  {/* Shimmer only on hover for better performance */}
+                  <div className="absolute inset-0 shimmer opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
               </div>
             </div>

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { format } from 'date-fns'
 import { Sparkles, Calendar, ChevronDown, ChevronUp } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
@@ -24,6 +24,20 @@ export default function Dashboard() {
   const currentDate = new Date()
   const timeOfDay = currentDate.getHours() < 12 ? 'Morning' : currentDate.getHours() < 18 ? 'Afternoon' : 'Evening'
   const [showAssignmentsTable, setShowAssignmentsTable] = useState(false)
+  const [isLowPowerMode, setIsLowPowerMode] = useState(false)
+
+  useEffect(() => {
+    // Detect low-power devices for optimized rendering
+    const checkLowPowerMode = () => {
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      const lowCPU = navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4
+      const isMobile = /mobile|android|iphone|ipad|ipod/i.test(navigator.userAgent)
+
+      return prefersReducedMotion || lowCPU || isMobile
+    }
+
+    setIsLowPowerMode(checkLowPowerMode())
+  }, [])
 
   return (
     <SidebarProvider
@@ -40,17 +54,21 @@ export default function Dashboard() {
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">
             <div className="relative w-full">
-              {/* Enhanced Animated Gradient Background */}
-              <div className="fixed inset-0 -z-10 bg-black">
-                {/* Floating gradient orbs with enhanced glow */}
-                <div className="absolute top-20 left-[10%] w-96 h-96 bg-purple-600 rounded-full mix-blend-screen filter blur-3xl opacity-20 animate-blob" />
-                <div className="absolute top-40 right-[15%] w-96 h-96 bg-pink-600 rounded-full mix-blend-screen filter blur-3xl opacity-20 animate-blob animation-delay-2000" />
-                <div className="absolute bottom-20 left-[20%] w-96 h-96 bg-cyan-500 rounded-full mix-blend-screen filter blur-3xl opacity-15 animate-blob animation-delay-4000" />
-                <div className="absolute bottom-40 right-[25%] w-80 h-80 bg-emerald-500 rounded-full mix-blend-screen filter blur-3xl opacity-10 animate-blob animation-delay-3000" />
+              {/* Enhanced Animated Gradient Background - Optimized for Performance */}
+              {!isLowPowerMode ? (
+                <div className="fixed inset-0 -z-10 bg-black">
+                  {/* Floating gradient orbs - Reduced from 4 to 3, lighter blur for better performance */}
+                  <div className="absolute top-20 left-[10%] w-80 h-80 bg-purple-600 rounded-full mix-blend-screen filter blur-2xl opacity-15 animate-blob will-change-transform" />
+                  <div className="absolute top-40 right-[15%] w-80 h-80 bg-pink-600 rounded-full mix-blend-screen filter blur-2xl opacity-15 animate-blob animation-delay-2000 will-change-transform" />
+                  <div className="absolute bottom-20 left-[20%] w-72 h-72 bg-cyan-500 rounded-full mix-blend-screen filter blur-2xl opacity-10 animate-blob animation-delay-4000 will-change-transform" />
 
-                {/* Gradient overlay for depth */}
-                <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black opacity-60" />
-              </div>
+                  {/* Gradient overlay for depth */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black opacity-60" />
+                </div>
+              ) : (
+                /* Static gradient background for low-power devices */
+                <div className="fixed inset-0 -z-10 bg-gradient-to-br from-purple-900/20 via-black to-cyan-900/20" />
+              )}
 
               <div className="px-4 md:px-6">
                 {/* Hero Section - Glassmorphic Welcome Panel */}
@@ -173,7 +191,7 @@ export default function Dashboard() {
                 }
 
                 .animate-blob {
-                  animation: blob 7s infinite;
+                  animation: blob 10s infinite;
                 }
 
                 .animation-delay-2000 {

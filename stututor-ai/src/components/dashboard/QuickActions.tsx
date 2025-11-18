@@ -83,7 +83,7 @@ export default function QuickActions() {
             <button
               key={action.id}
               onClick={action.onClick}
-              className="group relative h-auto flex flex-col items-start p-4 text-left glass-card glass-hover transition-all duration-300 rounded-xl border border-white/10 overflow-hidden"
+              className="group relative h-auto flex flex-col items-start p-4 text-left glass-light glass-hover transition-all duration-300 rounded-xl border border-white/10 overflow-hidden"
             >
               {/* Gradient glow on hover */}
               <div className={`absolute inset-0 ${action.gradient} opacity-0 group-hover:opacity-20 transition-opacity duration-300`} />
