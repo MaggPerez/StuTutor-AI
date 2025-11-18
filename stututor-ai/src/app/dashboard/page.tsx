@@ -1,7 +1,17 @@
+"use client"
+
+import React, { useState } from 'react'
+import { format } from 'date-fns'
+import { Sparkles, Calendar, ChevronDown, ChevronUp } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import StatsCards from '@/components/dashboard/StatsCards'
+import StudyProgress from '@/components/dashboard/StudyProgress'
+import RecentActivity from '@/components/dashboard/RecentActivity'
+import UpcomingTasks from '@/components/dashboard/UpcomingTasks'
+import QuickActions from '@/components/dashboard/QuickActions'
+import PerformanceChart from '@/components/dashboard/PerformanceChart'
+import { DataTable } from '@/components/data-table'
 import { AppSidebar } from "@/components/app-sidebar"
-import { ChartAreaInteractive } from "@/components/chart-area-interactive"
-import { DataTable } from "@/components/data-table"
-import { SectionCards } from "@/components/section-cards"
 import { SiteHeader } from "@/components/site-header"
 import {
   SidebarInset,
@@ -9,9 +19,12 @@ import {
 } from "@/components/ui/sidebar"
 
 import data from "./data.json"
-import { ChartPieLegend } from "@/components/chart-pie-legend"
 
-export default function Page() {
+export default function Dashboard() {
+  const currentDate = new Date()
+  const timeOfDay = currentDate.getHours() < 12 ? 'Morning' : currentDate.getHours() < 18 ? 'Afternoon' : 'Evening'
+  const [showAssignmentsTable, setShowAssignmentsTable] = useState(false)
+
   return (
     <SidebarProvider
       style={
@@ -26,23 +39,200 @@ export default function Page() {
         <SiteHeader />
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">
-            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+            <div className="relative w-full">
+              {/* Enhanced Animated Gradient Background */}
+              <div className="fixed inset-0 -z-10 bg-black">
+                {/* Floating gradient orbs with enhanced glow */}
+                <div className="absolute top-20 left-[10%] w-96 h-96 bg-purple-600 rounded-full mix-blend-screen filter blur-3xl opacity-20 animate-blob" />
+                <div className="absolute top-40 right-[15%] w-96 h-96 bg-pink-600 rounded-full mix-blend-screen filter blur-3xl opacity-20 animate-blob animation-delay-2000" />
+                <div className="absolute bottom-20 left-[20%] w-96 h-96 bg-cyan-500 rounded-full mix-blend-screen filter blur-3xl opacity-15 animate-blob animation-delay-4000" />
+                <div className="absolute bottom-40 right-[25%] w-80 h-80 bg-emerald-500 rounded-full mix-blend-screen filter blur-3xl opacity-10 animate-blob animation-delay-3000" />
 
-              {/* welcome message */}
-              <div className="ml-8">
-                <h1 className="text-2xl font-semibold sm:text-3xl">Good Morning John!</h1>
-                <p className="text-muted-foreground mt-1 text-sm">
-                  Here's an overview of your study
-                  activities and progress.
-                </p>
+                {/* Gradient overlay for depth */}
+                <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black opacity-60" />
+              </div>
 
+              <div className="px-4 md:px-6">
+                {/* Hero Section - Glassmorphic Welcome Panel */}
+                <div className="my-8 animate-fade-in">
+                  <div className="glass-gradient rounded-2xl p-6 md:p-8 border border-white/10 relative overflow-hidden group">
+                    {/* Subtle animated gradient border effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 via-pink-600/20 to-cyan-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" />
+
+                    <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                      <div className="space-y-3">
+                        <h1 className="text-5xl md:text-6xl font-bold tracking-tight">
+                          <span className="gradient-text-purple-pink">
+                            Good {timeOfDay}, John!
+                          </span>
+                        </h1>
+                        <div className="flex items-center gap-3 text-white/70">
+                          <Calendar className="h-5 w-5" />
+                          <p className="text-lg">{format(currentDate, 'EEEE, MMMM d, yyyy')}</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <Badge
+                          variant="secondary"
+                          className="gap-2 px-6 py-3 glass-strong border-white/20 shadow-xl hover:shadow-2xl transition-all hover:scale-105 glow-hover"
+                        >
+                          <Sparkles className="h-5 w-5 text-yellow-400 animate-pulse" />
+                          <span className="text-lg font-bold gradient-text-orange">12-day streak</span>
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Main Dashboard Content */}
+                <div className="space-y-8 pb-8">
+                  {/* Stats Overview - Large Cards */}
+                  <section className="animate-fade-in animation-delay-100">
+                    <StatsCards />
+                  </section>
+
+                  {/* Three-Column Layout */}
+                  <div className="grid gap-6 lg:grid-cols-12">
+                    {/* Left Column - Quick Actions (40%) */}
+                    <div className="lg:col-span-5 space-y-6">
+                      <section className="animate-fade-in animation-delay-200">
+                        <QuickActions />
+                      </section>
+                    </div>
+
+                    {/* Middle Column - Progress & Charts (35%) */}
+                    <div className="lg:col-span-4 space-y-6">
+                      <section className="animate-fade-in animation-delay-300">
+                        <StudyProgress />
+                      </section>
+                      <section className="animate-fade-in animation-delay-400">
+                        <PerformanceChart />
+                      </section>
+                    </div>
+
+                    {/* Right Column - Tasks & Activity Feed (25%) */}
+                    <div className="lg:col-span-3 space-y-6">
+                      <section className="animate-fade-in animation-delay-500 lg:sticky lg:top-6">
+                        <div className="space-y-6">
+                          <UpcomingTasks />
+                          <RecentActivity />
+                        </div>
+                      </section>
+                    </div>
+                  </div>
+
+                  {/* Collapsible Assignments Section - From V2 */}
+                  <section className="animate-fade-in animation-delay-600">
+                    <div className="glass-card rounded-2xl border border-white/10 overflow-hidden">
+                      <button
+                        onClick={() => setShowAssignmentsTable(!showAssignmentsTable)}
+                        className="w-full p-6 flex items-center justify-between glass-hover transition-all duration-300"
+                      >
+                        <div className="text-left">
+                          <h2 className="text-2xl font-bold gradient-text-cyan-blue mb-1">
+                            All Assignments
+                          </h2>
+                          <p className="text-sm text-white/60">
+                            Manage and track all your assignments in one place
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="secondary" className="glass-strong border-white/20">
+                            {data.length} assignments
+                          </Badge>
+                          {showAssignmentsTable ? (
+                            <ChevronUp className="h-6 w-6 text-white/60" />
+                          ) : (
+                            <ChevronDown className="h-6 w-6 text-white/60" />
+                          )}
+                        </div>
+                      </button>
+
+                      {showAssignmentsTable && (
+                        <div className="border-t border-white/10 animate-fade-in">
+                          <DataTable data={data} />
+                        </div>
+                      )}
+                    </div>
+                  </section>
+                </div>
               </div>
-              <SectionCards />
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 px-4 lg:px-6">
-                <ChartPieLegend />
-                <ChartAreaInteractive />
-              </div>
-              <DataTable data={data} />
+
+              <style jsx>{`
+                @keyframes blob {
+                  0%, 100% {
+                    transform: translate(0, 0) scale(1);
+                  }
+                  33% {
+                    transform: translate(30px, -50px) scale(1.1);
+                  }
+                  66% {
+                    transform: translate(-20px, 20px) scale(0.9);
+                  }
+                }
+
+                .animate-blob {
+                  animation: blob 7s infinite;
+                }
+
+                .animation-delay-2000 {
+                  animation-delay: 2s;
+                }
+
+                .animation-delay-3000 {
+                  animation-delay: 3s;
+                }
+
+                .animation-delay-4000 {
+                  animation-delay: 4s;
+                }
+
+                @keyframes fade-in {
+                  from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                  }
+                  to {
+                    opacity: 1;
+                    transform: translateY(0);
+                  }
+                }
+
+                .animate-fade-in {
+                  animation: fade-in 0.6s ease-out forwards;
+                }
+
+                .animation-delay-100 {
+                  animation-delay: 0.1s;
+                  opacity: 0;
+                }
+
+                .animation-delay-200 {
+                  animation-delay: 0.2s;
+                  opacity: 0;
+                }
+
+                .animation-delay-300 {
+                  animation-delay: 0.3s;
+                  opacity: 0;
+                }
+
+                .animation-delay-400 {
+                  animation-delay: 0.4s;
+                  opacity: 0;
+                }
+
+                .animation-delay-500 {
+                  animation-delay: 0.5s;
+                  opacity: 0;
+                }
+
+                .animation-delay-600 {
+                  animation-delay: 0.6s;
+                  opacity: 0;
+                }
+              `}</style>
             </div>
           </div>
         </div>
