@@ -14,50 +14,52 @@ import {
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
 } from "@/components/ui/chart"
 
-export const description = "A pie chart with a legend"
+export const description = "Subject Focus Distribution"
 
 const chartData = [
-  { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
-  { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-  { browser: "firefox", visitors: 187, fill: "var(--color-firefox)" },
-  { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
-  { browser: "other", visitors: 90, fill: "var(--color-other)" },
+  { subject: "Calculus", hours: 15, fill: "var(--color-calculus)" },
+  { subject: "Physics", hours: 12, fill: "var(--color-physics)" },
+  { subject: "CS", hours: 20, fill: "var(--color-cs)" },
+  { subject: "History", hours: 8, fill: "var(--color-history)" },
+  { subject: "English", hours: 5, fill: "var(--color-english)" },
 ]
 
 const chartConfig = {
-  visitors: {
-    label: "Visitors",
+  hours: {
+    label: "Hours",
   },
-  chrome: {
-    label: "Chrome",
+  calculus: {
+    label: "Calculus",
     color: "var(--chart-1)",
   },
-  safari: {
-    label: "Safari",
+  physics: {
+    label: "Physics",
     color: "var(--chart-2)",
   },
-  firefox: {
-    label: "Firefox",
+  cs: {
+    label: "Comp Sci",
     color: "var(--chart-3)",
   },
-  edge: {
-    label: "Edge",
+  history: {
+    label: "History",
     color: "var(--chart-4)",
   },
-  other: {
-    label: "Other",
+  english: {
+    label: "English",
     color: "var(--chart-5)",
   },
 } satisfies ChartConfig
 
 export function ChartPieLegend() {
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col h-full border-t-4 border-t-purple-500 shadow-sm">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Pie Chart - Legend</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Subject Focus</CardTitle>
+        <CardDescription>Weekly Distribution</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
@@ -65,9 +67,13 @@ export function ChartPieLegend() {
           className="mx-auto aspect-square max-h-[300px]"
         >
           <PieChart>
-            <Pie data={chartData} dataKey="visitors" />
+             <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel />}
+            />
+            <Pie data={chartData} dataKey="hours" nameKey="subject" innerRadius={60} strokeWidth={5} />
             <ChartLegend
-              content={<ChartLegendContent nameKey="browser" />}
+              content={<ChartLegendContent nameKey="subject" />}
               className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center"
             />
           </PieChart>

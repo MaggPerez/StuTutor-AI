@@ -10,7 +10,6 @@ import {
 
 import data from "./data.json"
 import { ChartPieLegend } from "@/components/chart-pie-legend"
-import { ModeToggle } from "@/components/ModeToggle"
 
 export default function Page() {
   return (
@@ -23,30 +22,39 @@ export default function Page() {
       }
     >
       <AppSidebar variant="inset" />
-      <SidebarInset>
+      <SidebarInset className="bg-background/50">
         <SiteHeader />
-        <div className="flex flex-1 flex-col">
-          <div className="@container/main flex flex-1 flex-col gap-2">
-            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+        <div className="flex flex-1 flex-col p-4 lg:p-6 gap-6 overflow-x-hidden">
+          
+          {/* Welcome Section */}
+          <div className="flex flex-col gap-1">
+            <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+              Good Morning, John!
+            </h1>
+            <p className="text-muted-foreground text-sm max-w-2xl">
+              Here's your daily overview. You have <span className="font-semibold text-primary">8 assignments</span> due this week and your study streak is on fire! 🔥
+            </p>
+          </div>
 
-              {/* welcome message */}
-              <div className="ml-8">
-                <h1 className="text-2xl font-semibold sm:text-3xl">Good Morning John!</h1>
-                <p className="text-muted-foreground mt-1 text-sm">
-                  Here's an overview of your study
-                  activities and progress.
-                  <ModeToggle />
-                </p>
+          {/* Stats Cards */}
+          <SectionCards />
 
-              </div>
-              <SectionCards />
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 px-4 lg:px-6">
-                <ChartPieLegend />
-                <ChartAreaInteractive />
-              </div>
-              <DataTable data={data} />
+          {/* Charts Section - Equal Height Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+            <div className="h-full min-h-[350px]">
+              <ChartPieLegend />
+            </div>
+            <div className="h-full min-h-[350px]">
+              <ChartAreaInteractive />
             </div>
           </div>
+
+          {/* Assignments Table */}
+          <div className="flex flex-col gap-4">
+            <h2 className="text-lg font-semibold tracking-tight">Current Assignments</h2>
+            <DataTable data={data} />
+          </div>
+          
         </div>
       </SidebarInset>
     </SidebarProvider>
