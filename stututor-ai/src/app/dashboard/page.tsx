@@ -10,6 +10,7 @@ import {
 
 import data from "./data.json"
 import { ChartPieLegend } from "@/components/chart-pie-legend"
+import { ModeToggle } from "@/components/ModeToggle"
 
 export default function Page() {
   return (
@@ -34,6 +35,7 @@ export default function Page() {
                 <p className="text-muted-foreground mt-1 text-sm">
                   Here's an overview of your study
                   activities and progress.
+                  <ModeToggle />
                 </p>
 
               </div>

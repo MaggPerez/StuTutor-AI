@@ -4,111 +4,118 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #f9f9f9;
-  --foreground: #202020;
-  --card: #fcfcfc;
-  --card-foreground: #202020;
-  --popover: #fcfcfc;
-  --popover-foreground: #202020;
-  --primary: #4a4064;
+  /* Gamified Light Mode - Clean but playful */
+  --background: #fdfbff; /* Very pale violet tint */
+  --foreground: #1e1b4b; /* Deep Indigo */
+  
+  --card: #ffffff;
+  --card-foreground: #1e1b4b;
+  
+  --popover: #ffffff;
+  --popover-foreground: #1e1b4b;
+  
+  --primary: #6d28d9; /* Vivid Purple */
   --primary-foreground: #ffffff;
-  --secondary: #dfb5ff;
-  --secondary-foreground: #2d1d58;
-  --muted: #efefef;
-  --muted-foreground: #646464;
-  --accent: #e8e8e8;
-  --accent-foreground: #202020;
-  --destructive: #4d2ee5;
+  
+  --secondary: #e9d5ff; /* Light Purple */
+  --secondary-foreground: #4c1d95; /* Dark Purple */
+  
+  --muted: #f3f4f6;
+  --muted-foreground: #6b7280;
+  
+  --accent: #f5f3ff;
+  --accent-foreground: #4c1d95;
+  
+  --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: #d8d8d8;
-  --input: #d8d8d8;
-  --ring: #4a4064;
-  --chart-1: #4a4064;
-  --chart-2: #dfb5ff;
-  --chart-3: #e8e8e8;
-  --chart-4: #e6c4ff;
-  --chart-5: #493e66;
-  --sidebar: #fbfbfb;
-  --sidebar-foreground: #252525;
-  --sidebar-primary: #343434;
-  --sidebar-primary-foreground: #fbfbfb;
-  --sidebar-accent: #f7f7f7;
-  --sidebar-accent-foreground: #343434;
-  --sidebar-border: #ebebeb;
-  --sidebar-ring: #b5b5b5;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  
+  --border: #e5e7eb;
+  --input: #e5e7eb;
+  
+  --ring: #8b5cf6; /* Violet Ring */
+  
+  --chart-1: #7c3aed; /* Violet 600 */
+  --chart-2: #2dd4bf; /* Teal 400 */
+  --chart-3: #f472b6; /* Pink 400 */
+  --chart-4: #fbbf24; /* Amber 400 */
+  --chart-5: #60a5fa; /* Blue 400 */
+  
+  --sidebar: #fdfbff;
+  --sidebar-foreground: #1e1b4b;
+  --sidebar-primary: #6d28d9;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f3e8ff;
+  --sidebar-accent-foreground: #1e1b4b;
+  --sidebar-border: #e5e7eb;
+  --sidebar-ring: #7c3aed;
+  
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  --radius: 0.5rem;
-  --shadow-x: 0;
-  --shadow-y: 1px;
-  --shadow-blur: 3px;
-  --shadow-spread: 0px;
-  --shadow-opacity: 0.1;
-  --shadow-color: oklch(0 0 0);
-  --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-  --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-  --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10);
-  --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10);
-  --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 2px 4px -1px hsl(0 0% 0% / 0.10);
-  --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 4px 6px -1px hsl(0 0% 0% / 0.10);
-  --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 8px 10px -1px hsl(0 0% 0% / 0.10);
-  --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
-  --tracking-normal: 0em;
-  --spacing: 0.25rem;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  /* More rounded for that "App" feel */
+  --radius: 1rem; 
+  
+  /* Standard Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
 .dark {
-  --background: #111111;
-  --foreground: #eeeeee;
-  --card: #191919;
-  --card-foreground: #eeeeee;
-  --popover: #191919;
-  --popover-foreground: #eeeeee;
-  --primary: #e0c2ff;
-  --primary-foreground: #26270c;
-  --secondary: #302839;
-  --secondary-foreground: #e0c2ff;
-  --muted: #222222;
-  --muted-foreground: #b4b4b4;
-  --accent: #2a2a2a;
-  --accent-foreground: #eeeeee;
-  --destructive: #4d2ee5;
+  /* Phantom Wallet / Gamified Dark Mode */
+  --background: #0f0c18; /* Deep Dark Violet-Black */
+  --foreground: #ffffff;
+  
+  --card: #1c172b; /* Dark Violet Card */
+  --card-foreground: #ffffff;
+  
+  --popover: #1c172b;
+  --popover-foreground: #ffffff;
+  
+  /* Vibrant Electric Purple */
+  --primary: #8b5cf6; /* Violet 500 */
+  --primary-foreground: #ffffff;
+  
+  /* Secondary Actions - Deep but slightly lighter */
+  --secondary: #2e2448; 
+  --secondary-foreground: #e9d5ff;
+  
+  --muted: #2e2448;
+  --muted-foreground: #a78bfa; /* Soft Violet Text */
+  
+  --accent: #2e2448;
+  --accent-foreground: #ffffff;
+  
+  --destructive: #ff4d4d;
   --destructive-foreground: #ffffff;
-  --border: #1e1820;
-  --input: #484848;
-  --ring: #e0c2ff;
-  --chart-1: #e0c2ff;
-  --chart-2: #302839;
-  --chart-3: #2a2a2a;
-  --chart-4: #382e42;
-  --chart-5: #e0c1ff;
-  --sidebar: #181b18;
-  --sidebar-foreground: #f4f5f4;
-  --sidebar-primary: #4ed81d;
+  
+  --border: #362c52; /* Subtle Violet Border */
+  --input: #362c52;
+  
+  --ring: #8b5cf6;
+  
+  /* Gamified / Crypto Charts - Neon Tones */
+  --chart-1: #a78bfa; /* Violet */
+  --chart-2: #2dd4bf; /* Cyan/Teal */
+  --chart-3: #f472b6; /* Pink */
+  --chart-4: #fbbf24; /* Amber */
+  --chart-5: #38bdf8; /* Sky Blue */
+  
+  --sidebar: #0f0c18;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #8b5cf6;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #272a27;
-  --sidebar-accent-foreground: #f4f5f4;
-  --sidebar-border: #272a27;
-  --sidebar-ring: #d4d8d4;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  --radius: 0.5rem;
-  --shadow-x: 0;
-  --shadow-y: 1px;
-  --shadow-blur: 3px;
-  --shadow-spread: 0px;
-  --shadow-opacity: 0.1;
-  --shadow-color: oklch(0 0 0);
-  --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-  --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-  --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10);
-  --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10);
-  --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 2px 4px -1px hsl(0 0% 0% / 0.10);
-  --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 4px 6px -1px hsl(0 0% 0% / 0.10);
-  --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 8px 10px -1px hsl(0 0% 0% / 0.10);
-  --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+  --sidebar-accent: #2e2448;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #362c52;
+  --sidebar-ring: #8b5cf6;
+
+  /* Glowing Shadows for Dark Mode */
+  --shadow-sm: 0 0 10px -2px rgba(139, 92, 246, 0.1);
+  --shadow: 0 0 15px -3px rgba(139, 92, 246, 0.2);
+  --shadow-md: 0 0 25px -5px rgba(139, 92, 246, 0.3);
+  --shadow-lg: 0 0 40px -10px rgba(139, 92, 246, 0.4);
 }
 
 @theme inline {
