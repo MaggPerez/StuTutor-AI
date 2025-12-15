@@ -142,7 +142,14 @@ export default function Courses() {
 
     if (courses.length === 0) {
         return (
-            <SidebarProvider>
+            <SidebarProvider 
+            style={
+                {
+                    "--sidebar-width": "calc(var(--spacing) * 72)",
+                    "--header-height": "calc(var(--spacing) * 12)",
+                } as React.CSSProperties
+            }
+            >
                 <AppSidebar variant="inset" />
                 <SidebarInset className="bg-transparent">
                     <div className="flex flex-col gap-4 justify-center items-center h-full">
@@ -158,7 +165,7 @@ export default function Courses() {
                                     <DialogHeader>
                                         <DialogTitle>Add Course</DialogTitle>
                                         <DialogDescription>
-                                            <p >Add a new course to your library</p>
+                                            Add a new course to your library
                                         </DialogDescription>
                                     </DialogHeader>
 
