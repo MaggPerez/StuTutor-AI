@@ -367,7 +367,7 @@ export function DataTable({
       defaultValue="all-assignments"
       className="w-full flex-col justify-start gap-6"
     >
-      <div className="flex flex-col sm:flex-row items-center justify-between px-4 lg:px-6 gap-4">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
          <TabsList className="bg-muted/50 p-1">
           <TabsTrigger value="all-assignments" className="rounded-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">All Assignments</TabsTrigger>
           <TabsTrigger value="active" className="rounded-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">
@@ -420,7 +420,7 @@ export function DataTable({
       </div>
       <TabsContent
         value="all-assignments"
-        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
+        className="relative flex flex-col gap-4 overflow-auto"
       >
         <div className="overflow-hidden rounded-xl border bg-card/50 shadow-sm">
           <DndContext
@@ -507,10 +507,10 @@ export function DataTable({
         </div>
       </TabsContent>
         {/* Placeholders for other tabs to prevent errors if clicked */}
-      <TabsContent value="active" className="px-4 lg:px-6">
+      <TabsContent value="active">
          <div className="h-24 flex items-center justify-center border rounded-lg border-dashed text-muted-foreground">Active assignments view placeholder</div>
       </TabsContent>
-      <TabsContent value="completed" className="px-4 lg:px-6">
+      <TabsContent value="completed">
          <div className="h-24 flex items-center justify-center border rounded-lg border-dashed text-muted-foreground">Completed assignments view placeholder</div>
       </TabsContent>
     </Tabs>
