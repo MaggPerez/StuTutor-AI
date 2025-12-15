@@ -150,7 +150,7 @@ export default function Courses() {
                         <p>Click the button below to create a new course</p>
                         <Dialog>
                             <DialogTrigger asChild>
-                                <Button>Open Dialog</Button>
+                                <Button>Add Course</Button>
                             </DialogTrigger>
                             <DialogContent className="sm:max-w-[425px]">
 
