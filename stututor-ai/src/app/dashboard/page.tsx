@@ -91,9 +91,9 @@ export default function Page() {
                 <ChartAreaInteractive />
                 
                 {/* Study Progress / Distribution */}
-                <div className="h-[400px]">
+                {/* <div className="h-[400px]">
                     <ChartPieLegend />
-                </div>
+                </div> */}
             </div>
 
             {/* Right Column (1/3) - Lists & Activity */}
