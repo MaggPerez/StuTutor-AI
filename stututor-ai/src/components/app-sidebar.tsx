@@ -51,7 +51,7 @@ const data = {
     },
     {
       title: "Assignments",
-      url: "#",
+      url: "/assignments",
       icon: IconListDetails,
     },
     {
