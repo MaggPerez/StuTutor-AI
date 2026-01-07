@@ -3,6 +3,7 @@ from typing import Union
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from users.users import router as users_router
+from courses.courses import router as courses_router
 
 app = FastAPI()
 
@@ -27,3 +28,4 @@ def read_item(item_id: int, q: Union[str, None] = None):
     return {"item_id": item_id, "q": q}
 
 app.include_router(users_router)
+app.include_router(courses_router)

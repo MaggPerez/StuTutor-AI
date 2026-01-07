@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
@@ -95,8 +95,24 @@ const courses: Course[] = [
 ]
 
 
-function addCourse(course: Course) {
+async function addCourse(course: Course) {
     courses.push(course)
+    try {
+        const response = await fetch("/api/courses", {
+            method: "POST",
+            body: JSON.stringify(course),
+        });
+        const responseData = await response.json();
+        console.log(responseData);
+        return responseData;
+    } catch(error) {
+        toast.error("Failed to add course", {
+            description: "Failed to add course",
+            duration: 3000,
+            position: "top-right",
+            className: "bg-red-500 text-white",
+        });
+    }
 }
 
 
@@ -140,6 +156,7 @@ export default function Courses() {
     }
 
 
+    // if no courses, show the dialog to add a new course
     if (courses.length === 0) {
         return (
             <SidebarProvider 
