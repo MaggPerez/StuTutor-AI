@@ -16,9 +16,19 @@ import { Sparkles, Calendar } from "lucide-react"
 
 import data from "./data.json"
 
-export default function Page() {
+import { createClient } from "../../../lib/supabase/server"
+import { redirect } from "next/navigation"
+
+export default async function Page() {
   const currentDate = new Date()
   const timeOfDay = currentDate.getHours() < 12 ? 'Morning' : currentDate.getHours() < 18 ? 'Afternoon' : 'Evening'
+
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  if (!user) {
+    redirect('/login')
+  }
 
   return (
     <SidebarProvider
