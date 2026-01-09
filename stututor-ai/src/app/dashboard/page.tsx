@@ -64,7 +64,7 @@ export default async function Page() {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="space-y-1">
               <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-purple-400 via-pink-400 to-teal-400 bg-clip-text text-transparent">
-                Good {timeOfDay}, Student!
+                Good {timeOfDay}, { user?.user_metadata.full_name}!
               </h1>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Calendar className="size-4" />
