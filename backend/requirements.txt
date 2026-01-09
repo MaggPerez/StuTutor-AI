@@ -1,0 +1,6 @@
+supabase
+sqlalchemy
+pydantic
+pydantic-settings
+pydantic-core
+pydantic-settings
