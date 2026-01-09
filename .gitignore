@@ -28,5 +28,6 @@ dist-ssr
 # SQL and shell scripts
 *.sql
 *.sh
+sql/
 
 .vscode
