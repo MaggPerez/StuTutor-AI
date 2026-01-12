@@ -65,37 +65,6 @@ export async function signup(prevState: LoginSignUpFormState, formData: FormData
     return { error: 'Failed to sign up, please try again.' }
   }
 
-  // Create user in your database via API
-  if (authData.user) {
-    try {
-      const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8000'
-      const response = await fetch(`${API_BASE_URL}/users/create-user`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          auth_id: authData.user.id,
-          email: email,
-          full_name: fullname,
-          username: username,
-          role: 'student', // default role
-        }),
-      })
-
-      if (!response.ok) {
-        const errorText = await response.text()
-        console.error('Failed to create user in database:', {
-          status: response.status,
-          statusText: response.statusText,
-          body: errorText
-        })
-        return { error: 'Something went wrong, please try again.' }
-      }
-    } catch (error) {
-      return { error: 'Failed to sign up, please try again.' }
-    }
-  }
 
   revalidatePath('/', 'layout')
   redirect('/dashboard')
