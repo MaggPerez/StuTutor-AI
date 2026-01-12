@@ -60,7 +60,7 @@ export async function signup(formData: FormData) {
   // Create user in your database via API
   if (authData.user) {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000'}/api/users`, {
+      const response = await fetch('/api/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

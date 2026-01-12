@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:8000";
 
 export async function GET() {
     try {
@@ -12,7 +12,9 @@ export async function GET() {
     }
 }
 
-/**function to create a user
+
+
+/** function to create a user
  * @param request object to create a user with the following fields: id, auth_id, email, full_name, role
  * @returns 
  */
