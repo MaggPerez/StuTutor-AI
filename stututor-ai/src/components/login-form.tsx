@@ -1,3 +1,4 @@
+'use client'
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -17,12 +18,23 @@ import {
 import { Input } from "@/components/ui/input"
 import Link from "next/link"
 
-import { login } from "../app/login/actions"
+import { login, type LoginSignUpFormState } from "../app/login/actions"
+import { SubmitButton } from "./login-signup/submit-button"
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert"
+import { AlertCircle } from "lucide-react"
+import { useActionState } from "react"
+
+
+const initialState: LoginSignUpFormState = { error: null }
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+
+  // useActionState to handle form state and actions
+  const [state, formAction] = useActionState(login, initialState)
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -33,8 +45,9 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={login}>
+          <form action={formAction}>
             <FieldGroup>
+
               <Field>
                 <Button variant="outline" type="button">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -81,7 +94,17 @@ export function LoginForm({
                 <Input id="password" name="password" type="password" required />
               </Field>
               <Field>
-                <Button type="submit">Login</Button>
+                <SubmitButton label="Login" />
+
+                {/* error message */}
+                {state.error && (
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Error</AlertTitle>
+                    <AlertDescription>{state.error}</AlertDescription>
+                  </Alert>
+                )}
+
                 <FieldDescription className="text-center">
                   Don&apos;t have an account? <Link href="/signup">Sign up</Link>
                 </FieldDescription>

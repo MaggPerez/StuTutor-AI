@@ -5,8 +5,14 @@ import { redirect } from 'next/navigation'
 
 import { createClient } from '../../../lib/supabase/server'
 
-export async function login(formData: FormData) {
+export type LoginSignUpFormState = {
+  error: string | null
+}
+
+export async function login(prevState: LoginSignUpFormState, formData: FormData): Promise<LoginSignUpFormState> {
   const supabase = await createClient()
+
+
 
   // type-casting here for convenience
   // in practice, you should validate your inputs
@@ -16,16 +22,19 @@ export async function login(formData: FormData) {
   }
 
   const { error } = await supabase.auth.signInWithPassword(data)
+  
 
   if (error) {
-    redirect('/error')
+    return { error: 'Invalid credentials, please try again.' }
   }
 
   revalidatePath('/', 'layout')
   redirect('/dashboard')
+
+  
 }
 
-export async function signup(formData: FormData) {
+export async function signup(prevState: LoginSignUpFormState, formData: FormData): Promise<LoginSignUpFormState> {
   const supabase = await createClient()
 
   // Extract form data
@@ -37,7 +46,7 @@ export async function signup(formData: FormData) {
 
   // Validate passwords match
   if (password !== confirmPassword) {
-    redirect('/error')
+    return { error: 'Passwords do not match, please try again.' }
   }
 
   // Sign up with Supabase Auth
@@ -53,14 +62,14 @@ export async function signup(formData: FormData) {
   })
 
   if (authError) {
-    console.error('Supabase auth error:', authError)
-    redirect('/error')
+    return { error: 'Failed to sign up, please try again.' }
   }
 
   // Create user in your database via API
   if (authData.user) {
     try {
-      const response = await fetch('/api/users', {
+      const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8000'
+      const response = await fetch(`${API_BASE_URL}/users/create-user`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -75,11 +84,16 @@ export async function signup(formData: FormData) {
       })
 
       if (!response.ok) {
-        console.error('Failed to create user in database')
-        // Optionally handle cleanup of Supabase auth user here
+        const errorText = await response.text()
+        console.error('Failed to create user in database:', {
+          status: response.status,
+          statusText: response.statusText,
+          body: errorText
+        })
+        return { error: 'Something went wrong, please try again.' }
       }
     } catch (error) {
-      console.error('Error creating user in database:', error)
+      return { error: 'Failed to sign up, please try again.' }
     }
   }
 

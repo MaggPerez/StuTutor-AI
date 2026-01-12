@@ -1,3 +1,4 @@
+'use client'
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -16,12 +17,22 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import Link from "next/link"
-import { signup } from "../app/login/actions"
 
-export async function SignupForm({
+import { signup, type LoginSignUpFormState } from "../app/login/actions"
+import { SubmitButton } from "./login-signup/submit-button"
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert"
+import { AlertCircle } from "lucide-react"
+import { useActionState } from "react"
+
+const initialState: LoginSignUpFormState = { error: null }
+
+export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+
+  // useActionState to handle form state and actions
+  const [state, formAction] = useActionState(signup, initialState)
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -33,7 +44,7 @@ export async function SignupForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={signup}>  {/* Changed to use action directly */}
+          <form action={formAction}>
             <FieldGroup>
               {/* Social buttons */}
               <Field>
@@ -53,7 +64,7 @@ export async function SignupForm({
                 <FieldLabel htmlFor="fullname">Full Name</FieldLabel>
                 <Input
                   id="fullname"
-                  name="fullname"  // Add name for FormData
+                  name="fullname"
                   type="text"
                   placeholder="John Doe"
                   required
@@ -63,7 +74,7 @@ export async function SignupForm({
                 <FieldLabel htmlFor="username">Username</FieldLabel>
                 <Input
                   id="username"
-                  name="username"  // Add name for FormData
+                  name="username"
                   type="text"
                   placeholder="johndoe"
                   required
@@ -84,7 +95,7 @@ export async function SignupForm({
                 <FieldLabel htmlFor="password">Password</FieldLabel>
                 <Input 
                   id="password" 
-                  name="password"  // Add name for FormData
+                  name="password"
                   type="password" 
                   required 
                 />
@@ -95,13 +106,26 @@ export async function SignupForm({
                 </FieldLabel>
                 <Input 
                   id="confirm-password" 
-                  name="confirm-password"  // Add name for FormData
+                  name="confirm-password"
                   type="password" 
                   required 
                 />
               </Field>
               <Field>
-                <Button type="submit">Sign up</Button>
+
+                {/* submit button */}
+                <SubmitButton label="Sign up" />
+
+                {/* error message */}
+                {state.error && (
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Error</AlertTitle>
+                    <AlertDescription>{state.error}</AlertDescription>
+                  </Alert>
+                )}
+
+
                 <FieldDescription className="text-center">
                   Already have an account? <Link href="/login">Login</Link>
                 </FieldDescription>
