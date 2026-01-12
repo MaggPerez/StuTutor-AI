@@ -31,137 +31,147 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { useUser } from "@/contexts/UserContext"
 
-const data = {
-  user: {
-    name: "Student",
-    email: "student@university.edu",
-    avatar: "/avatars/student.jpg",
-  },
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "/dashboard",
-      icon: IconDashboard,
-    },
-    {
-      title: "My Courses",
-      url: "/courses",
-      icon: IconFolder,
-    },
-    {
-      title: "Assignments",
-      url: "/assignments",
-      icon: IconListDetails,
-    },
-    {
-      title: "Study Analytics",
-      url: "#",
-      icon: IconChartBar,
-    },
-    {
-      title: "AI Tutor",
-      url: "#",
-      icon: IconFileAi,
-    },
-  ],
-  navClouds: [
-    {
-      title: "Study Resources",
-      icon: IconDatabase,
-      isActive: true,
-      url: "#",
-      items: [
-        {
-          title: "Notes",
-          url: "#",
-        },
-        {
-          title: "Flashcards",
-          url: "#",
-        },
-        {
-          title: "Study Guides",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Schedule",
-      icon: IconCamera,
-      url: "#",
-      items: [
-        {
-          title: "Class Schedule",
-          url: "#",
-        },
-        {
-          title: "Study Sessions",
-          url: "#",
-        },
-        {
-          title: "Exam Calendar",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Documents",
-      icon: IconFileDescription,
-      url: "#",
-      items: [
-        {
-          title: "Uploaded Files",
-          url: "#",
-        },
-        {
-          title: "Shared Documents",
-          url: "#",
-        },
-        {
-          title: "Templates",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  navSecondary: [
-    {
-      title: "Settings",
-      url: "#",
-      icon: IconSettings,
-    },
-    {
-      title: "Get Help",
-      url: "#",
-      icon: IconHelp,
-    },
-    {
-      title: "Search",
-      url: "#",
-      icon: IconSearch,
-    },
-  ],
-  documents: [
-    {
-      name: "Study Groups",
-      url: "#",
-      icon: IconUsers,
-    },
-    {
-      name: "Grade Tracker",
-      url: "#",
-      icon: IconReport,
-    },
-    {
-      name: "Resource Library",
-      url: "#",
-      icon: IconDatabase,
-    },
-  ],
-}
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  // Use the user context to get the user
+  const { user } = useUser()
+
+  // Data for the sidebar
+  const data = {
+    user: {
+      name: user?.user_metadata.full_name || "Student",
+      email: user?.email || "student@university.edu",
+      avatar: user?.user_metadata.avatar_url || "/avatars/student.jpg",
+    },
+    // Main navigation items
+    navMain: [
+      {
+        title: "Dashboard",
+        url: "/dashboard",
+        icon: IconDashboard,
+      },
+      {
+        title: "My Courses",
+        url: "/courses",
+        icon: IconFolder,
+      },
+      {
+        title: "Assignments",
+        url: "/assignments",
+        icon: IconListDetails,
+      },
+      {
+        title: "Study Analytics",
+        url: "#",
+        icon: IconChartBar,
+      },
+      {
+        title: "AI Tutor",
+        url: "#",
+        icon: IconFileAi,
+      },
+    ],
+    // Cloud navigation items
+    navClouds: [
+      {
+        title: "Study Resources",
+        icon: IconDatabase,
+        isActive: true,
+        url: "#",
+        items: [
+          {
+            title: "Notes",
+            url: "#",
+          },
+          {
+            title: "Flashcards",
+            url: "#",
+          },
+          {
+            title: "Study Guides",
+            url: "#",
+          },
+        ],
+      },
+      {
+        title: "Schedule",
+        icon: IconCamera,
+        url: "#",
+        items: [
+          {
+            title: "Class Schedule",
+            url: "#",
+          },
+          {
+            title: "Study Sessions",
+            url: "#",
+          },
+          {
+            title: "Exam Calendar",
+            url: "#",
+          },
+        ],
+      },
+      {
+        title: "Documents",
+        icon: IconFileDescription,
+        url: "#",
+        items: [
+          {
+            title: "Uploaded Files",
+            url: "#",
+          },
+          {
+            title: "Shared Documents",
+            url: "#",
+          },
+          {
+            title: "Templates",
+            url: "#",
+          },
+        ],
+      },
+    ],
+    // Secondary navigation items
+    navSecondary: [
+      {
+        title: "Settings",
+        url: "#",
+        icon: IconSettings,
+      },
+      {
+        title: "Get Help",
+        url: "#",
+        icon: IconHelp,
+      },
+      {
+        title: "Search",
+        url: "#",
+        icon: IconSearch,
+      },
+    ],
+    // Documents navigation items
+    documents: [
+      {
+        name: "Study Groups",
+        url: "#",
+        icon: IconUsers,
+      },
+      {
+        name: "Grade Tracker",
+        url: "#",
+        icon: IconReport,
+      },
+      {
+        name: "Resource Library",
+        url: "#",
+        icon: IconDatabase,
+      },
+    ],
+  }
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
