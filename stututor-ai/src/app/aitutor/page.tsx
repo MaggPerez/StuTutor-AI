@@ -17,13 +17,13 @@ export default function AITutor() {
     return (
         <div className="h-full w-full">
             <ResizablePanelGroup direction="horizontal">
-                <ResizablePanel className="h-full w-full">Chat History</ResizablePanel>
+                <ResizablePanel defaultSize={15} className="h-full w-full">Chat History</ResizablePanel>
                 <ResizableHandle />
-                <ResizablePanel className="h-full">
+                <ResizablePanel defaultSize={40} className="h-full">
                     <PDFViewer />
                 </ResizablePanel>
                 <ResizableHandle />
-                <ResizablePanel className="h-full w-full">Chat Box</ResizablePanel>
+                <ResizablePanel defaultSize={20} className="h-full w-full">Chat Box</ResizablePanel>
             </ResizablePanelGroup>
         </div>
     )

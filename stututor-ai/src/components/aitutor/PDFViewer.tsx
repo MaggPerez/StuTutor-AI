@@ -1,52 +1,227 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
+import { 
+  ChevronLeft, 
+  ChevronRight, 
+  ZoomIn, 
+  ZoomOut, 
+  RotateCw, 
+  Loader2
+} from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 // Set up the worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 export default function PDFViewer() {
-  const [numPages, setNumPages] = useState<number>();
+  const [numPages, setNumPages] = useState<number>(0);
   const [pageNumber, setPageNumber] = useState<number>(1);
-  const [scale, setScale] = useState<number>(1);
+  const [scale, setScale] = useState<number>(1.0);
+  const [rotation, setRotation] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [inputPage, setInputPage] = useState<string>('1');
+
+  // Constraints
   const minScale = 0.5;
-  const maxScale = 3;
+  const maxScale = 3.0;
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
     setNumPages(numPages);
+    setLoading(false);
+  }
+
+  function onDocumentLoadStart() {
+    setLoading(true);
   }
 
   const handleZoomIn = () => {
-    setScale(prev => Math.min(prev + 0.25, maxScale));
+    setScale(prev => Math.min(prev + 0.1, maxScale));
   };
 
   const handleZoomOut = () => {
-    setScale(prev => Math.max(prev - 0.25, minScale));
+    setScale(prev => Math.max(prev - 0.1, minScale));
   };
 
+  const handleRotate = () => {
+    setRotation(prev => (prev + 90) % 360);
+  };
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= numPages) {
+      setPageNumber(newPage);
+      setInputPage(newPage.toString());
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputPage(e.target.value);
+  };
+
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      const page = parseInt(inputPage);
+      if (!isNaN(page)) {
+        handlePageChange(page);
+      } else {
+        // Reset to current page if invalid
+        setInputPage(pageNumber.toString());
+      }
+    }
+  };
+  
+  // Ensure input stays synced when pageNumber changes via buttons
+  useEffect(() => {
+    setInputPage(pageNumber.toString());
+  }, [pageNumber]);
 
   return (
-    <div>
-      <p>
-        Page {pageNumber} of {numPages}
-      </p>
-      <Button onClick={() => setPageNumber(pageNumber - 1)} disabled={pageNumber <= 1}>Previous</Button>
-      <Button onClick={() => setPageNumber(pageNumber + 1)} disabled={pageNumber >= (numPages || 0)}>Next</Button>
+    <div className="flex flex-col h-full w-full bg-gray-100/50 dark:bg-zinc-900/50 border rounded-md overflow-hidden">
+      {/* Toolbar */}
+      <div className="flex items-center justify-between p-2 bg-background border-b shadow-sm z-10 shrink-0">
+        <div className="flex items-center gap-1">
 
-      {/* Zoom Controls */}
-      <div style={{ marginTop: '1rem' }}>
-        <Button onClick={handleZoomOut} disabled={scale <= minScale}>Zoom Out</Button>
-        <span style={{ margin: '0 1rem' }}>{Math.round(scale * 100)}%</span>
-        <Button onClick={handleZoomIn} disabled={scale >= maxScale}>Zoom In</Button>
+          {/* Previous Page Button */}
+           <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    onClick={() => handlePageChange(pageNumber - 1)} 
+                    disabled={pageNumber <= 1 || loading}
+                >
+                    <ChevronLeft className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Previous Page</TooltipContent>
+            </Tooltip>
+           </TooltipProvider>
+
+          {/* Page Input */}
+          <div className="flex items-center gap-2 mx-2">
+            <Input 
+                className="h-8 w-12 text-center px-1" 
+                value={inputPage}
+                onChange={handleInputChange}
+                onKeyDown={handleInputKeyDown}
+                disabled={loading}
+            />
+            <span className="text-sm text-muted-foreground whitespace-nowrap">
+                / {numPages || '--'}
+            </span>
+          </div>
+
+          {/* Next Page Button */}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    onClick={() => handlePageChange(pageNumber + 1)} 
+                    disabled={pageNumber >= numPages || loading}
+                >
+                    <ChevronRight className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Next Page</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+
+        <div className="flex items-center gap-1">
+          <Separator orientation="vertical" className="h-6 mx-2" />
+          
+          {/* Zoom Out Button */}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" onClick={handleZoomOut} disabled={scale <= minScale || loading}>
+                    <ZoomOut className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Zoom Out</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <span className="text-sm w-12 text-center select-none">
+            {Math.round(scale * 100)}%
+          </span>
+
+          {/* Zoom In Button */}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" onClick={handleZoomIn} disabled={scale >= maxScale || loading}>
+                    <ZoomIn className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Zoom In</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          {/* Rotate Button */}
+           <Separator orientation="vertical" className="h-6 mx-2" />
+
+           <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" onClick={handleRotate} disabled={loading}>
+                    <RotateCw className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Rotate</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       </div>
 
-      <Document file="/constitution.pdf" onLoadSuccess={onDocumentLoadSuccess}>
-        <Page pageNumber={pageNumber} scale={scale} />
-      </Document>
+      {/* Main Viewer Area */}
+      <div className="flex-1 w-full bg-gray-100 dark:bg-zinc-950/50 overflow-hidden relative">
+        <ScrollArea className="h-full w-full">
+            <div className="flex justify-center p-8 min-h-full">
 
+              {/* PDF Document */}
+                <Document 
+                    file="/constitution.pdf" 
+                    onLoadSuccess={onDocumentLoadSuccess}
+                    onLoadStart={onDocumentLoadStart}
+                    loading={
+                        <div className="flex flex-col items-center justify-center h-64 gap-2">
+                            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                            <p className="text-sm text-muted-foreground">Loading PDF...</p>
+                        </div>
+                    }
+                    error={
+                        <div className="flex flex-col items-center justify-center h-64 gap-2 text-destructive">
+                             <p>Failed to load PDF.</p>
+                        </div>
+                    }
+                    className="shadow-lg"
+                >
+
+                    {/* Current Page */}
+                    <Page 
+                        pageNumber={pageNumber} 
+                        scale={scale} 
+                        rotate={rotation}
+                        className="shadow-md"
+                        renderTextLayer={true}
+                        renderAnnotationLayer={true}
+                    />
+                </Document>
+            </div>
+            <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+      </div>
     </div>
   );
 }
