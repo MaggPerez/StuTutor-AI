@@ -21,7 +21,11 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 // Set up the worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
-export default function PDFViewer() {
+interface PDFViewerProps {
+  file?: File | null;
+}
+
+export default function PDFViewer({ file }: PDFViewerProps) {
   const [numPages, setNumPages] = useState<number>(0);
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [scale, setScale] = useState<number>(1.0);
@@ -191,7 +195,7 @@ export default function PDFViewer() {
 
               {/* PDF Document */}
                 <Document 
-                    file="/constitution.pdf" 
+                    file={file} 
                     onLoadSuccess={onDocumentLoadSuccess}
                     onLoadStart={onDocumentLoadStart}
                     loading={
