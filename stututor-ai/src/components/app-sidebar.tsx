@@ -69,7 +69,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       },
       {
         title: "AI Tutor",
-        url: "#",
+        url: "/aitutor",
         icon: IconFileAi,
       },
     ],
