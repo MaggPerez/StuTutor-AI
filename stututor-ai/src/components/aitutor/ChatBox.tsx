@@ -84,7 +84,7 @@ export default function ChatBox() {
                 setIsLoading(false)
             }
 
-        }, 1000)
+        }, 500)
     }
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -147,6 +147,22 @@ export default function ChatBox() {
                             </div>
                         </div>
                     ))}
+
+                    {/* Loading Indicator */}
+                    {isLoading && (
+                        <div className="flex w-full gap-2 max-w-[90%] mr-auto">
+                            <Avatar className="h-8 w-8 shrink-0">
+                                <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                                    <Bot className="h-4 w-4" />
+                                </AvatarFallback>
+                            </Avatar>
+                            <div className="rounded-lg px-4 py-2 text-sm shadow-sm bg-white text-black border border-gray-100 dark:border-gray-800 flex items-center gap-1 min-h-[40px]">
+                                <span className="w-1.5 h-1.5 bg-zinc-500 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                                <span className="w-1.5 h-1.5 bg-zinc-500 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                                <span className="w-1.5 h-1.5 bg-zinc-500 rounded-full animate-bounce"></span>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Scroll to bottom */}
                     <div ref={messagesEndRef} />
