@@ -7,6 +7,7 @@ import {
     ResizablePanelGroup,
 } from "@/components/ui/resizable"
 import ChatHistory from '@/components/aitutor/ChatHistory'
+import ChatBox from '@/components/aitutor/ChatBox'
 
 // Import PDFViewer without SSR
 const PDFViewer = dynamic(() => import('@/components/aitutor/PDFViewer'), {
@@ -26,7 +27,9 @@ export default function AITutor() {
                     <PDFViewer />
                 </ResizablePanel>
                 <ResizableHandle />
-                <ResizablePanel defaultSize={20} className="h-full w-full">Chat Box</ResizablePanel>
+                <ResizablePanel defaultSize={20} className="h-full w-full">
+                    <ChatBox />
+                </ResizablePanel>
             </ResizablePanelGroup>
         </div>
     )
