@@ -41,7 +41,7 @@ async def upload_pdf(file: UploadFile = File(...), question: str = Form(...)):
     file_content = await file.read()
     answer = readPDF(file_content, question)
     print(answer)
-    return {"Gemini": answer}
+    return {"message": answer}
 
 
 

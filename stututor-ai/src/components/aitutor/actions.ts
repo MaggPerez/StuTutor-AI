@@ -22,9 +22,6 @@ export async function uploadPDF(file: File, question: string) {
     
     const response = await fetch(`${baseUrl}/gemini/upload-pdf`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'multipart/form-data',
-        },
         body: formData,
     })
     if (!response.ok) {
