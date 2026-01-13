@@ -3,7 +3,8 @@
 import React, { useState } from 'react'
 import {
     Plus,
-    Search
+    Search,
+    ArrowLeft
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
@@ -11,6 +12,8 @@ import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import ChatItem from '@/components/aitutor/ChatItem'
+import { useRouter } from 'next/navigation'
+
 
 // Dummy data for UI demonstration
 const MOCK_CHATS = [
@@ -24,7 +27,7 @@ const MOCK_CHATS = [
 export default function ChatHistory() {
     const [searchQuery, setSearchQuery] = useState('')
     const [activeChatId, setActiveChatId] = useState<string | null>('1')
-
+    const router = useRouter()
     // Simple filtering based on search
     const filteredChats = MOCK_CHATS.filter(chat => 
         chat.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -57,7 +60,22 @@ export default function ChatHistory() {
             {/* Header */}
             <div className='p-4 pb-2 space-y-4'>
                 <div className="flex items-center justify-between">
+
+                    {/* Back button */}
+                    <Button 
+                        onClick={() => router.back()}
+                        variant="outline"
+                        size="sm"
+                        className="h-8 px-2 cursor-pointer"
+                    >
+                        <ArrowLeft className='mr-2 size-4' />
+                        Back
+                    </Button>
+
+                    {/* Title */}
                     <h2 className="text-lg font-semibold tracking-tight">Chats</h2>
+
+                    {/* New Chat button */}
                     <Button 
                         onClick={() => {}}
                         variant="outline"

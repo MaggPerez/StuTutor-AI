@@ -1,6 +1,7 @@
 /__pycache__/
 /users/__pycache__/
 /courses/__pycache__/
+/gemini/__pycache__/
 .env
 .venv
 .DS_Store

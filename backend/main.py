@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from users.users import router as users_router
 from courses.courses import router as courses_router
+from gemini.gemini import router as gemini_router
 
 app = FastAPI()
 
@@ -29,3 +30,4 @@ def read_item(item_id: int, q: Union[str, None] = None):
 
 app.include_router(users_router, prefix="/users")
 app.include_router(courses_router, prefix="/courses")
+app.include_router(gemini_router, prefix="/gemini")
