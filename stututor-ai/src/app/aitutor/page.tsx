@@ -29,7 +29,7 @@ export default function AITutorPage() {
             title: "AI Chat Tutor",
             description: "Get instant help with your studies from our advanced AI tutor. Upload documents and ask questions.",
             icon: <MessageSquare className="h-8 w-8 text-primary" />,
-            action: () => router.push('/aitutor/1'),
+            action: () => router.push('/aitutor'),
             active: true
         },
         {

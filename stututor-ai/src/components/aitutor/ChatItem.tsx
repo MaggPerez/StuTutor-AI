@@ -4,10 +4,11 @@ import { cn } from '@/lib/utils'
 import { MessageSquare } from 'lucide-react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Pencil, Archive, Trash2, MoreHorizontal } from 'lucide-react'
+import { Chat } from '@/types/Messages'
 
 
 interface ChatItemProps {
-    chat: { id: string, title: string, date: Date }
+    chat: Chat
     isActive: boolean
     onClick: () => void
 }

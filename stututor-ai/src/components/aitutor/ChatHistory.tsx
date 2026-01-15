@@ -28,9 +28,9 @@ export default function ChatHistory({ initialActiveChatId }: { initialActiveChat
 
     // Grouping chats by date categories
     const groupedChats = {
-        today: filteredChats.filter(chat => isToday(chat.date)),
-        yesterday: filteredChats.filter(chat => isYesterday(chat.date)),
-        previous: filteredChats.filter(chat => !isToday(chat.date) && !isYesterday(chat.date))
+        today: filteredChats.filter(chat => isToday(chat.createdAt)),
+        yesterday: filteredChats.filter(chat => isYesterday(chat.createdAt)),
+        previous: filteredChats.filter(chat => !isToday(chat.createdAt) && !isYesterday(chat.createdAt))
     }
 
     function isToday(date: Date) {
@@ -52,8 +52,14 @@ export default function ChatHistory({ initialActiveChatId }: { initialActiveChat
         const newChat: Chat = {
             id: Date.now().toString(),
             title: 'New Chat',
-            date: new Date(),
-            chatMessages: []
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            pdfDocumentId: null,
+            pdfDocumentName: null,
+            pdfDocumentUrl: null,
+            messageCount: 0,
+            chatMessages: [],
+            userId: ''
         }
         setChats(prev => [...prev, newChat])
     }
