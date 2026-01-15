@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils'
 import { sendMessage, uploadPDF } from './actions'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { usePDF } from '@/contexts/PDFContext'
 
 interface Message {
     id: string;
@@ -35,6 +36,7 @@ export default function ChatBox() {
     const [isLoading, setIsLoading] = useState(false)
     const [file, setFile] = useState<File | null>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
+    const { currentPDF, setCurrentPDF } = usePDF()
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -74,6 +76,7 @@ export default function ChatBox() {
 
                 //if user has uploaded a file, upload it to the server and get the response
                 if (file) {
+                    setCurrentPDF(file)
                     const response = await uploadPDF(file, input)
                     const aiResponse: Message = {
                         id: (Date.now() + 1).toString(),
