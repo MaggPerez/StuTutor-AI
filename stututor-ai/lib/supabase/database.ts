@@ -1,4 +1,4 @@
-import { createClient } from './client'
+import { createClient } from './server'
 import { Chat, ChatMessage, PDFDocument } from '@/types/Messages'
 
 
@@ -11,7 +11,7 @@ export async function createChat(title: string = "New Chat", pdfDocumentId?: str
     }
 
     const { data, error } = await supabase.from('chats').insert({
-        userId: user.id,
+        user_id: user.id,
         title: title,
         pdfDocumentId: pdfDocumentId
     }).select().single()
@@ -29,7 +29,7 @@ export async function createChat(title: string = "New Chat", pdfDocumentId?: str
  * Gets all chats for the current user
  */
 export async function getUserChats(limit: number = 20): Promise<Chat[]> {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error('User not authenticated')
@@ -51,7 +51,7 @@ export async function getUserChats(limit: number = 20): Promise<Chat[]> {
  * Gets a single chat by ID
  */
 export async function getChatById(chatId: string): Promise<Chat | null> {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     const { data, error } = await supabase
         .from('chats')
@@ -72,7 +72,7 @@ export async function getChatById(chatId: string): Promise<Chat | null> {
  * Updates a chat
  */
 export async function updateChat(chatId: string, updates: Partial<Chat>) {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     const { data, error } = await supabase
         .from('chats')
@@ -96,7 +96,7 @@ export async function updateChat(chatId: string, updates: Partial<Chat>) {
  * Deletes a chat (soft delete)
  */
 export async function deleteChat(chatId: string) {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     const { error } = await supabase.rpc('soft_delete_chat', {
         chat_uuid: chatId
@@ -111,7 +111,7 @@ export async function deleteChat(chatId: string) {
  * Gets all messages for a chat
  */
 export async function getChatMessages(chatId: string): Promise<ChatMessage[]> {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     const { data, error } = await supabase
         .from('chat_messages')
@@ -134,7 +134,7 @@ export async function createMessage(
     content: string,
     metadata?: any
 ): Promise<ChatMessage> {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     const { data, error } = await supabase
         .from('chat_messages')
@@ -160,7 +160,7 @@ export async function createMessages(
     chatId: string,
     messages: Array<{ role: 'user' | 'assistant'; content: string; metadata?: any }>
 ): Promise<ChatMessage[]> {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     const messagesToInsert = messages.map(msg => ({
         chat_id: chatId,
@@ -190,7 +190,7 @@ export async function createPDFDocument(
     storagePath: string,
     metadata?: any
 ): Promise<PDFDocument> {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error('User not authenticated')
@@ -219,7 +219,7 @@ export async function createPDFDocument(
  * Gets a PDF document by ID
  */
 export async function getPDFDocument(pdfId: string): Promise<PDFDocument | null> {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     const { data, error } = await supabase
         .from('pdf_documents')

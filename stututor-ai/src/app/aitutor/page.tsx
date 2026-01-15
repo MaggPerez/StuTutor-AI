@@ -1,6 +1,6 @@
 
-
 import React from 'react'
+import Link from 'next/link'
 import {
     MessageSquare,
     FileText,
@@ -30,7 +30,7 @@ export default async function AITutorPage() {
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
-        redirect('/login')
+        redirect('/dashboard')
     }
 
     const chat = await createChat()
@@ -41,42 +41,42 @@ export default async function AITutorPage() {
             title: "AI Chat Tutor",
             description: "Get instant help with your studies from our advanced AI tutor. Upload documents and ask questions.",
             icon: <MessageSquare className="h-8 w-8 text-primary" />,
-            action: () => redirect(`/aitutor/${chat.id}`),
+            href: `/aitutor/${chat.id}`,
             active: true
         },
         {
             title: "Document Summarizer",
             description: "Upload lengthy documents and get concise summaries and key takeaways in seconds.",
             icon: <FileText className="h-8 w-8 text-muted-foreground" />,
-            action: () => { }, // Placeholder
+            href: null,
             active: false
         },
         {
             title: "Quiz Generator",
             description: "Create custom quizzes from your study materials to test your knowledge and prepare for exams.",
             icon: <Brain className="h-8 w-8 text-muted-foreground" />,
-            action: () => { }, // Placeholder
+            href: null,
             active: false
         },
         {
             title: "Essay Assistant",
             description: "Get feedback on your writing, structure suggestions, and help with brainstorming ideas.",
             icon: <PenTool className="h-8 w-8 text-muted-foreground" />,
-            action: () => { }, // Placeholder
+            href: null,
             active: false
         },
         {
             title: "Math Solver",
             description: "Step-by-step solutions for complex mathematical problems and equations.",
             icon: <Calculator className="h-8 w-8 text-muted-foreground" />,
-            action: () => { }, // Placeholder
+            href: null,
             active: false
         },
         {
             title: "Language Practice",
             description: "Practice conversation, grammar, and vocabulary in multiple languages.",
             icon: <Languages className="h-8 w-8 text-muted-foreground" />,
-            action: () => { }, // Placeholder
+            href: null,
             active: false
         }
     ]
@@ -103,28 +103,45 @@ export default async function AITutorPage() {
 
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {features.map((feature, index) => (
-                            <Card
-                                key={index}
-                                className={`transition-all duration-200 hover:shadow-lg ${feature.active ? 'cursor-pointer hover:border-primary/50' : 'opacity-70 cursor-not-allowed bg-muted/30'}`}
-                                onClick={feature.active ? feature.action : undefined}
-                            >
-                                <CardHeader>
-                                    <div className="mb-4 inline-flex items-center justify-center rounded-lg bg-secondary/20 p-3 w-fit">
-                                        {feature.icon}
-                                    </div>
-                                    <CardTitle className="text-xl mb-2">{feature.title}</CardTitle>
-                                    <CardDescription className="text-base line-clamp-3">
-                                        {feature.description}
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className={`text-sm font-medium ${feature.active ? 'text-primary' : 'text-muted-foreground'}`}>
-                                        {feature.active ? 'Try now →' : 'Coming soon'}
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ))}
+                        {features.map((feature, index) => {
+                            const cardContent = (
+                                <>
+                                    <CardHeader>
+                                        <div className="mb-4 inline-flex items-center justify-center rounded-lg bg-secondary/20 p-3 w-fit">
+                                            {feature.icon}
+                                        </div>
+                                        <CardTitle className="text-xl mb-2">{feature.title}</CardTitle>
+                                        <CardDescription className="text-base line-clamp-3">
+                                            {feature.description}
+                                        </CardDescription>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className={`text-sm font-medium ${feature.active ? 'text-primary' : 'text-muted-foreground'}`}>
+                                            {feature.active ? 'Try now →' : 'Coming soon'}
+                                        </div>
+                                    </CardContent>
+                                </>
+                            )
+
+                            if (feature.active && feature.href) {
+                                return (
+                                    <Link key={index} href={feature.href}>
+                                        <Card className="transition-all duration-200 hover:shadow-lg cursor-pointer hover:border-primary/50 h-full">
+                                            {cardContent}
+                                        </Card>
+                                    </Link>
+                                )
+                            }
+
+                            return (
+                                <Card
+                                    key={index}
+                                    className="transition-all duration-200 opacity-70 cursor-not-allowed bg-muted/30"
+                                >
+                                    {cardContent}
+                                </Card>
+                            )
+                        })}
                     </div>
                 </div>
             </SidebarInset>
