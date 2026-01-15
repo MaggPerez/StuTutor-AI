@@ -1,15 +1,16 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  ZoomIn, 
-  ZoomOut, 
-  RotateCw, 
-  Loader2
+import {
+  ChevronLeft,
+  ChevronRight,
+  ZoomIn,
+  ZoomOut,
+  RotateCw,
+  Loader2,
+  File
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -21,21 +22,28 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 // Set up the worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
-interface PDFViewerProps {
-  file?: File | null;
-}
 
-export default function PDFViewer({ file }: PDFViewerProps) {
+
+export default function PDFViewer() {
   const [numPages, setNumPages] = useState<number>(0);
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [scale, setScale] = useState<number>(1.0);
   const [rotation, setRotation] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [inputPage, setInputPage] = useState<string>('1');
-
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   // Constraints
   const minScale = 0.5;
   const maxScale = 3.0;
+
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const pdfFile = e.target.files?.[0]
+    if (pdfFile) {
+      setPdfFile(pdfFile)
+    }
+  }
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
     setNumPages(numPages);
@@ -80,7 +88,7 @@ export default function PDFViewer({ file }: PDFViewerProps) {
       }
     }
   };
-  
+
   // Ensure input stays synced when pageNumber changes via buttons
   useEffect(() => {
     setInputPage(pageNumber.toString());
@@ -93,33 +101,33 @@ export default function PDFViewer({ file }: PDFViewerProps) {
         <div className="flex items-center gap-1">
 
           {/* Previous Page Button */}
-           <TooltipProvider>
+          <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    onClick={() => handlePageChange(pageNumber - 1)} 
-                    disabled={pageNumber <= 1 || loading}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => handlePageChange(pageNumber - 1)}
+                  disabled={pageNumber <= 1 || loading}
                 >
-                    <ChevronLeft className="h-4 w-4" />
+                  <ChevronLeft className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Previous Page</TooltipContent>
             </Tooltip>
-           </TooltipProvider>
+          </TooltipProvider>
 
           {/* Page Input */}
           <div className="flex items-center gap-2 mx-2">
-            <Input 
-                className="h-8 w-12 text-center px-1" 
-                value={inputPage}
-                onChange={handleInputChange}
-                onKeyDown={handleInputKeyDown}
-                disabled={loading}
+            <Input
+              className="h-8 w-12 text-center px-1"
+              value={inputPage}
+              onChange={handleInputChange}
+              onKeyDown={handleInputKeyDown}
+              disabled={loading}
             />
             <span className="text-sm text-muted-foreground whitespace-nowrap">
-                / {numPages || '--'}
+              / {numPages || '--'}
             </span>
           </div>
 
@@ -127,13 +135,13 @@ export default function PDFViewer({ file }: PDFViewerProps) {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    onClick={() => handlePageChange(pageNumber + 1)} 
-                    disabled={pageNumber >= numPages || loading}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => handlePageChange(pageNumber + 1)}
+                  disabled={pageNumber >= numPages || loading}
                 >
-                    <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Next Page</TooltipContent>
@@ -143,13 +151,13 @@ export default function PDFViewer({ file }: PDFViewerProps) {
 
         <div className="flex items-center gap-1">
           <Separator orientation="vertical" className="h-6 mx-2" />
-          
+
           {/* Zoom Out Button */}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button variant="ghost" size="icon" onClick={handleZoomOut} disabled={scale <= minScale || loading}>
-                    <ZoomOut className="h-4 w-4" />
+                  <ZoomOut className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Zoom Out</TooltipContent>
@@ -165,7 +173,7 @@ export default function PDFViewer({ file }: PDFViewerProps) {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button variant="ghost" size="icon" onClick={handleZoomIn} disabled={scale >= maxScale || loading}>
-                    <ZoomIn className="h-4 w-4" />
+                  <ZoomIn className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Zoom In</TooltipContent>
@@ -173,13 +181,13 @@ export default function PDFViewer({ file }: PDFViewerProps) {
           </TooltipProvider>
 
           {/* Rotate Button */}
-           <Separator orientation="vertical" className="h-6 mx-2" />
+          <Separator orientation="vertical" className="h-6 mx-2" />
 
-           <TooltipProvider>
+          <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button variant="ghost" size="icon" onClick={handleRotate} disabled={loading}>
-                    <RotateCw className="h-4 w-4" />
+                  <RotateCw className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Rotate</TooltipContent>
@@ -191,39 +199,56 @@ export default function PDFViewer({ file }: PDFViewerProps) {
       {/* Main Viewer Area */}
       <div className="flex-1 w-full bg-gray-100 dark:bg-zinc-950/50 overflow-hidden relative">
         <ScrollArea className="h-full w-full">
-            <div className="flex justify-center p-8 min-h-full">
+          <div className="flex justify-center p-8 min-h-full">
 
-              {/* PDF Document */}
-                <Document 
-                    file={file} 
-                    onLoadSuccess={onDocumentLoadSuccess}
-                    onLoadStart={onDocumentLoadStart}
-                    loading={
-                        <div className="flex flex-col items-center justify-center h-64 gap-2">
-                            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                            <p className="text-sm text-muted-foreground">Loading PDF...</p>
-                        </div>
-                    }
-                    error={
-                        <div className="flex flex-col items-center justify-center h-64 gap-2 text-destructive">
-                             <p>Failed to load PDF.</p>
-                        </div>
-                    }
-                    className="shadow-lg"
-                >
+            {pdfFile ? (
+              // PDF Document
+              <Document
+                file={pdfFile}
+                onLoadSuccess={onDocumentLoadSuccess}
+                onLoadStart={onDocumentLoadStart}
+                loading={
+                  <div className="flex flex-col items-center justify-center h-64 gap-2">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    <p className="text-sm text-muted-foreground">Loading PDF...</p>
+                  </div>
+                }
+                error={
+                  <div className="flex flex-col items-center justify-center h-64 gap-2 text-destructive">
+                    <p>Failed to load PDF.</p>
+                  </div>
+                }
+                className="shadow-lg"
+              >
 
-                    {/* Current Page */}
-                    <Page 
-                        pageNumber={pageNumber} 
-                        scale={scale} 
-                        rotate={rotation}
-                        className="shadow-md"
-                        renderTextLayer={true}
-                        renderAnnotationLayer={true}
-                    />
-                </Document>
-            </div>
-            <ScrollBar orientation="horizontal" />
+                {/* Current Page */}
+                <Page
+                  pageNumber={pageNumber}
+                  scale={scale}
+                  rotate={rotation}
+                  className="shadow-md"
+                  renderTextLayer={true}
+                  renderAnnotationLayer={true}
+                />
+              </Document>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-64 gap-4">
+                <div className="rounded-full bg-muted p-6">
+                  <File className="h-16 w-16 text-muted-foreground" />
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                  <p className="text-lg font-medium">No PDF loaded</p>
+                  <p className="text-sm text-muted-foreground">Upload a PDF file to get started</p>
+                </div>
+                <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
+                  <File className="h-4 w-4 mr-2" />
+                  Choose PDF File
+                  <input type="file" className="hidden" onChange={handleFileChange} ref={fileInputRef} />
+                </Button>
+              </div>
+            )}
+          </div>
+          <ScrollBar orientation="horizontal" />
         </ScrollArea>
       </div>
     </div>
