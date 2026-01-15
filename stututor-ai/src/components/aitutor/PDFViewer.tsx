@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
@@ -9,7 +9,8 @@ import {
   ZoomIn, 
   ZoomOut, 
   RotateCw, 
-  Loader2
+  Loader2,
+  File
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -17,21 +18,22 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { usePDF } from '@/contexts/PDFContext';
 
 // Set up the worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
-interface PDFViewerProps {
-  file?: File | null;
-}
 
-export default function PDFViewer({ file }: PDFViewerProps) {
+
+export default function PDFViewer() {
   const [numPages, setNumPages] = useState<number>(0);
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [scale, setScale] = useState<number>(1.0);
   const [rotation, setRotation] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [inputPage, setInputPage] = useState<string>('1');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { currentPDF, setCurrentPDF } = usePDF();
 
   // Constraints
   const minScale = 0.5;
@@ -64,6 +66,13 @@ export default function PDFViewer({ file }: PDFViewerProps) {
       setInputPage(newPage.toString());
     }
   };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+        setCurrentPDF(file)
+    }
+}
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputPage(e.target.value);
@@ -172,9 +181,9 @@ export default function PDFViewer({ file }: PDFViewerProps) {
             </Tooltip>
           </TooltipProvider>
 
-          {/* Rotate Button */}
            <Separator orientation="vertical" className="h-6 mx-2" />
 
+          {/* Rotate Button */}
            <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -194,34 +203,52 @@ export default function PDFViewer({ file }: PDFViewerProps) {
             <div className="flex justify-center p-8 min-h-full">
 
               {/* PDF Document */}
-                <Document 
-                    file={file} 
-                    onLoadSuccess={onDocumentLoadSuccess}
-                    onLoadStart={onDocumentLoadStart}
-                    loading={
-                        <div className="flex flex-col items-center justify-center h-64 gap-2">
-                            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                            <p className="text-sm text-muted-foreground">Loading PDF...</p>
-                        </div>
-                    }
-                    error={
-                        <div className="flex flex-col items-center justify-center h-64 gap-2 text-destructive">
-                             <p>Failed to load PDF.</p>
-                        </div>
-                    }
-                    className="shadow-lg"
-                >
+                {currentPDF ? (
+                  <Document 
+                  file={currentPDF} 
+                  onLoadSuccess={onDocumentLoadSuccess}
+                  onLoadStart={onDocumentLoadStart}
+                  loading={
+                      <div className="flex flex-col items-center justify-center h-64 gap-2">
+                          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                          <p className="text-sm text-muted-foreground">Loading PDF...</p>
+                      </div>
+                  }
+                  error={
+                      <div className="flex flex-col items-center justify-center h-64 gap-2 text-destructive">
+                           <p>Failed to load PDF.</p>
+                      </div>
+                  }
+                  className="shadow-lg"
+              >
 
-                    {/* Current Page */}
-                    <Page 
-                        pageNumber={pageNumber} 
-                        scale={scale} 
-                        rotate={rotation}
-                        className="shadow-md"
-                        renderTextLayer={true}
-                        renderAnnotationLayer={true}
-                    />
-                </Document>
+                  {/* Current Page */}
+                  <Page 
+                      pageNumber={pageNumber} 
+                      scale={scale} 
+                      rotate={rotation}
+                      className="shadow-md"
+                      renderTextLayer={true}
+                      renderAnnotationLayer={true}
+                  />
+              </Document>
+                ) : (
+                  // If no PDF file is selected, show a message and a button to select a PDF file
+                  <div className="flex flex-col items-center justify-center h-64 gap-4">
+                    <div className="rounded-full bg-muted p-6">
+                      <File className="h-16 w-16 text-muted-foreground" />
+                    </div>
+                    <div className="flex flex-col items-center gap-2">
+                      <p className="text-lg font-medium">No PDF loaded</p>
+                      <p className="text-sm text-muted-foreground">Upload a PDF file to get started</p>
+                    </div>
+                    <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
+                      <File className="h-4 w-4 mr-2" />
+                      Choose PDF File
+                    </Button>
+                    <input type="file" className="hidden" onChange={handleFileChange} ref={fileInputRef} />
+                  </div>
+                )}
             </div>
             <ScrollBar orientation="horizontal" />
         </ScrollArea>

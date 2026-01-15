@@ -34,7 +34,6 @@ export default function ChatBox() {
     const [input, setInput] = useState('')
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const [isLoading, setIsLoading] = useState(false)
-    const [file, setFile] = useState<File | null>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
     const { currentPDF, setCurrentPDF } = usePDF()
 
@@ -49,7 +48,7 @@ export default function ChatBox() {
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (file) {
-            setFile(file)
+            setCurrentPDF(file)
         }
     }
 
@@ -67,7 +66,6 @@ export default function ChatBox() {
 
         setMessages(prev => [...prev, newMessage])
         setInput('')
-        setFile(null)
 
         // Send message to AI and get response
         setTimeout(async () => {
@@ -75,9 +73,8 @@ export default function ChatBox() {
             try {
 
                 //if user has uploaded a file, upload it to the server and get the response
-                if (file) {
-                    setCurrentPDF(file)
-                    const response = await uploadPDF(file, input)
+                if (currentPDF) {
+                    const response = await uploadPDF(currentPDF, input)
                     const aiResponse: Message = {
                         id: (Date.now() + 1).toString(),
                         role: 'assistant',
@@ -217,10 +214,10 @@ export default function ChatBox() {
 
             {/* Input Area */}
             <div className='p-4 border-t bg-background/50 backdrop-blur-sm'>
-                {file && (
+                {currentPDF && (
                     <div className="flex items-center gap-2 mb-2">
                         <File className="h-4 w-4" />
-                        <p className="text-sm text-muted-foreground">{file.name}</p>
+                        <p className="text-sm text-muted-foreground">{currentPDF.name}</p>
                     </div>
                 )}
                 <div className='relative flex items-end gap-2 bg-secondary/30 p-2 rounded-xl border focus-within:ring-1 focus-within:ring-ring'>

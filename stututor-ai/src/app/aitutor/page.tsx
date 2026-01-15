@@ -9,16 +9,20 @@ import {
 import ChatHistory from '@/components/aitutor/ChatHistory'
 import ChatBox from '@/components/aitutor/ChatBox'
 import { PDFProvider } from '@/contexts/PDFContext'
-import { usePDF } from '@/contexts/PDFContext'
+import { Loader2 } from 'lucide-react'
+
 
 // Import PDFViewer without SSR
 const PDFViewer = dynamic(() => import('@/components/aitutor/PDFViewer'), {
     ssr: false,
-    loading: () => <div>Loading PDF viewer...</div>
+    loading: () => <div className="flex flex-col items-center justify-center h-full">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="text-sm text-muted-foreground">Loading PDF viewer...</p>
+    </div>
 })
 
 function AITutorContent() {
-    const { currentPDF } = usePDF()
+
 
     return (
         <ResizablePanelGroup direction="horizontal">
@@ -27,7 +31,7 @@ function AITutorContent() {
             </ResizablePanel>
             <ResizableHandle />
             <ResizablePanel defaultSize={40} className="h-full">
-                <PDFViewer file={currentPDF} />
+                <PDFViewer />
             </ResizablePanel>
             <ResizableHandle />
             <ResizablePanel defaultSize={20} className="h-full w-full">
