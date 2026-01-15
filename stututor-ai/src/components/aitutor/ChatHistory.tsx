@@ -13,23 +13,16 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import ChatItem from '@/components/aitutor/ChatItem'
 import { useRouter } from 'next/navigation'
+import { Chat } from '@/types/Messages'
 
 
-// Dummy data for UI demonstration
-const MOCK_CHATS = [
-    { id: '1', title: 'Calculus Derivatives Help', date: new Date() },
-    { id: '2', title: 'Physics: Newton\'s Laws', date: new Date() },
-    { id: '3', title: 'Essay Brainstorming', date: new Date(Date.now() - 86400000) }, // Yesterday
-    { id: '4', title: 'History of Rome', date: new Date(Date.now() - 172800000) }, // 2 days ago
-    { id: '5', title: 'Linear Algebra Notes', date: new Date(Date.now() - 604800000) }, // 1 week ago
-]
-
-export default function ChatHistory() {
+export default function ChatHistory({ initialActiveChatId }: { initialActiveChatId: string }) {
     const [searchQuery, setSearchQuery] = useState('')
-    const [activeChatId, setActiveChatId] = useState<string | null>('1')
+    const [chats, setChats] = useState<Chat[]>([])
     const router = useRouter()
+    const [activeChatId, setActiveChatId] = useState<string | null>(initialActiveChatId)
     // Simple filtering based on search
-    const filteredChats = MOCK_CHATS.filter(chat => 
+    const filteredChats = chats.filter(chat => 
         chat.title.toLowerCase().includes(searchQuery.toLowerCase())
     )
 
@@ -55,6 +48,16 @@ export default function ChatHistory() {
             date.getFullYear() === yesterday.getFullYear()
     }
 
+    function handleNewChat() {
+        const newChat: Chat = {
+            id: Date.now().toString(),
+            title: 'New Chat',
+            date: new Date(),
+            chatMessages: []
+        }
+        setChats(prev => [...prev, newChat])
+    }
+
     return (
         <div className='flex flex-col h-full w-full bg-background border-r'>
             {/* Header */}
@@ -77,7 +80,7 @@ export default function ChatHistory() {
 
                     {/* New Chat button */}
                     <Button 
-                        onClick={() => {}}
+                        onClick={handleNewChat}
                         variant="outline"
                         size="sm"
                         className="h-8 px-2 cursor-pointer"
