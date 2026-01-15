@@ -13,25 +13,26 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import ChatItem from '@/components/aitutor/ChatItem'
 import { useRouter } from 'next/navigation'
-
-
-// Dummy data for UI demonstration
-const MOCK_CHATS = [
-    { id: '1', title: 'Calculus Derivatives Help', date: new Date() },
-    { id: '2', title: 'Physics: Newton\'s Laws', date: new Date() },
-    { id: '3', title: 'Essay Brainstorming', date: new Date(Date.now() - 86400000) }, // Yesterday
-    { id: '4', title: 'History of Rome', date: new Date(Date.now() - 172800000) }, // 2 days ago
-    { id: '5', title: 'Linear Algebra Notes', date: new Date(Date.now() - 604800000) }, // 1 week ago
-]
+import { useChatContext } from '@/contexts/ChatContext'
 
 export default function ChatHistory() {
     const [searchQuery, setSearchQuery] = useState('')
-    const [activeChatId, setActiveChatId] = useState<string | null>('1')
     const router = useRouter()
+    const {
+        conversations,
+        currentConversation,
+        createNewConversation,
+        loadMessages,
+    } = useChatContext()
+
     // Simple filtering based on search
-    const filteredChats = MOCK_CHATS.filter(chat => 
+    const filteredChats = conversations.filter(chat =>
         chat.title.toLowerCase().includes(searchQuery.toLowerCase())
-    )
+    ).map(conv => ({
+        id: conv.id,
+        title: conv.title,
+        date: new Date(conv.updated_at)
+    }))
 
     // Grouping chats by date categories
     const groupedChats = {
@@ -76,8 +77,8 @@ export default function ChatHistory() {
                     <h2 className="text-lg font-semibold tracking-tight">Chats</h2>
 
                     {/* New Chat button */}
-                    <Button 
-                        onClick={() => {}}
+                    <Button
+                        onClick={() => createNewConversation(`New Chat ${new Date().toLocaleDateString()}`)}
                         variant="outline"
                         size="sm"
                         className="h-8 px-2 cursor-pointer"
@@ -111,11 +112,11 @@ export default function ChatHistory() {
                                 Today
                             </h3>
                             {groupedChats.today.map((chat) => (
-                                <ChatItem 
-                                    key={chat.id} 
-                                    chat={chat} 
-                                    isActive={activeChatId === chat.id} 
-                                    onClick={() => setActiveChatId(chat.id)}
+                                <ChatItem
+                                    key={chat.id}
+                                    chat={chat}
+                                    isActive={currentConversation?.id === chat.id}
+                                    onClick={() => loadMessages(chat.id)}
                                 />
                             ))}
                         </div>
@@ -128,11 +129,11 @@ export default function ChatHistory() {
                                 Yesterday
                             </h3>
                             {groupedChats.yesterday.map((chat) => (
-                                <ChatItem 
-                                    key={chat.id} 
-                                    chat={chat} 
-                                    isActive={activeChatId === chat.id} 
-                                    onClick={() => setActiveChatId(chat.id)}
+                                <ChatItem
+                                    key={chat.id}
+                                    chat={chat}
+                                    isActive={currentConversation?.id === chat.id}
+                                    onClick={() => loadMessages(chat.id)}
                                 />
                             ))}
                         </div>
@@ -145,11 +146,11 @@ export default function ChatHistory() {
                                 Previous 7 Days
                             </h3>
                             {groupedChats.previous.map((chat) => (
-                                <ChatItem 
-                                    key={chat.id} 
-                                    chat={chat} 
-                                    isActive={activeChatId === chat.id} 
-                                    onClick={() => setActiveChatId(chat.id)}
+                                <ChatItem
+                                    key={chat.id}
+                                    chat={chat}
+                                    isActive={currentConversation?.id === chat.id}
+                                    onClick={() => loadMessages(chat.id)}
                                 />
                             ))}
                         </div>

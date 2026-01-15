@@ -3,13 +3,14 @@ import { useState, useEffect } from 'react'
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  ZoomIn, 
-  ZoomOut, 
-  RotateCw, 
-  Loader2
+import {
+  ChevronLeft,
+  ChevronRight,
+  ZoomIn,
+  ZoomOut,
+  RotateCw,
+  Loader2,
+  FileText
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -17,6 +18,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useChatContext } from '@/contexts/ChatContext';
 
 // Set up the worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
@@ -26,6 +28,7 @@ interface PDFViewerProps {
 }
 
 export default function PDFViewer({ file }: PDFViewerProps) {
+  const { currentPDFUrl, currentPDF } = useChatContext();
   const [numPages, setNumPages] = useState<number>(0);
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [scale, setScale] = useState<number>(1.0);
@@ -85,6 +88,10 @@ export default function PDFViewer({ file }: PDFViewerProps) {
   useEffect(() => {
     setInputPage(pageNumber.toString());
   }, [pageNumber]);
+
+  // Determine which PDF source to use: props file or context URL
+  const pdfSource = file || currentPDFUrl;
+  const hasPDF = !!(file || currentPDFUrl);
 
   return (
     <div className="flex flex-col h-full w-full bg-gray-100/50 dark:bg-zinc-900/50 border rounded-md overflow-hidden">
@@ -194,8 +201,9 @@ export default function PDFViewer({ file }: PDFViewerProps) {
             <div className="flex justify-center p-8 min-h-full">
 
               {/* PDF Document */}
-                <Document 
-                    file={file} 
+              {hasPDF ? (
+                <Document
+                    file={pdfSource}
                     onLoadSuccess={onDocumentLoadSuccess}
                     onLoadStart={onDocumentLoadStart}
                     loading={
@@ -213,15 +221,24 @@ export default function PDFViewer({ file }: PDFViewerProps) {
                 >
 
                     {/* Current Page */}
-                    <Page 
-                        pageNumber={pageNumber} 
-                        scale={scale} 
+                    <Page
+                        pageNumber={pageNumber}
+                        scale={scale}
                         rotate={rotation}
                         className="shadow-md"
                         renderTextLayer={true}
                         renderAnnotationLayer={true}
                     />
                 </Document>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-full gap-4 text-muted-foreground">
+                  <FileText className="h-16 w-16 opacity-20" />
+                  <div className="text-center">
+                    <p className="text-sm font-medium">No PDF loaded</p>
+                    <p className="text-xs mt-1">Upload a PDF to get started</p>
+                  </div>
+                </div>
+              )}
             </div>
             <ScrollBar orientation="horizontal" />
         </ScrollArea>

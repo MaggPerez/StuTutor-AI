@@ -7,9 +7,11 @@ import { Textarea } from '@/components/ui/textarea'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { cn } from '@/lib/utils'
-import { sendMessage, uploadPDF } from './actions'
+import { sendMessage, uploadPDF as uploadPDFToGemini } from './actions'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { useChatContext } from '@/contexts/ChatContext'
+import type { ChatMessage } from '@/types/chat'
 
 interface Message {
     id: string;
@@ -18,7 +20,6 @@ interface Message {
     timestamp: Date;
 }
 
-// Mock initial messages
 const INITIAL_MESSAGES: Message[] = [
     {
         id: '1',
@@ -29,12 +30,40 @@ const INITIAL_MESSAGES: Message[] = [
 ]
 
 export default function ChatBox() {
-    const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES)
+    const {
+        currentConversation,
+        messages: contextMessages,
+        addMessage,
+        uploadPDF,
+        createNewConversation,
+        userId
+    } = useChatContext()
+
+    const [localMessages, setLocalMessages] = useState<Message[]>(INITIAL_MESSAGES)
     const [input, setInput] = useState('')
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const [isLoading, setIsLoading] = useState(false)
     const [file, setFile] = useState<File | null>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
+
+    // Sync context messages with local state
+    useEffect(() => {
+        if (contextMessages.length > 0) {
+            const formattedMessages = contextMessages.map(msg => ({
+                id: msg.id,
+                role: msg.role,
+                content: msg.content,
+                timestamp: new Date(msg.created_at)
+            }))
+            setLocalMessages(formattedMessages)
+        } else if (currentConversation && !isLoading) {
+            // New conversation with no messages, show initial message
+            setLocalMessages(INITIAL_MESSAGES)
+        } else if (!currentConversation) {
+            // No conversation selected, show welcome message
+            setLocalMessages(INITIAL_MESSAGES)
+        }
+    }, [contextMessages, currentConversation, isLoading])
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -42,76 +71,83 @@ export default function ChatBox() {
 
     useEffect(() => {
         scrollToBottom()
-    }, [messages])
+    }, [localMessages])
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]
-        if (file) {
-            setFile(file)
+        const selectedFile = e.target.files?.[0]
+        if (selectedFile) {
+            setFile(selectedFile)
         }
     }
 
-
-
-    const handleSend = () => {
+    const handleSend = async () => {
         if (!input.trim()) return
 
-        const newMessage: Message = {
-            id: Date.now().toString(),
-            role: 'user',
-            content: input,
-            timestamp: new Date()
-        }
+        const userMessage = input
+        const uploadedFile = file
 
-        setMessages(prev => [...prev, newMessage])
+        // Clear input immediately
         setInput('')
         setFile(null)
 
-        // Send message to AI and get response
-        setTimeout(async () => {
-            setIsLoading(true)
-            try {
+        setIsLoading(true)
+        try {
+            // Create or ensure we have a conversation FIRST
+            if (!currentConversation && userId) {
+                const title = uploadedFile ? `Chat about ${uploadedFile.name}` : `Chat ${new Date().toLocaleDateString()}`
+                await createNewConversation(title)
 
-                //if user has uploaded a file, upload it to the server and get the response
-                if (file) {
-                    const response = await uploadPDF(file, input)
-                    const aiResponse: Message = {
-                        id: (Date.now() + 1).toString(),
-                        role: 'assistant',
-                        content: response.message,
-                        timestamp: new Date()
-                    }
-                    setMessages(prev => [...prev, aiResponse])
-                }
-                else {
-                    // if user has not uploaded a file, send the message to the AI and get the response
-                    const response = await sendMessage(input)
-
-                    // Create AI response message
-                    const aiResponse: Message = {
-                        id: (Date.now() + 1).toString(),
-                        role: 'assistant',
-                        content: response.message,
-                        timestamp: new Date()
-                    }
-                    setMessages(prev => [...prev, aiResponse])
-                }
-            } catch (error) {
-
-                // if an error occurs, send a message to the user that an error occurred and try again later
-                const aiResponse: Message = {
-                    id: (Date.now() + 1).toString(),
-                    role: 'assistant',
-                    content: 'Sorry, I encountered an error. Please try again.',
-                    timestamp: new Date()
-                }
-                setMessages(prev => [...prev, aiResponse])
-            }
-            finally {
-                setIsLoading(false)
+                // Wait a moment for the conversation to be set in context
+                await new Promise(resolve => setTimeout(resolve, 100))
             }
 
-        }, 1000)
+            // Handle PDF upload if file is present
+            if (uploadedFile) {
+                // Upload PDF to Supabase
+                const uploadSuccess = await uploadPDF(uploadedFile)
+
+                if (uploadSuccess) {
+                    // Save user message
+                    await addMessage('user', userMessage)
+
+                    // Send to Gemini for processing
+                    const response = await uploadPDFToGemini(uploadedFile, userMessage)
+
+                    // Save AI response
+                    await addMessage('assistant', response.message)
+                } else {
+                    // Show error message locally
+                    const errorMsg = {
+                        id: Date.now().toString(),
+                        role: 'assistant' as const,
+                        content: 'Sorry, I encountered an error uploading the PDF. Please try again.',
+                        timestamp: new Date()
+                    }
+                    setLocalMessages(prev => [...prev, errorMsg])
+                }
+            } else {
+                // Regular message without file
+                await addMessage('user', userMessage)
+
+                // Send to Gemini
+                const response = await sendMessage(userMessage)
+
+                // Save AI response
+                await addMessage('assistant', response.message)
+            }
+        } catch (error) {
+            console.error('Error sending message:', error)
+            // Show error in UI locally
+            const errorMsg = {
+                id: Date.now().toString(),
+                role: 'assistant' as const,
+                content: 'Sorry, I encountered an error. Please try again.',
+                timestamp: new Date()
+            }
+            setLocalMessages(prev => [...prev, errorMsg])
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -137,7 +173,7 @@ export default function ChatBox() {
             {/* Messages Area */}
             <ScrollArea className='flex-1 p-4'>
                 <div className='space-y-4'>
-                    {messages.map((message) => (
+                    {localMessages.map((message) => (
                         <div
                             key={message.id}
                             className={cn(
