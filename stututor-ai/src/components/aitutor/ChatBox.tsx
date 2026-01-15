@@ -74,7 +74,7 @@ export default function ChatBox() {
 
                 //if user has uploaded a file, upload it to the server and get the response
                 if (currentPDF) {
-                    const response = await uploadPDF(currentPDF, input)
+                    const response = await uploadPDF(currentPDF as File, input)
                     const aiResponse: Message = {
                         id: (Date.now() + 1).toString(),
                         role: 'assistant',
@@ -217,7 +217,7 @@ export default function ChatBox() {
                 {currentPDF && (
                     <div className="flex items-center gap-2 mb-2">
                         <File className="h-4 w-4" />
-                        <p className="text-sm text-muted-foreground">{currentPDF.name}</p>
+                        <p className="text-sm text-muted-foreground">{(currentPDF as File).name}</p>
                     </div>
                 )}
                 <div className='relative flex items-end gap-2 bg-secondary/30 p-2 rounded-xl border focus-within:ring-1 focus-within:ring-ring'>

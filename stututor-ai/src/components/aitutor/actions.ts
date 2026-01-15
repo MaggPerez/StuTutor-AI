@@ -42,3 +42,44 @@ export async function storePDF(file: File) {
     }
     return data
 }
+
+
+
+export async function getPDFUrl(fileName: string) {
+
+    const { data, error } = await supabase.storage.from('pdf-documents').download(fileName)
+    if (error) {
+        console.error('Failed to download PDF:', error.message)
+        return null
+    }
+    return data
+}
+
+
+
+// export async function getPDFUrlTest() {
+//     // Check if user is authenticated
+//     const { data: { user } } = await supabase.auth.getUser()
+//     if (!user) {
+//         console.error('User not authenticated')
+//         return null
+//     }
+
+//     const { data, error } = await supabase.storage.from('pdf-documents').download("")
+//     if (error) {
+//         console.error('Failed to download PDF:', error.message)
+//         return null
+//     }
+//     return data
+// }
+
+
+export async function isExists(fileName: string) {
+    const { data, error } = await supabase.storage.from('pdf-documents').exists(fileName)
+
+    if (data) {
+        return true
+    } else {
+        return false
+    }
+}
