@@ -10,6 +10,7 @@ import ChatHistory from '@/components/aitutor/ChatHistory'
 import ChatBox from '@/components/aitutor/ChatBox'
 import { PDFProvider } from '@/contexts/PDFContext'
 import { Loader2 } from 'lucide-react'
+import { ChatProvider } from '@/contexts/ChatContext'
 
 // Import PDFViewer without SSR
 const PDFViewer = dynamic(() => import('@/components/aitutor/PDFViewer'), {
@@ -44,9 +45,11 @@ export default async function ChatPage({ params, }: { params: Promise<{ id: stri
 
     return (
         <div className="h-full w-full">
-            <PDFProvider>
-                <ChatPageContent id={id} />
-            </PDFProvider>
+            <ChatProvider initialChatId={id}>
+                <PDFProvider>
+                    <ChatPageContent id={id} />
+                </PDFProvider>
+            </ChatProvider>
         </div>
     )
 }

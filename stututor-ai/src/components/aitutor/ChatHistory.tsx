@@ -1,32 +1,26 @@
 'use client'
 
 import React, { useState } from 'react'
-import {
-    Plus,
-    Search,
-    ArrowLeft
-} from 'lucide-react'
-
+import { Plus, Search, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import ChatItem from '@/components/aitutor/ChatItem'
 import { useRouter } from 'next/navigation'
-import { Chat } from '@/types/Messages'
-
+import { useChat } from '@/contexts/ChatContext'
 
 export default function ChatHistory({ initialActiveChatId }: { initialActiveChatId: string }) {
     const [searchQuery, setSearchQuery] = useState('')
-    const [chats, setChats] = useState<Chat[]>([])
     const router = useRouter()
-    const [activeChatId, setActiveChatId] = useState<string | null>(initialActiveChatId)
-    // Simple filtering based on search
-    const filteredChats = chats.filter(chat => 
+    const { chats, createNewChat, switchChat, currentChatId } = useChat()
+
+    // Filter chats based on search
+    const filteredChats = chats.filter(chat =>
         chat.title.toLowerCase().includes(searchQuery.toLowerCase())
     )
 
-    // Grouping chats by date categories
+    // Group chats by date
     const groupedChats = {
         today: filteredChats.filter(chat => isToday(chat.createdAt)),
         yesterday: filteredChats.filter(chat => isYesterday(chat.createdAt)),
@@ -48,20 +42,14 @@ export default function ChatHistory({ initialActiveChatId }: { initialActiveChat
             date.getFullYear() === yesterday.getFullYear()
     }
 
-    function handleNewChat() {
-        const newChat: Chat = {
-            id: Date.now().toString(),
-            title: 'New Chat',
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            pdfDocumentId: null,
-            pdfDocumentName: null,
-            pdfDocumentUrl: null,
-            messageCount: 0,
-            chatMessages: [],
-            userId: ''
-        }
-        setChats(prev => [...prev, newChat])
+    async function handleNewChat() {
+        const newChatId = await createNewChat()
+        router.push(`/aitutor/${newChatId}`)
+    }
+
+    function handleChatClick(chatId: string) {
+        switchChat(chatId)
+        router.push(`/aitutor/${chatId}`)
     }
 
     return (
@@ -71,7 +59,7 @@ export default function ChatHistory({ initialActiveChatId }: { initialActiveChat
                 <div className="flex items-center justify-between">
 
                     {/* Back button */}
-                    <Button 
+                    <Button
                         onClick={() => router.back()}
                         variant="outline"
                         size="sm"
@@ -85,7 +73,7 @@ export default function ChatHistory({ initialActiveChatId }: { initialActiveChat
                     <h2 className="text-lg font-semibold tracking-tight">Chats</h2>
 
                     {/* New Chat button */}
-                    <Button 
+                    <Button
                         onClick={handleNewChat}
                         variant="outline"
                         size="sm"
@@ -95,11 +83,11 @@ export default function ChatHistory({ initialActiveChatId }: { initialActiveChat
                         New Chat
                     </Button>
                 </div>
-                
+
                 {/* Search */}
                 <div className="relative">
                     <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input 
+                    <Input
                         placeholder="Search chats..."
                         className="pl-8 h-9"
                         value={searchQuery}
@@ -120,11 +108,11 @@ export default function ChatHistory({ initialActiveChatId }: { initialActiveChat
                                 Today
                             </h3>
                             {groupedChats.today.map((chat) => (
-                                <ChatItem 
-                                    key={chat.id} 
-                                    chat={chat} 
-                                    isActive={activeChatId === chat.id} 
-                                    onClick={() => setActiveChatId(chat.id)}
+                                <ChatItem
+                                    key={chat.id}
+                                    chat={chat}
+                                    isActive={currentChatId === chat.id}
+                                    onClick={() => handleChatClick(chat.id)}
                                 />
                             ))}
                         </div>
@@ -137,33 +125,33 @@ export default function ChatHistory({ initialActiveChatId }: { initialActiveChat
                                 Yesterday
                             </h3>
                             {groupedChats.yesterday.map((chat) => (
-                                <ChatItem 
-                                    key={chat.id} 
-                                    chat={chat} 
-                                    isActive={activeChatId === chat.id} 
-                                    onClick={() => setActiveChatId(chat.id)}
+                                <ChatItem
+                                    key={chat.id}
+                                    chat={chat}
+                                    isActive={currentChatId === chat.id}
+                                    onClick={() => handleChatClick(chat.id)}
                                 />
                             ))}
                         </div>
                     )}
 
-                     {/* Previous */}
-                     {groupedChats.previous.length > 0 && (
+                    {/* Previous */}
+                    {groupedChats.previous.length > 0 && (
                         <div className="space-y-2">
                             <h3 className="text-xs font-medium text-muted-foreground px-2 py-1">
                                 Previous 7 Days
                             </h3>
                             {groupedChats.previous.map((chat) => (
-                                <ChatItem 
-                                    key={chat.id} 
-                                    chat={chat} 
-                                    isActive={activeChatId === chat.id} 
-                                    onClick={() => setActiveChatId(chat.id)}
+                                <ChatItem
+                                    key={chat.id}
+                                    chat={chat}
+                                    isActive={currentChatId === chat.id}
+                                    onClick={() => handleChatClick(chat.id)}
                                 />
                             ))}
                         </div>
                     )}
-                    
+
                     {/* No chats found */}
                     {filteredChats.length === 0 && (
                         <div className="text-center py-8 text-muted-foreground text-sm">

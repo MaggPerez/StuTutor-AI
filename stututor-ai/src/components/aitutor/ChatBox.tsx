@@ -11,6 +11,7 @@ import { sendMessage, uploadPDF } from './actions'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { usePDF } from '@/contexts/PDFContext'
+import { useChat } from '@/contexts/ChatContext'
 
 interface Message {
     id: string;
@@ -30,12 +31,13 @@ const INITIAL_MESSAGES: Message[] = [
 ]
 
 export default function ChatBox() {
-    const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES)
     const [input, setInput] = useState('')
     const messagesEndRef = useRef<HTMLDivElement>(null)
-    const [isLoading, setIsLoading] = useState(false)
     const fileInputRef = useRef<HTMLInputElement>(null)
     const { currentPDF, setCurrentPDF } = usePDF()
+
+    const [isSending, setIsSending] = useState(false)
+    const { messages, sendMessage: sendMessageToChat, receiveMessage, isLoading } = useChat()
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -54,64 +56,31 @@ export default function ChatBox() {
 
 
 
-    const handleSend = () => {
+    const handleSend = async () => {
         if (!input.trim()) return
 
-        const newMessage: Message = {
-            id: Date.now().toString(),
-            role: 'user',
-            content: input,
-            timestamp: new Date()
-        }
-
-        setMessages(prev => [...prev, newMessage])
+        const userMessage = input
         setInput('')
+        setIsSending(true)
 
-        // Send message to AI and get response
-        setTimeout(async () => {
-            setIsLoading(true)
-            try {
+        try {
+            // Save user message to database
+            await sendMessageToChat(userMessage)
 
-                //if user has uploaded a file, upload it to the server and get the response
-                if (currentPDF) {
-                    const response = await uploadPDF(currentPDF as File, input)
-                    const aiResponse: Message = {
-                        id: (Date.now() + 1).toString(),
-                        role: 'assistant',
-                        content: response.message,
-                        timestamp: new Date()
-                    }
-                    setMessages(prev => [...prev, aiResponse])
-                }
-                else {
-                    // if user has not uploaded a file, send the message to the AI and get the response
-                    const response = await sendMessage(input)
-
-                    // Create AI response message
-                    const aiResponse: Message = {
-                        id: (Date.now() + 1).toString(),
-                        role: 'assistant',
-                        content: response.message,
-                        timestamp: new Date()
-                    }
-                    setMessages(prev => [...prev, aiResponse])
-                }
-            } catch (error) {
-
-                // if an error occurs, send a message to the user that an error occurred and try again later
-                const aiResponse: Message = {
-                    id: (Date.now() + 1).toString(),
-                    role: 'assistant',
-                    content: 'Sorry, I encountered an error. Please try again.',
-                    timestamp: new Date()
-                }
-                setMessages(prev => [...prev, aiResponse])
+            // Send message to AI and get response
+            if (currentPDF) {
+                const response = await uploadPDF(currentPDF as File, userMessage)
+                await receiveMessage(response.message)
+            } else {
+                const response = await sendMessage(userMessage)
+                await receiveMessage(response.message)
             }
-            finally {
-                setIsLoading(false)
-            }
-
-        }, 1000)
+        } catch (error) {
+            console.error('Error sending message:', error)
+            await receiveMessage('Sorry, I encountered an error. Please try again.')
+        } finally {
+            setIsSending(false)
+        }
     }
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -192,7 +161,7 @@ export default function ChatBox() {
                     ))}
 
                     {/* Loading Indicator */}
-                    {isLoading && (
+                    {isSending && (
                         <div className="flex w-full gap-2 max-w-[90%] mr-auto">
                             <Avatar className="h-8 w-8 shrink-0">
                                 <AvatarFallback className="bg-primary text-primary-foreground text-xs">

@@ -1,7 +1,6 @@
-'use client'
+
 
 import React from 'react'
-import { useRouter } from 'next/navigation'
 import {
     MessageSquare,
     FileText,
@@ -20,16 +19,29 @@ import {
 import { AppSidebar } from '@/components/app-sidebar'
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
 import { SiteHeader } from '@/components/site-header'
+import { redirect } from 'next/navigation'
+import { createChat } from '../../../lib/supabase/database'
+import { createClient } from '../../../lib/supabase/server'
 
-export default function AITutorPage() {
-    const router = useRouter()
+
+export default async function AITutorPage() {
+    // Check if user is authenticated
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+        redirect('/login')
+    }
+
+    const chat = await createChat()
+
 
     const features = [
         {
             title: "AI Chat Tutor",
             description: "Get instant help with your studies from our advanced AI tutor. Upload documents and ask questions.",
             icon: <MessageSquare className="h-8 w-8 text-primary" />,
-            action: () => router.push('/aitutor'),
+            action: () => redirect(`/aitutor/${chat.id}`),
             active: true
         },
         {
