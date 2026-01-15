@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react"
 import { User } from "@supabase/supabase-js"
 import { createClient } from "../../lib/supabase/client"
+import { storePDF } from "../components/aitutor/actions"
 
 interface PDFContextType {
     currentPDFUrl: string | null
@@ -16,6 +17,12 @@ export function PDFProvider({ children }: { children: React.ReactNode }) {
     const [currentPDFUrl, setCurrentPDFUrl] = useState<string | null>(null)
     const [currentPDF, setCurrentPDF] = useState<File | null>(null)
     const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        if (currentPDF) {
+            storePDF(currentPDF)
+        }
+    }, [currentPDF])
 
 
     return (

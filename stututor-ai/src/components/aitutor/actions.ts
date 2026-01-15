@@ -1,3 +1,6 @@
+import { createClient } from '../../../lib/supabase/client'
+const supabase = createClient()
+
 const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 export async function sendMessage(message: string) {
@@ -28,5 +31,14 @@ export async function uploadPDF(file: File, question: string) {
         throw new Error('Failed to upload PDF')
     }
     const data = await response.json()
+    return data
+}
+
+
+export async function storePDF(file: File) {
+    const { data, error } = await supabase.storage.from('pdf-documents').upload(file.name, file)
+    if (error) {
+        throw new Error('Failed to store PDF: ' + error.message)
+    }
     return data
 }
