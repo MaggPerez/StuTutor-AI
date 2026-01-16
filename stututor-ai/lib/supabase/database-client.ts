@@ -50,7 +50,7 @@ export async function getUserChats(limit: number = 20): Promise<Chat[]> {
 /**
  * Gets a single chat by ID
  */
-export async function getChatById(chatId: string): Promise<Chat | null> {
+export async function getChatById(chatId: string | null): Promise<Chat | null> {
     const supabase = createClient()
 
     const { data, error } = await supabase
