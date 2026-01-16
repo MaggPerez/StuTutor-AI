@@ -63,11 +63,11 @@ export async function getPDFUrl(chatId: string | null) {
         console.error('Chat not found')
         return null
     }
-    const fileName = chat.pdfDocumentName
+    const fileName = chat.pdf_document_name
     
 
     if (!fileName) {
-        // console.error('PDF document name not found')
+        console.error('PDF document name not found')
         return null
     }
     
