@@ -7,8 +7,9 @@ import {
     getUserChats,
     getChatMessages,
     createMessage,
-    updateChat
-} from '../../lib/supabase/database'
+    updateChat,
+    deleteChat as deleteChatFromDb
+} from '../../lib/supabase/database-client'
 
 interface ChatContextType {
     currentChatId: string | null
@@ -25,6 +26,7 @@ interface ChatContextType {
     createNewChat: (title?: string, pdfDocumentId?: string) => Promise<string>
     switchChat: (chatId: string) => Promise<void>
     updateChatTitle: (chatId: string, title: string) => Promise<void>
+    deleteChat: (chatId: string) => Promise<void>
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined)
@@ -172,6 +174,19 @@ export function ChatProvider({ children, initialChatId }: { children: React.Reac
         }
     }
 
+    /**
+     * Delete a chat
+     */
+    const deleteChat = async (chatId: string) => {
+        try {
+            await deleteChatFromDb(chatId)
+            setChats(prev => prev.filter(c => c.id !== chatId))
+        } catch (error) {
+            console.error('Error deleting chat:', error)
+            throw error
+        }
+    }
+
     return (
         <ChatContext.Provider
             value={{
@@ -186,7 +201,8 @@ export function ChatProvider({ children, initialChatId }: { children: React.Reac
                 loadChats,
                 createNewChat,
                 switchChat,
-                updateChatTitle
+                updateChatTitle,
+                deleteChat
             }}
         >
             {children}

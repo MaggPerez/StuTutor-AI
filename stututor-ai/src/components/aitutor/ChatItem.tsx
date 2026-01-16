@@ -1,10 +1,11 @@
-
+'use client'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { MessageSquare } from 'lucide-react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Pencil, Archive, Trash2, MoreHorizontal } from 'lucide-react'
 import { Chat } from '@/types/Messages'
+import { useChat } from '@/contexts/ChatContext'
 
 
 interface ChatItemProps {
@@ -14,6 +15,7 @@ interface ChatItemProps {
 }
 
 export default function ChatItem({ chat, isActive, onClick }: ChatItemProps) {
+    const { deleteChat, currentChatId } = useChat()
     return (
         <div className="group relative flex items-center">
 
@@ -29,14 +31,14 @@ export default function ChatItem({ chat, isActive, onClick }: ChatItemProps) {
                 <MessageSquare className="mr-2 h-4 w-4 shrink-0 opacity-70" />
                 <span className="truncate">{chat.title}</span>
             </Button>
-            
+
             {/* Dropdown Menu */}
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
 
                     {/* Dropdown Menu Trigger */}
-                    <Button 
-                        variant="ghost" 
+                    <Button
+                        variant="ghost"
                         size="icon"
                         className={cn(
                             "absolute right-1 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer",
@@ -65,7 +67,7 @@ export default function ChatItem({ chat, isActive, onClick }: ChatItemProps) {
                     {/* Delete */}
                     <DropdownMenuItem className="text-destructive focus:text-destructive">
                         <Trash2 className="mr-2 h-3.5 w-3.5" />
-                        Delete
+                        <span onClick={() => deleteChat(chat.id)}>Delete</span>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
