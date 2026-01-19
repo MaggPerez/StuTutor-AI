@@ -29,7 +29,7 @@ const steps = [
 
 export const HowItWorks = () => {
   return (
-    <section id="how-it-works" className="py-24 bg-background overflow-hidden">
+    <section id="how-it-works" className="py-24 bg-background overflow-hidden min-h-screen flex flex-col justify-center">
       <div className="container mx-auto px-4">
         
         <div className="text-center mb-16">
