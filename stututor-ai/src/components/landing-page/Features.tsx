@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 export const Features = () => {
+  // State for AI Analysis
   const [isAnalyzing, setIsAnalyzing] = React.useState(false);
   const [showResult, setShowResult] = React.useState(false);
 
@@ -23,6 +24,19 @@ export const Features = () => {
     setTimeout(() => {
       setIsAnalyzing(false);
       setShowResult(true);
+    }, 2000);
+  };
+
+  // State for Instant Summaries
+  const [isSummarizing, setIsSummarizing] = React.useState(false);
+  const [showSummary, setShowSummary] = React.useState(false);
+
+  const handleSummarize = () => {
+    if (isSummarizing || showSummary) return;
+    setIsSummarizing(true);
+    setTimeout(() => {
+      setIsSummarizing(false);
+      setShowSummary(true);
     }, 2000);
   };
 
@@ -126,24 +140,82 @@ export const Features = () => {
             </div>
             
             <div className="relative z-10 flex-1 flex flex-col">
-              <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center mb-6">
-                <FileText className="w-6 h-6 text-blue-500" />
+              <div className="flex items-center justify-between mb-6">
+                 <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                  <FileText className="w-6 h-6 text-blue-500" />
+                </div>
+                {!showSummary && !isSummarizing && (
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={handleSummarize}
+                    className="h-8 text-xs border-blue-200 hover:bg-blue-50 hover:text-blue-600 dark:border-blue-900 dark:hover:bg-blue-950/50"
+                  >
+                    Summarize
+                  </Button>
+                )}
               </div>
+              
               <h3 className="text-xl font-bold mb-2">Instant Summaries</h3>
               <p className="text-muted-foreground mb-8">
                 Get the gist of 100-page readings in seconds. Bullet points, key takeaways, and action items.
               </p>
               
-              <div className="mt-auto space-y-4">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-muted/50 border border-border/30 backdrop-blur-sm transition-transform hover:scale-105 duration-200">
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 shrink-0 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
-                    <div className="space-y-2 w-full">
-                      <div className="h-1.5 w-3/4 bg-foreground/10 rounded-full" />
-                      <div className="h-1.5 w-full bg-foreground/10 rounded-full" />
+              <div className="mt-auto space-y-4 min-h-[160px] flex flex-col justify-end">
+                
+                {/* Default Skeleton State */}
+                {!isSummarizing && !showSummary && (
+                  <>
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-muted/50 border border-border/30 backdrop-blur-sm transition-transform hover:scale-105 duration-200">
+                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 shrink-0 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+                        <div className="space-y-2 w-full">
+                          <div className="h-1.5 w-3/4 bg-foreground/10 rounded-full" />
+                          <div className="h-1.5 w-full bg-foreground/10 rounded-full" />
+                        </div>
+                      </div>
+                    ))}
+                  </>
+                )}
+
+                {/* Loading State */}
+                {isSummarizing && (
+                  <div className="flex flex-col items-center justify-center h-full py-8 text-blue-500 animate-pulse">
+                    <Loader2 className="w-8 h-8 animate-spin mb-3" />
+                    <span className="text-sm font-medium">Generating summary...</span>
+                  </div>
+                )}
+
+                {/* Result State */}
+                {showSummary && (
+                  <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-3">
+                    <div className="p-3 rounded-xl bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800 backdrop-blur-sm">
+                      <div className="flex items-start gap-3">
+                         <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 shrink-0 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+                         <p className="text-sm text-foreground/90">
+                           <span className="font-semibold text-blue-600 dark:text-blue-400">Core Thesis:</span> The industrial revolution shifted global economic power.
+                         </p>
+                      </div>
+                    </div>
+                     <div className="p-3 rounded-xl bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800 backdrop-blur-sm">
+                      <div className="flex items-start gap-3">
+                         <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 shrink-0 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+                         <p className="text-sm text-foreground/90">
+                           <span className="font-semibold text-blue-600 dark:text-blue-400">Key Date:</span> 1760 - 1840 marked the transition period.
+                         </p>
+                      </div>
+                    </div>
+                    <div className="p-3 rounded-xl bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800 backdrop-blur-sm">
+                      <div className="flex items-start gap-3">
+                         <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 shrink-0 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+                         <p className="text-sm text-foreground/90">
+                           <span className="font-semibold text-blue-600 dark:text-blue-400">Impact:</span> Standard of living increased consistently for the first time.
+                         </p>
+                      </div>
                     </div>
                   </div>
-                ))}
+                )}
+
               </div>
             </div>
           </div>
