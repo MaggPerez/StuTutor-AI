@@ -1,17 +1,17 @@
-import React from 'react'
-import { Button } from '@/components/ui/button'
-import { Hero } from '@/components/landing-page/Hero'
-import { Features } from '@/components/landing-page/Features'
-import { HowItWorks } from '@/components/landing-page/HowItWorks'
-
+import { Hero } from '@/components/landing-page/Hero';
+import { HowItWorks } from '@/components/landing-page/HowItWorks';
+import { Features } from '@/components/landing-page/Features';
+import { CTASection } from '@/components/landing-page/CTASection';
+import { Footer } from '@/components/landing-page/Footer';
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen">
       <Hero />
       <HowItWorks />
-      {/* <UploadSection /> */}
       <Features />
+      <CTASection />
+      <Footer />
     </div>
-  )
+  );
 }
