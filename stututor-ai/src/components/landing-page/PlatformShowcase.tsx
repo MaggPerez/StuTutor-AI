@@ -1,3 +1,4 @@
+'use client'
 import {
   LayoutDashboard,
   BookOpen,
@@ -7,6 +8,7 @@ import {
   CalendarDays,
   GraduationCap,
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const capabilities = [
   {
@@ -59,39 +61,101 @@ const capabilities = [
   },
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: [0.25, 0.46, 0.45, 0.94] as const
+    }
+  }
+};
+
+const headerVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: [0.25, 0.46, 0.45, 0.94] as const
+    }
+  }
+};
+
 export const PlatformShowcase = () => {
   return (
     <section className="relative overflow-hidden bg-background py-24 lg:py-32">
       <div className="container mx-auto px-4">
         {/* Section Header */}
-        <div className="mx-auto mb-16 max-w-3xl text-center">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
+        <motion.div
+          className="mx-auto mb-16 max-w-3xl text-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={containerVariants}
+        >
+          <motion.div
+            variants={headerVariants}
+            className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-medium text-primary"
+          >
             <GraduationCap className="h-4 w-4" />
             Built for College Students
-          </div>
-          <h2 className="mb-6 text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+          </motion.div>
+          <motion.h2
+            variants={headerVariants}
+            className="mb-6 text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl"
+          >
             Your complete academic toolkit
-          </h2>
-          <p className="text-lg text-muted-foreground">
+          </motion.h2>
+          <motion.p
+            variants={headerVariants}
+            className="text-lg text-muted-foreground"
+          >
             More than just an AI tutor. StuTutor is a full-featured platform designed to help you manage and excel in your college journey.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         {/* Capabilities Grid */}
         <div className="mx-auto max-w-6xl">
           {/* Top Row - 3 items */}
-          <div className="mb-4 grid gap-4 md:grid-cols-3">
+          <motion.div
+            className="mb-4 grid gap-4 md:grid-cols-3"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={containerVariants}
+          >
             {capabilities.slice(0, 3).map((item, index) => {
               const Icon = item.icon;
               return (
-                <div
+                <motion.div
                   key={index}
+                  variants={itemVariants}
+                  whileHover={{ y: -8, transition: { duration: 0.2 } }}
                   className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5"
                 >
                   {/* Icon */}
-                  <div className={`mb-4 inline-flex rounded-xl ${item.lightColor} p-3 transition-transform duration-300 group-hover:scale-110`}>
+                  <motion.div
+                    className={`mb-4 inline-flex rounded-xl ${item.lightColor} p-3`}
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    transition={{ type: "spring", stiffness: 400 }}
+                  >
                     <Icon className={`h-6 w-6 ${item.textColor}`} />
-                  </div>
+                  </motion.div>
 
                   {/* Content */}
                   <h3 className="mb-2 text-lg font-bold text-foreground">
@@ -102,25 +166,42 @@ export const PlatformShowcase = () => {
                   </p>
 
                   {/* Hover Accent */}
-                  <div className={`absolute -bottom-1 left-0 h-1 w-0 ${item.color} transition-all duration-300 group-hover:w-full`}></div>
-                </div>
+                  <motion.div
+                    className={`absolute -bottom-1 left-0 h-1 ${item.color}`}
+                    initial={{ width: 0 }}
+                    whileHover={{ width: "100%" }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </motion.div>
               );
             })}
-          </div>
+          </motion.div>
 
           {/* Bottom Row - 3 items */}
-          <div className="grid gap-4 md:grid-cols-3">
+          <motion.div
+            className="grid gap-4 md:grid-cols-3"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={containerVariants}
+          >
             {capabilities.slice(3, 6).map((item, index) => {
               const Icon = item.icon;
               return (
-                <div
+                <motion.div
                   key={index}
+                  variants={itemVariants}
+                  whileHover={{ y: -8, transition: { duration: 0.2 } }}
                   className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5"
                 >
                   {/* Icon */}
-                  <div className={`mb-4 inline-flex rounded-xl ${item.lightColor} p-3 transition-transform duration-300 group-hover:scale-110`}>
+                  <motion.div
+                    className={`mb-4 inline-flex rounded-xl ${item.lightColor} p-3`}
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    transition={{ type: "spring", stiffness: 400 }}
+                  >
                     <Icon className={`h-6 w-6 ${item.textColor}`} />
-                  </div>
+                  </motion.div>
 
                   {/* Content */}
                   <h3 className="mb-2 text-lg font-bold text-foreground">
@@ -131,40 +212,76 @@ export const PlatformShowcase = () => {
                   </p>
 
                   {/* Hover Accent */}
-                  <div className={`absolute -bottom-1 left-0 h-1 w-0 ${item.color} transition-all duration-300 group-hover:w-full`}></div>
-                </div>
+                  <motion.div
+                    className={`absolute -bottom-1 left-0 h-1 ${item.color}`}
+                    initial={{ width: 0 }}
+                    whileHover={{ width: "100%" }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </motion.div>
               );
             })}
-          </div>
+          </motion.div>
         </div>
 
         {/* Visual Accent - App Preview Hint */}
-        <div className="mx-auto mt-16 max-w-4xl">
+        <motion.div
+          className="mx-auto mt-16 max-w-4xl"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
           <div className="relative rounded-2xl border border-border bg-gradient-to-br from-card via-card to-secondary/30 p-8 text-center">
             <div className="flex flex-wrap items-center justify-center gap-3">
               {capabilities.map((item, index) => {
                 const Icon = item.icon;
                 return (
-                  <div
+                  <motion.div
                     key={index}
-                    className={`flex h-12 w-12 items-center justify-center rounded-xl ${item.color} shadow-lg transition-transform hover:scale-110`}
+                    className={`flex h-12 w-12 items-center justify-center rounded-xl ${item.color} shadow-lg`}
+                    initial={{ opacity: 0, scale: 0 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.4 + index * 0.1, type: "spring", stiffness: 200 }}
+                    whileHover={{ scale: 1.15, rotate: 10 }}
                   >
                     <Icon className="h-6 w-6 text-white" />
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>
-            <p className="mt-6 text-sm text-muted-foreground">
+            <motion.p
+              className="mt-6 text-sm text-muted-foreground"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 1 }}
+            >
               All tools seamlessly integrated into one powerful platform
-            </p>
+            </motion.p>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Background Decoration */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute -left-32 top-1/3 h-[400px] w-[400px] rounded-full bg-chart-2/5 blur-[120px]"></div>
-        <div className="absolute -right-32 bottom-1/3 h-[400px] w-[400px] rounded-full bg-chart-3/5 blur-[120px]"></div>
+        <motion.div
+          className="absolute -left-32 top-1/3 h-[400px] w-[400px] rounded-full bg-chart-2/5 blur-[120px]"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.5, 0.3]
+          }}
+          transition={{ duration: 10, repeat: Infinity }}
+        />
+        <motion.div
+          className="absolute -right-32 bottom-1/3 h-[400px] w-[400px] rounded-full bg-chart-3/5 blur-[120px]"
+          animate={{
+            scale: [1, 1.15, 1],
+            opacity: [0.3, 0.5, 0.3]
+          }}
+          transition={{ duration: 12, repeat: Infinity, delay: 2 }}
+        />
       </div>
     </section>
   );

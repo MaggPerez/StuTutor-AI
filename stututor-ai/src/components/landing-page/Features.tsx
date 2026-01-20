@@ -1,3 +1,4 @@
+'use client'
 import {
   MessageSquare,
   BookOpen,
@@ -8,6 +9,7 @@ import {
   Clock,
   Sparkles,
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const features = [
   {
@@ -68,25 +70,78 @@ const features = [
   },
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 30, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.5,
+      ease: [0.25, 0.46, 0.45, 0.94] as const
+    }
+  }
+};
+
+const headerVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] as const }
+  }
+};
+
 export const Features = () => {
   return (
     <section id="features" className="relative overflow-hidden bg-background py-24 lg:py-32">
       <div className="container mx-auto px-4">
         {/* Section Header */}
-        <div className="mx-auto mb-16 max-w-2xl text-center">
-          <p className="mb-4 text-sm font-semibold uppercase tracking-wider text-primary">
+        <motion.div
+          className="mx-auto mb-16 max-w-2xl text-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+        >
+          <motion.p
+            variants={headerVariants}
+            className="mb-4 text-sm font-semibold uppercase tracking-wider text-primary"
+          >
             Features
-          </p>
-          <h2 className="mb-6 text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+          </motion.p>
+          <motion.h2
+            variants={headerVariants}
+            className="mb-6 text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl"
+          >
             Everything you need to excel
-          </h2>
-          <p className="text-lg text-muted-foreground">
+          </motion.h2>
+          <motion.p
+            variants={headerVariants}
+            className="text-lg text-muted-foreground"
+          >
             Powerful AI-driven tools designed to accelerate your learning
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         {/* Bento Grid */}
-        <div className="mx-auto max-w-6xl">
+        <motion.div
+          className="mx-auto max-w-6xl"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          variants={containerVariants}
+        >
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {features.map((feature, index) => {
               const Icon = feature.icon;
@@ -97,19 +152,30 @@ export const Features = () => {
               };
 
               return (
-                <div
+                <motion.div
                   key={index}
+                  variants={itemVariants}
+                  whileHover={{ y: -8, transition: { duration: 0.2 } }}
                   className={`group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5 ${sizeClasses[feature.size as keyof typeof sizeClasses]}`}
                 >
                   {/* Background Gradient */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-100`}></div>
+                  <motion.div
+                    className={`absolute inset-0 bg-gradient-to-br ${feature.gradient}`}
+                    initial={{ opacity: 0 }}
+                    whileHover={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                  />
 
                   {/* Content */}
                   <div className="relative z-10">
                     {/* Icon */}
-                    <div className="mb-4 inline-flex rounded-xl bg-primary/10 p-3 transition-colors group-hover:bg-primary/20">
+                    <motion.div
+                      className="mb-4 inline-flex rounded-xl bg-primary/10 p-3 transition-colors group-hover:bg-primary/20"
+                      whileHover={{ scale: 1.1, rotate: 5 }}
+                      transition={{ type: "spring", stiffness: 400 }}
+                    >
                       <Icon className="h-6 w-6 text-primary" />
-                    </div>
+                    </motion.div>
 
                     {/* Title */}
                     <h3 className={`mb-2 font-bold text-foreground ${feature.size === 'large' ? 'text-xl' : 'text-lg'}`}>
@@ -123,18 +189,37 @@ export const Features = () => {
                   </div>
 
                   {/* Corner Decoration */}
-                  <div className="absolute -bottom-8 -right-8 h-24 w-24 rounded-full bg-gradient-to-br from-primary/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
-                </div>
+                  <motion.div
+                    className="absolute -bottom-8 -right-8 h-24 w-24 rounded-full bg-gradient-to-br from-primary/10 to-transparent"
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    whileHover={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </motion.div>
               );
             })}
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Background Decoration */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute left-1/4 top-1/4 h-[300px] w-[300px] rounded-full bg-primary/5 blur-[100px]"></div>
-        <div className="absolute bottom-1/4 right-1/4 h-[300px] w-[300px] rounded-full bg-chart-3/5 blur-[100px]"></div>
+        <motion.div
+          className="absolute left-1/4 top-1/4 h-[300px] w-[300px] rounded-full bg-primary/5 blur-[100px]"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.5, 0.3]
+          }}
+          transition={{ duration: 10, repeat: Infinity }}
+        />
+        <motion.div
+          className="absolute bottom-1/4 right-1/4 h-[300px] w-[300px] rounded-full bg-chart-3/5 blur-[100px]"
+          animate={{
+            scale: [1, 1.15, 1],
+            opacity: [0.3, 0.5, 0.3]
+          }}
+          transition={{ duration: 12, repeat: Infinity, delay: 2 }}
+        />
       </div>
     </section>
   );
