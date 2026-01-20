@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
 export const Features = () => {
   // State for AI Analysis
@@ -40,23 +41,53 @@ export const Features = () => {
     }, 2000);
   };
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2
+      }
+    }
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+  };
+
   return (
     <section id="features" className="min-h-screen flex flex-col justify-center py-24 bg-muted/30">
       <div className="container mx-auto px-4 h-full">
         
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center max-w-3xl mx-auto mb-16"
+        >
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">
             Everything you need to excel
           </h2>
           <p className="text-lg text-muted-foreground">
             Our AI-powered platform turns your static documents into dynamic learning experiences.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-fr h-full">
+        <motion.div 
+          variants={container}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-fr h-full"
+        >
           
           {/* Large Card - Main Feature */}
-          <div className="md:col-span-2 md:row-span-2 group relative overflow-hidden rounded-3xl bg-card border border-border/50 p-8 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300 flex flex-col">
+          <motion.div 
+            variants={item}
+            className="md:col-span-2 md:row-span-2 group relative overflow-hidden rounded-3xl bg-card border border-border/50 p-8 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300 flex flex-col"
+          >
             <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity pointer-events-none">
               <Brain className="w-64 h-64" />
             </div>
@@ -130,10 +161,13 @@ export const Features = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Tall Card - Instant Summaries */}
-          <div className="md:col-span-1 md:row-span-2 group relative overflow-hidden rounded-3xl bg-card border border-border/50 p-8 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300 flex flex-col">
+          <motion.div 
+            variants={item}
+            className="md:col-span-1 md:row-span-2 group relative overflow-hidden rounded-3xl bg-card border border-border/50 p-8 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300 flex flex-col"
+          >
              {/* Fixed background icon position */}
              <div className="absolute -right-6 -bottom-6 opacity-5 group-hover:opacity-10 transition-opacity pointer-events-none">
               <FileText className="w-64 h-64 transform rotate-12" />
@@ -218,13 +252,16 @@ export const Features = () => {
 
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Bottom Row - Smaller Cards balanced to take remaining height if needed */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:col-span-3">
             
             {/* Small Card 1 */}
-            <div className="group relative overflow-hidden rounded-3xl bg-card border border-border/50 p-6 hover:shadow-xl transition-all duration-300 flex flex-col justify-center min-h-[180px]">
+            <motion.div 
+              variants={item}
+              className="group relative overflow-hidden rounded-3xl bg-card border border-border/50 p-6 hover:shadow-xl transition-all duration-300 flex flex-col justify-center min-h-[180px]"
+            >
               <div className="flex items-center gap-4 mb-3">
                 <div className="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center shrink-0">
                   <Zap className="w-5 h-5 text-orange-500" />
@@ -234,10 +271,13 @@ export const Features = () => {
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Turn any topic into a practice test instantly to check your knowledge retention before exams.
               </p>
-            </div>
+            </motion.div>
 
             {/* Small Card 2 */}
-            <div className="group relative overflow-hidden rounded-3xl bg-card border border-border/50 p-6 hover:shadow-xl transition-all duration-300 flex flex-col justify-center min-h-[180px]">
+            <motion.div 
+              variants={item}
+              className="group relative overflow-hidden rounded-3xl bg-card border border-border/50 p-6 hover:shadow-xl transition-all duration-300 flex flex-col justify-center min-h-[180px]"
+            >
               <div className="flex items-center gap-4 mb-3">
                 <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center shrink-0">
                   <Clock className="w-5 h-5 text-green-500" />
@@ -247,10 +287,13 @@ export const Features = () => {
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Study at your own pace, anytime. Your AI tutor never sleeps, ensuring help is always a click away.
               </p>
-            </div>
+            </motion.div>
 
             {/* Small Card 3 */}
-            <div className="group relative overflow-hidden rounded-3xl bg-card border border-border/50 p-6 hover:shadow-xl transition-all duration-300 flex flex-col justify-center min-h-[180px]">
+            <motion.div 
+              variants={item}
+              className="group relative overflow-hidden rounded-3xl bg-card border border-border/50 p-6 hover:shadow-xl transition-all duration-300 flex flex-col justify-center min-h-[180px]"
+            >
                <div className="flex items-center gap-4 mb-3">
                 <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center shrink-0">
                   <Layout className="w-5 h-5 text-purple-500" />
@@ -260,11 +303,11 @@ export const Features = () => {
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Keep all your courses, notes, and chat history in one clean, searchable place for easy access.
               </p>
-            </div>
+            </motion.div>
 
           </div>
 
-        </div>
+        </motion.div>
       </div>
     </section>
   );
