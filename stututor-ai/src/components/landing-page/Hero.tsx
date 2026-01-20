@@ -229,7 +229,7 @@ export const Hero = () => {
 
               {/* Floating Elements - Static, no infinite animations */}
               <motion.div
-                className="absolute -left-4 top-12 z-20 hidden rounded-xl border border-border bg-card p-3 shadow-lg lg:block"
+                className="absolute -right-12 top-4 z-20 hidden rounded-xl border border-border bg-card p-3 shadow-lg lg:block"
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 1.4, duration: 0.5 }}
@@ -243,7 +243,7 @@ export const Hero = () => {
               </motion.div>
 
               <motion.div
-                className="absolute -right-4 bottom-24 z-20 hidden rounded-xl border border-border bg-card p-3 shadow-lg lg:block"
+                className="absolute  bottom-24 z-20 hidden rounded-xl border border-border bg-card p-3 shadow-lg lg:block"
                 initial={{ opacity: 0, x: 30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 1.6, duration: 0.5 }}
