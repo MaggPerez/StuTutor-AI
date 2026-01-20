@@ -3,6 +3,13 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Play, FileText, MessageSquare, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { ModeToggle } from '@/components/ModeToggle';
+
+const navLinks = [
+  { href: '#toolkit', label: 'Toolkit' },
+  { href: '#how-it-works', label: 'How it Works' },
+  { href: '#features', label: 'Features' },
+];
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -42,16 +49,17 @@ const staggerContainer = {
 
 export const Hero = () => {
   return (
-    <section className="relative min-h-screen overflow-hidden bg-background">
-      {/* Navigation */}
+    <>
+      {/* Sticky Navigation */}
       <motion.nav
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="relative z-50 border-b border-border/40 bg-background/80 backdrop-blur-xl"
+        className="fixed top-0 left-0 right-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-xl"
       >
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <motion.div
+          <motion.a
+            href="#"
             className="flex items-center gap-2"
             whileHover={{ scale: 1.02 }}
             transition={{ type: "spring", stiffness: 400 }}
@@ -60,28 +68,24 @@ export const Hero = () => {
               <Sparkles className="h-5 w-5 text-primary-foreground" />
             </div>
             <span className="text-xl font-bold text-foreground">StuTutor</span>
-          </motion.div>
+          </motion.a>
 
           <div className="hidden items-center gap-8 md:flex">
-            <motion.a
-              href="#how-it-works"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-              whileHover={{ y: -2 }}
-              transition={{ type: "spring", stiffness: 400 }}
-            >
-              How it Works
-            </motion.a>
-            <motion.a
-              href="#features"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-              whileHover={{ y: -2 }}
-              transition={{ type: "spring", stiffness: 400 }}
-            >
-              Features
-            </motion.a>
+            {navLinks.map((link, index) => (
+              <motion.a
+                key={index}
+                href={link.href}
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                whileHover={{ y: -2 }}
+                transition={{ type: "spring", stiffness: 400 }}
+              >
+                {link.label}
+              </motion.a>
+            ))}
           </div>
 
           <div className="flex items-center gap-3">
+            <ModeToggle />
             <Link href="/login">
               <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
                 Sign In
@@ -98,6 +102,8 @@ export const Hero = () => {
           </div>
         </div>
       </motion.nav>
+
+      <section className="relative min-h-screen overflow-hidden bg-background pt-16">
 
       {/* Hero Content */}
       <div className="container mx-auto px-4 py-16 lg:py-24">
@@ -331,6 +337,7 @@ export const Hero = () => {
         {/* Grid Pattern */}
         <div className="absolute inset-0 bg-[linear-gradient(rgba(139,92,246,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(139,92,246,0.03)_1px,transparent_1px)] bg-[size:64px_64px]"></div>
       </div>
-    </section>
+      </section>
+    </>
   );
 };

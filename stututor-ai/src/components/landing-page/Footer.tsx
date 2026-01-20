@@ -24,6 +24,7 @@ const itemVariants = {
 };
 
 const links = [
+  { href: '#toolkit', label: 'Toolkit' },
   { href: '#how-it-works', label: 'How it Works' },
   { href: '#features', label: 'Features' },
   { href: '/login', label: 'Sign In', isLink: true },

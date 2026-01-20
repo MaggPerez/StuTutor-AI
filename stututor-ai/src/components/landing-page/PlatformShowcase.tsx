@@ -98,7 +98,7 @@ const headerVariants = {
 
 export const PlatformShowcase = () => {
   return (
-    <section className="relative overflow-hidden bg-background py-24 lg:py-32">
+    <section id="toolkit" className="relative overflow-hidden bg-background py-24 lg:py-32">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <motion.div
