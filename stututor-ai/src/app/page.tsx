@@ -1,4 +1,5 @@
 import { Hero } from '@/components/landing-page/Hero';
+import { PlatformShowcase } from '@/components/landing-page/PlatformShowcase';
 import { HowItWorks } from '@/components/landing-page/HowItWorks';
 import { Features } from '@/components/landing-page/Features';
 import { CTASection } from '@/components/landing-page/CTASection';
@@ -8,6 +9,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen">
       <Hero />
+      <PlatformShowcase />
       <HowItWorks />
       <Features />
       <CTASection />
