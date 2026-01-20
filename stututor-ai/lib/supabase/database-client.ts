@@ -99,11 +99,11 @@ export async function deleteChat(chatId: string) {
     const supabase = createClient()
 
     const { data, error } = await supabase
-    .from('chats')
-    .delete()
-    .eq('id', chatId)
-    .select()
-    .single()
+        .from('chats')
+        .delete()
+        .eq('id', chatId)
+        .select()
+        .single()
 
     if (error) throw error
 
@@ -185,6 +185,7 @@ export async function createMessages(
 }
 
 
+// =============================== PDF OPERATIONS ===============================
 
 /**
  * Creates a PDF document record
@@ -238,6 +239,63 @@ export async function getPDFDocument(pdfId: string): Promise<PDFDocument | null>
     }
 
     return transformPDFFromDB(data)
+}
+
+
+
+export async function getPDFDocumentName(chatId: string | null) {
+    const supabase = createClient()
+    const { data, error } = await supabase.from('chats').select('*').eq('id', chatId).single()
+    if (error) {
+        console.error('Failed to get PDF document name:', error.message)
+        return null
+    }
+    return data
+}
+
+
+
+/**
+ * Stores a PDF file in the database
+ */
+export async function storePDF(file: File) {
+    const supabase = createClient()
+    const { data, error } = await supabase.storage.from('pdf-documents').upload(file.name, file, {
+        upsert: true,
+    })
+    if (error) {
+        throw new Error('Failed to store PDF: ' + error.message)
+    }
+    return data
+}
+
+
+
+/**
+ * Gets a PDF URL by chat ID
+ */
+export async function getPDFUrl(chatId: string | null) {    
+    const supabase = createClient()
+    const chat = await getPDFDocumentName(chatId)
+    if (!chat) {
+        console.error('Chat not found')
+        return null
+    }
+    const fileName = chat.pdf_document_name
+    
+
+    if (!fileName) {
+        console.error('PDF document name not found')
+        return null
+    }
+    
+    const { data, error } = await supabase.storage.from('pdf-documents').download(fileName)
+    
+    if (error) {
+        console.error('Failed to download PDF:', error.message)
+        return null
+    }
+    return data
 }
 
 
