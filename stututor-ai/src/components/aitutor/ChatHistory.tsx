@@ -9,6 +9,7 @@ import { Separator } from '@/components/ui/separator'
 import ChatItem from '@/components/aitutor/ChatItem'
 import { useRouter } from 'next/navigation'
 import { useChat } from '@/contexts/ChatContext'
+import Link from 'next/link'
 
 export default function ChatHistory({ initialActiveChatId }: { initialActiveChatId: string }) {
     const [searchQuery, setSearchQuery] = useState('')
@@ -58,15 +59,16 @@ export default function ChatHistory({ initialActiveChatId }: { initialActiveChat
                 <div className="flex items-center justify-between">
 
                     {/* Back button */}
-                    <Button
-                        onClick={() => router.back()}
-                        variant="outline"
-                        size="sm"
-                        className="h-8 px-2 cursor-pointer"
-                    >
-                        <ArrowLeft className='mr-2 size-4' />
-                        Back
-                    </Button>
+                    <Link href="/aitutor">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 px-2 cursor-pointer"
+                        >
+                            <ArrowLeft className='mr-2 size-4' />
+                            Back
+                        </Button>
+                    </Link>
 
                     {/* Title */}
                     <h2 className="text-lg font-semibold tracking-tight">Chats</h2>
