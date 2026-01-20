@@ -40,6 +40,10 @@ import {
 } from '@tabler/icons-react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
+import { createCourse, getUserCourses } from '../../../lib/supabase/database-client'
+import { Course } from '@/types/Courses'
+import { SiteHeader } from '@/components/site-header'
+
 const courseIcons = {
     math: { name: "Mathematics", icon: IconMath },
     science: { name: "Science", icon: IconAtom },
@@ -56,67 +60,6 @@ const courseIcons = {
 type CourseIcon = keyof typeof courseIcons
 
 
-interface Course {
-    id: number
-    title: string
-    description: string
-    professor: string
-    date: Date
-    time: string
-    link: string
-    icon: CourseIcon
-}
-
-const courses: Course[] = [
-    // {
-    //     id: 1,
-    //     title: "Math 101",
-    //     description: "This is a course about math.",
-    //     professor: "John Doe",
-    //     date: new Date(),
-    //     time: "10:00",
-    //     icon: IconMath,
-    //     link: "/courses/math-101"
-    // },
-    // {
-    //     id: 2,
-    //     title: "English 101",
-    //     description: "This is a course about english.",
-    //     image: "/images/english.jpg",
-    //     link: "/courses/english-101"
-    // },
-    // {
-    //     id: 3,
-    //     title: "Science 101",
-    //     description: "This is a course about science.",
-    //     image: "/images/science.jpg",
-    //     link: "/courses/science-101"
-    // }
-]
-
-
-async function addCourse(course: Course) {
-    courses.push(course)
-    try {
-        const response = await fetch("/api/courses", {
-            method: "POST",
-            body: JSON.stringify(course),
-        });
-        const responseData = await response.json();
-        console.log(responseData);
-        return responseData;
-    } catch(error) {
-        toast.error("Failed to add course", {
-            description: "Failed to add course",
-            duration: 3000,
-            position: "top-right",
-            className: "bg-red-500 text-white",
-        });
-    }
-}
-
-
-
 export default function Courses() {
     const [courseName, setCourseName] = useState<string>("")
     const [professor, setProfessor] = useState<string>("")
@@ -124,6 +67,14 @@ export default function Courses() {
     const [time, setTime] = useState<string>()
     const [description, setDescription] = useState<string>("")
     const [selectedIcon, setSelectedIcon] = useState<CourseIcon>("math")
+
+    const [courses, setCourses] = useState<Course[]>([])
+
+    useEffect(() => {
+        getUserCourses().then((courses) => {
+            setCourses(courses)
+        })
+    }, [])
 
     function onHandleCreateCourse(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
@@ -137,16 +88,16 @@ export default function Courses() {
             return
         }
         const newCourse: Course = {
-            id: courses.length + 1,
             title: courseName,
             description: description,
             professor: professor,
-            date: date,
-            time: time,
-            link: "",
+            course_date: date,
+            course_time: time,
             icon: selectedIcon
         }
-        addCourse(newCourse)
+        createCourse(newCourse).then((course) => {
+            setCourses([...courses, course])
+        })
         setCourseName("")
         setProfessor("")
         setDate(undefined)
@@ -159,18 +110,19 @@ export default function Courses() {
     // if no courses, show the dialog to add a new course
     if (courses.length === 0) {
         return (
-            <SidebarProvider 
-            style={
-                {
-                    "--sidebar-width": "calc(var(--spacing) * 72)",
-                    "--header-height": "calc(var(--spacing) * 12)",
-                } as React.CSSProperties
-            }
+            <SidebarProvider
+                style={
+                    {
+                        "--sidebar-width": "calc(var(--spacing) * 72)",
+                        "--header-height": "calc(var(--spacing) * 12)",
+                    } as React.CSSProperties
+                }
             >
                 <AppSidebar variant="inset" />
                 <SidebarInset className="bg-transparent">
+                    <SiteHeader />
                     <div className="flex flex-col gap-4 justify-center items-center h-full">
-                        <h1 className="text-2xl font-bold">No courses found</h1>
+                        <h1 className="text-2xl font-bold">Set up your courses!</h1>
                         <p>Click the button below to create a new course</p>
                         <Dialog>
                             <DialogTrigger asChild>
@@ -283,38 +235,151 @@ export default function Courses() {
 
     return (
         <div className='flex flex-col gap-4'>
-            <SidebarProvider>
+            <SidebarProvider
+                style={
+                    {
+                        "--sidebar-width": "calc(var(--spacing) * 72)",
+                        "--header-height": "calc(var(--spacing) * 12)",
+                    } as React.CSSProperties
+                }
+            >
                 <AppSidebar variant="inset" />
                 <SidebarInset className="bg-transparent">
-                    <h1 className="text-2xl font-bold">Courses</h1>
+                    <SiteHeader />
+                    <div className="p-4 max-w-7xl ">
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <Button>Add Course</Button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[425px]">
 
-                    {/* Courses Grid */}
-                    <div className="flex flex-row gap-4">
-                        {courses.map((course) => {
-                            // Extract the icon component for this course
-                            const CourseIcon = courseIcons[course.icon].icon
+                                <form onSubmit={onHandleCreateCourse} className="flex flex-col gap-4">
+                                    <DialogHeader>
+                                        <DialogTitle>Add Course</DialogTitle>
+                                        <DialogDescription>
+                                            Add a new course to your library
+                                        </DialogDescription>
+                                    </DialogHeader>
 
-                            return (
-                                <Card key={course.id}>
-                                    <CardHeader>
-                                        <CardTitle className="text-3xl font-bold flex items-center gap-2">
-                                            {/* course icon */}
-                                            <CourseIcon className="size-8" />
+                                    <div className="grid gap-4">
+                                        {/* course name */}
+                                        <div className="grid grid-cols-2 gap-5">
+                                            <div className="flex flex-col gap-2">
+                                                <Label htmlFor="name-1">Course Name</Label>
+                                                <Input id="name-1" name="name" placeholder="Math 101"
+                                                    value={courseName} onChange={(e) => setCourseName(e.target.value)} required />
+                                            </div>
 
-                                            {/* course title */}
-                                            {course.title}
-                                        </CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <div>
-                                            <p>Professor: {course.professor}</p>
-                                            <p>{course.description}</p>
-                                            <p>{format(course.date, "PPP")} at {course.time}</p>
+                                            {/* professor */}
+                                            <div className="flex flex-col gap-2">
+                                                <Label htmlFor="professor-1">Professor</Label>
+                                                <Input id="professor-1" name="professor" placeholder="John Doe"
+                                                    value={professor} onChange={(e) => setProfessor(e.target.value)} required />
+                                            </div>
                                         </div>
-                                    </CardContent>
-                                </Card>
-                            )
-                        })}
+
+                                        {/* date */}
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div className="flex flex-col gap-2">
+                                                <Label htmlFor="date-1">Date</Label>
+                                                <Popover>
+                                                    <PopoverTrigger asChild>
+                                                        <Button variant="outline" className="w-full justify-start text-left font-normal">
+                                                            <CalendarIcon className="mr-2 h-4 w-4" />
+                                                            {date ? format(date, "PPP") : <span>Pick a date</span>}
+                                                        </Button>
+                                                    </PopoverTrigger>
+                                                    <PopoverContent className="w-auto p-0" align="start">
+                                                        <Calendar
+                                                            mode="single"
+                                                            selected={date}
+                                                            onSelect={setDate}
+                                                            initialFocus
+                                                        />
+                                                    </PopoverContent>
+                                                </Popover>
+                                            </div>
+
+                                            {/* time */}
+                                            <div className="flex flex-col gap-2">
+                                                <Label htmlFor="time-1">Time</Label>
+                                                <Input
+                                                    id="time-1"
+                                                    name="time"
+                                                    type="time"
+                                                    value={time}
+                                                    onChange={(e) => setTime((e.target.value))}
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Icon Selection */}
+                                        <div className="flex flex-col gap-2">
+                                            <Label htmlFor="icon-1">Course Icon</Label>
+                                            <Select value={selectedIcon} onValueChange={(value) => setSelectedIcon(value as CourseIcon)}>
+                                                <SelectTrigger id="icon-1" className="w-full">
+                                                    <SelectValue placeholder="Choose an icon" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {Object.entries(courseIcons).map(([key, { name, icon: IconComponent }]) => (
+                                                        <SelectItem key={key} value={key}>
+                                                            <div className="flex items-center gap-2">
+                                                                <IconComponent className="size-4" />
+                                                                <span>{name}</span>
+                                                            </div>
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+
+                                        {/* course description */}
+                                        <div className="grid gap-3">
+                                            <Label htmlFor="username-1">Description</Label>
+                                            <Input id="username-1" name="username" placeholder="This is a course about math."
+                                                value={description} onChange={(e) => setDescription(e.target.value)} required />
+                                        </div>
+                                    </div>
+                                    <DialogFooter>
+                                        <DialogClose asChild>
+                                            <Button type='button' variant="outline">Cancel</Button>
+                                        </DialogClose>
+                                        <Button type="submit">Save changes</Button>
+                                    </DialogFooter>
+                                </form>
+                            </DialogContent>
+                        </Dialog>
+                        <h1 className="text-2xl font-bold">Courses</h1>
+
+                        {/* Courses Grid */}
+                        <div className="flex flex-row gap-4">
+                            {courses.map((course) => {
+                                // Extract the icon component for this course
+                                const CourseIcon = courseIcons[course.icon].icon
+
+                                return (
+                                    <Card key={course.id}>
+                                        <CardHeader>
+                                            <CardTitle className="text-3xl font-bold flex items-center gap-2">
+                                                {/* course icon */}
+                                                <CourseIcon className="size-8" />
+
+                                                {/* course title */}
+                                                {course.title}
+                                            </CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <div>
+                                                <p>Professor: {course.professor}</p>
+                                                <p>{course.description}</p>
+                                                <p>{format(course.course_date, "PPP")} at {course.course_time}</p>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                )
+                            })}
+                        </div>
                     </div>
                 </SidebarInset>
             </SidebarProvider>

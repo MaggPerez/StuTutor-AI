@@ -114,7 +114,7 @@ export function ChartAreaInteractive() {
         </div>
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-        <ChartContainer
+        {/* <ChartContainer
           config={chartConfig}
           className="aspect-auto h-[250px] w-full"
         >
@@ -191,7 +191,7 @@ export function ChartAreaInteractive() {
               strokeWidth={2}
             />
           </AreaChart>
-        </ChartContainer>
+        </ChartContainer> */}
       </CardContent>
     </Card>
   )

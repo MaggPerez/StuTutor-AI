@@ -1,5 +1,7 @@
+"use client";
+import { useEffect } from "react";
 import { Clock, BookOpen, CalendarDays, Flame } from "lucide-react"
-
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge"
 import {
   Card,
@@ -11,6 +13,10 @@ import {
 } from "@/components/ui/card"
 
 export function SectionCards() {
+  const [studyTime, setStudyTime] = useState(0);
+  const [activeCourses, setActiveCourses] = useState(0);
+  const [assignmentsDue, setAssignmentsDue] = useState(0);
+  const [studyStreak, setStudyStreak] = useState(0);
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
       {/* Study Time Card */}
@@ -18,7 +24,7 @@ export function SectionCards() {
         <CardHeader className="pb-2">
           <CardDescription>Study Time This Week</CardDescription>
           <CardTitle className="text-3xl font-bold tabular-nums text-foreground">
-            24.5 hrs
+            {studyTime} hrs
           </CardTitle>
           <CardAction>
             <Badge variant="secondary" className="gap-1 bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
@@ -39,7 +45,7 @@ export function SectionCards() {
         <CardHeader className="pb-2">
           <CardDescription>Active Courses</CardDescription>
           <CardTitle className="text-3xl font-bold tabular-nums text-foreground">
-            6
+            {activeCourses}
           </CardTitle>
           <CardAction>
             <Badge variant="secondary" className="gap-1 bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300">
@@ -60,7 +66,7 @@ export function SectionCards() {
         <CardHeader className="pb-2">
           <CardDescription>Assignments Due</CardDescription>
           <CardTitle className="text-3xl font-bold tabular-nums text-foreground">
-            8
+            {assignmentsDue}
           </CardTitle>
           <CardAction>
             <Badge variant="secondary" className="gap-1 bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300">
@@ -81,7 +87,7 @@ export function SectionCards() {
         <CardHeader className="pb-2">
           <CardDescription>Study Streak</CardDescription>
           <CardTitle className="text-3xl font-bold tabular-nums text-foreground">
-            12 Days
+            {studyStreak} Days
           </CardTitle>
           <CardAction>
             <Badge variant="secondary" className="gap-1 bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">

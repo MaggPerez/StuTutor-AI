@@ -1,6 +1,7 @@
 import { createClient } from './client'
 import { Chat, ChatMessage, PDFDocument } from '@/types/Messages'
 import { User } from '@supabase/supabase-js'
+import { Course } from '@/types/Courses'
 
 async function getUserId(): Promise<string> {
     const supabase = createClient()
@@ -311,6 +312,39 @@ export async function getPDFUrl(chatId: string | null) {
 }
 
 
+// =============================== COURSE OPERATIONS ===============================
+
+/**
+ * 
+ * @param course 
+ * @returns 
+ */
+export async function createCourse(course: Course) {
+    const supabase = createClient()
+    const { data, error } = await supabase.from('courses').insert(course).select().single()
+
+    if (error) {
+        throw new Error('Failed to create course: ' + error.message)
+    }
+    return transformCourseFromDB(data)
+}
+
+
+/**
+ * 
+ * @returns All courses for the current user
+ */
+export async function getUserCourses() {
+    const supabase = createClient()
+    const { data, error } = await supabase.from('courses').select('*')
+    if (error) {
+        throw new Error('Failed to get courses: ' + error.message)
+    }
+    return data.map(transformCourseFromDB)
+}
+
+
+
 
 // =============================== HELPER FUNCTIONS ===============================
 
@@ -360,5 +394,27 @@ function transformPDFFromDB(data: any): PDFDocument {
         publicUrl: data.public_url,
         uploadedAt: new Date(data.uploaded_at),
         metadata: data.metadata
+    }
+}
+
+function transformCourseFromDB(data: any): Course {
+    return {
+        // Required fields
+        id: data.id,
+        title: data.title,
+        professor: data.professor,
+        course_date: new Date(data.course_date),
+        course_time: data.course_time,
+        icon: data.icon,
+
+        // Optional fields
+        description: data.description,
+        course_code: data.course_code,
+        course_website: data.course_website,
+        meeting_link: data.meeting_link,
+        syllabus_link: data.syllabus_link,
+        semester: data.semester,
+        academic_year: data.academic_year,
+        credits: data.credits,
     }
 }

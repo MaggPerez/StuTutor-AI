@@ -77,7 +77,7 @@ export default async function Page() {
                 className="gap-1.5 px-4 py-2 bg-amber-500/10 text-amber-500 border border-amber-500/20 shadow-[0_0_15px_-3px_rgba(245,158,11,0.2)] hover:shadow-[0_0_20px_-3px_rgba(245,158,11,0.4)] transition-all"
               >
                 <Sparkles className="size-4 fill-amber-500 text-amber-500" />
-                <span className="font-semibold">5-Day Streak</span>
+                <span className="font-semibold">0-Day Streak</span>
               </Badge>
             </div>
           </div>
