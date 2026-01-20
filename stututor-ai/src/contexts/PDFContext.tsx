@@ -34,9 +34,15 @@ export function PDFProvider({ children }: { children: React.ReactNode }) {
     //if user has not uploaded a file, fetch the PDF from the database
     useEffect(() => {
         if (currentChatId) {
+            // Clear previous PDF when switching chats
+            setFetchingPDF(null)
+            setFetchingPDFUrl(null)
+            setCurrentPDF(null)
+            setCurrentPDFUrl(null)
+
             fetchPDFUrl()
         }
-    }, [])
+    }, [currentChatId])
 
     //if user uploads a file, store it in the database
     useEffect(() => {

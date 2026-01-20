@@ -33,11 +33,20 @@ export default function PDFViewer() {
   const [loading, setLoading] = useState<boolean>(true);
   const [inputPage, setInputPage] = useState<string>('1');
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { currentPDF, setCurrentPDF, fetchingPDF } = usePDF();
+  const { currentPDF, setCurrentPDF, fetchingPDF, fetchingPDFUrl } = usePDF();
 
   // Constraints
   const minScale = 0.5;
   const maxScale = 3.0;
+
+  // Reset viewer state when PDF changes
+  useEffect(() => {
+    setPageNumber(1);
+    setInputPage('1');
+    setScale(1.0);
+    setRotation(0);
+    setNumPages(0);
+  }, [fetchingPDFUrl, currentPDF]);
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
     setNumPages(numPages);

@@ -13,7 +13,7 @@ import { useChat } from '@/contexts/ChatContext'
 export default function ChatHistory({ initialActiveChatId }: { initialActiveChatId: string }) {
     const [searchQuery, setSearchQuery] = useState('')
     const router = useRouter()
-    const { chats, createNewChat, switchChat, currentChatId } = useChat()
+    const { chats, createNewChat, currentChatId } = useChat()
 
     // Filter chats based on search
     const filteredChats = chats.filter(chat =>
@@ -48,7 +48,6 @@ export default function ChatHistory({ initialActiveChatId }: { initialActiveChat
     }
 
     function handleChatClick(chatId: string) {
-        switchChat(chatId)
         router.push(`/aitutor/${chatId}`)
     }
 

@@ -1,5 +1,4 @@
 'use client'
-import React from 'react'
 import dynamic from 'next/dynamic'
 import {
     ResizableHandle,
@@ -8,9 +7,7 @@ import {
 } from "@/components/ui/resizable"
 import ChatHistory from '@/components/aitutor/ChatHistory'
 import ChatBox from '@/components/aitutor/ChatBox'
-import { PDFProvider } from '@/contexts/PDFContext'
 import { Loader2 } from 'lucide-react'
-import { ChatProvider } from '@/contexts/ChatContext'
 import { useParams } from 'next/navigation'
 
 // Import PDFViewer without SSR
@@ -22,35 +19,24 @@ const PDFViewer = dynamic(() => import('@/components/aitutor/PDFViewer'), {
     </div>
 })
 
-function ChatPageContent({ id }: { id: string }) {
-
-    return (
-        <ResizablePanelGroup direction="horizontal">
-            <ResizablePanel defaultSize={15} className="h-full w-full">
-                <ChatHistory initialActiveChatId={id} />
-            </ResizablePanel>
-            <ResizableHandle />
-            <ResizablePanel defaultSize={40} className="h-full">
-                <PDFViewer />
-            </ResizablePanel>
-            <ResizableHandle />
-            <ResizablePanel defaultSize={20} className="h-full w-full">
-                <ChatBox />
-            </ResizablePanel>
-        </ResizablePanelGroup>
-    )
-}
-
-export default function ChatPage({ params, }: { params: Promise<{ id: string }> }) {
+export default function ChatPage() {
     const { id } = useParams<{ id: string }>()
 
     return (
         <div className="h-full w-full">
-            <ChatProvider initialChatId={id}>
-                <PDFProvider>
-                    <ChatPageContent id={id} />
-                </PDFProvider>
-            </ChatProvider>
+            <ResizablePanelGroup direction="horizontal">
+                <ResizablePanel defaultSize={15} className="h-full w-full">
+                    <ChatHistory initialActiveChatId={id} />
+                </ResizablePanel>
+                <ResizableHandle />
+                <ResizablePanel defaultSize={40} className="h-full">
+                    <PDFViewer />
+                </ResizablePanel>
+                <ResizableHandle />
+                <ResizablePanel defaultSize={20} className="h-full w-full">
+                    <ChatBox />
+                </ResizablePanel>
+            </ResizablePanelGroup>
         </div>
     )
 }

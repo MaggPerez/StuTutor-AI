@@ -1,6 +1,7 @@
 "use client"
 
 import React, { createContext, useContext, useState, useEffect } from 'react'
+import { useParams } from 'next/navigation'
 import { Chat, ChatMessage } from '@/types/Messages'
 import {
     createChat,
@@ -31,26 +32,34 @@ interface ChatContextType {
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined)
 
-export function ChatProvider({ children, initialChatId }: { children: React.ReactNode, initialChatId?: string }) {
-    const [currentChatId, setCurrentChatId] = useState<string | null>(initialChatId || null)
+export function ChatProvider({ children }: { children: React.ReactNode }) {
+    const params = useParams()
+    const chatIdFromUrl = params?.id as string | undefined
+
+    const [currentChatId, setCurrentChatId] = useState<string | null>(chatIdFromUrl || null)
     const [currentChat, setCurrentChat] = useState<Chat | null>(null)
     const [messages, setMessages] = useState<ChatMessage[]>([])
     const [chats, setChats] = useState<Chat[]>([])
     const [isLoading, setIsLoading] = useState(true)
 
-    // Initialize chat on mount or when chatId changes
+    // Load chats only once on mount
+    useEffect(() => {
+        loadChats()
+    }, [])
+
+    // Update currentChatId when URL changes
+    useEffect(() => {
+        if (chatIdFromUrl && chatIdFromUrl !== currentChatId) {
+            setCurrentChatId(chatIdFromUrl)
+        }
+    }, [chatIdFromUrl])
+
+    // Initialize chat when currentChatId changes
     useEffect(() => {
         if (currentChatId) {
             initializeChat(currentChatId)
         }
     }, [currentChatId])
-
-
-
-    // Load chats on mount
-    useEffect(() => {
-        loadChats()
-    }, [])
 
 
 
@@ -65,7 +74,10 @@ export function ChatProvider({ children, initialChatId }: { children: React.Reac
             return
         }
 
+        // Clear messages immediately when switching chats
+        setMessages([])
         setIsLoading(true)
+
         try {
             const messages = await getChatMessages(chatId)
             setMessages(messages)
