@@ -32,10 +32,10 @@ const INITIAL_MESSAGES: Message[] = [
 
 export default function ChatBox() {
     const [input, setInput] = useState('')
+    const { currentPDF, setCurrentPDF, fetchingPDF } = usePDF()
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
-    const { currentPDF, setCurrentPDF } = usePDF()
-
+    
     const [isSending, setIsSending] = useState(false)
     const { messages, sendMessage: sendMessageToChat, receiveMessage, isLoading } = useChat()
 
@@ -68,8 +68,8 @@ export default function ChatBox() {
             await sendMessageToChat(userMessage)
 
             // Send message to AI and get response
-            if (currentPDF) {
-                const response = await uploadPDF(currentPDF as File, userMessage)
+            if (currentPDF || fetchingPDF) {
+                const response = await uploadPDF(currentPDF as File || fetchingPDF as File, userMessage)
                 await receiveMessage(response.message)
             } else {
                 const response = await sendMessage(userMessage)
@@ -183,10 +183,10 @@ export default function ChatBox() {
 
             {/* Input Area */}
             <div className='p-4 border-t bg-background/50 backdrop-blur-sm'>
-                {currentPDF && (
+                {(currentPDF || fetchingPDF) && (
                     <div className="flex items-center gap-2 mb-2">
                         <File className="h-4 w-4" />
-                        <p className="text-sm text-muted-foreground">{(currentPDF as File).name}</p>
+                        <p className="text-sm text-muted-foreground">{(currentPDF as File || fetchingPDF as File).name}</p>
                     </div>
                 )}
                 <div className='relative flex items-end gap-2 bg-secondary/30 p-2 rounded-xl border focus-within:ring-1 focus-within:ring-ring'>

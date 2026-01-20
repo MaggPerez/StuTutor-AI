@@ -33,7 +33,7 @@ export default function PDFViewer() {
   const [loading, setLoading] = useState<boolean>(true);
   const [inputPage, setInputPage] = useState<string>('1');
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { currentPDF, setCurrentPDF } = usePDF();
+  const { currentPDF, setCurrentPDF, fetchingPDF } = usePDF();
 
   // Constraints
   const minScale = 0.5;
@@ -203,9 +203,9 @@ export default function PDFViewer() {
             <div className="flex justify-center p-8 min-h-full">
 
               {/* PDF Document */}
-                {currentPDF ? (
+                {currentPDF || fetchingPDF ? (
                   <Document 
-                  file={currentPDF} 
+                  file={currentPDF || fetchingPDF} 
                   onLoadSuccess={onDocumentLoadSuccess}
                   onLoadStart={onDocumentLoadStart}
                   loading={

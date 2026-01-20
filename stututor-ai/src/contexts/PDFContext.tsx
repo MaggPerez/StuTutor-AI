@@ -11,6 +11,9 @@ interface PDFContextType {
     currentPDFUrl: string | null
     currentPDF: File | Blob | null
     setCurrentPDF: (pdf: File) => void
+    fetchingPDF: File | Blob | null
+    fetchingPDFUrl: string | null
+    setFetchingPDF: (pdf: File) => void
 }
 
 const PDFContext = createContext<PDFContextType | undefined>(undefined)
@@ -19,68 +22,82 @@ export function PDFProvider({ children }: { children: React.ReactNode }) {
     const { currentChatId } = useChat()
     const [currentPDFUrl, setCurrentPDFUrl] = useState<string | null>(null)
     const [currentPDF, setCurrentPDF] = useState<File | null>(null)
+
+    const [fetchingPDF, setFetchingPDF] = useState<File | null>(null)
+    const [fetchingPDFUrl, setFetchingPDFUrl] = useState<string | null>(null)
+
     const [loading, setLoading] = useState(true)
 
-    
+
 
 
     //if user has not uploaded a file, fetch the PDF from the database
     useEffect(() => {
-        async function fetchPDFUrl() {
-            try {
-                const file = await getPDFUrl(currentChatId)
-                if (file) {
-                    setCurrentPDF(file as File)
-                    // Create URL for the PDF blob
-                    const url = URL.createObjectURL(file)
-                    setCurrentPDFUrl(url)
-                }
-            } catch (error) {
-                console.error('Error fetching PDF:', error)
-            } finally {
-                setLoading(false)
-            }
+        if (currentChatId) {
+            fetchPDFUrl()
         }
-        fetchPDFUrl()
-    }, []) 
+    }, [])
 
     //if user uploads a file, store it in the database
     useEffect(() => {
-        async function storePDFDocument() {
-            try {
+        if (currentPDF) {
+            storePDFDocument()
+        }
+    }, [currentPDF])
+
+
+    /**
+     * Fetches the PDF URL from the database
+     */
+    async function fetchPDFUrl() {
+        try {
+            const file = await getPDFUrl(currentChatId)
+            if (file) {
+                setFetchingPDF(file as File)
+                // Create URL for the PDF blob
+                const url = URL.createObjectURL(file)
+                setFetchingPDFUrl(url)
+            }
+        } catch (error) {
+            console.error('Error fetching PDF:', error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+
+    /**
+     * Stores the PDF document in the database
+     */
+    async function storePDFDocument() {
+        try {
             if (currentPDF) {
                 const pdfDocumentId = await createPDFDocument(
                     currentPDF.name,      // fileName
                     currentPDF.size,      // fileSize  
-                    currentPDF.name,      // storagePath
+                    currentChatId + "/" + currentPDF.name,      // storagePath
                     {}                    // metadata (optional)
                 )
-                    const updates: Partial<Chat> = {
-                        title: currentPDF.name as string,
-                        pdfDocumentId: pdfDocumentId.id,
-                        pdfDocumentName: currentPDF.name as string,
-                        pdfDocumentUrl: pdfDocumentId.publicUrl
-                    }
-                    await updateChat(currentChatId ?? "", updates)
-                    await storePDF(currentPDF)
+                const updates: Partial<Chat> = {
+                    title: currentPDF.name as string,
+                    pdfDocumentId: pdfDocumentId.id,
+                    pdfDocumentName: currentPDF.name as string,
+                    pdfDocumentUrl: pdfDocumentId.publicUrl
                 }
-                else {
-                    return
-                }
-            } catch (error) {
-                console.error('Error storing PDF document:', error)
-                if (error instanceof Error) {
-                    throw new Error('Error storing PDF document: ' + error.message)
-                }
-                throw error
+                await updateChat(currentChatId ?? "", updates)
+                await storePDF(currentPDF, currentChatId + "/" + currentPDF.name)
             }
+            else {
+                return
+            }
+        } catch (error) {
+            throw new Error('Error storing PDF document: ' + (error as Error).message)
         }
-        storePDFDocument()
-    }, [currentPDF])
+    }
 
 
     return (
-        <PDFContext.Provider value={{ currentPDFUrl, currentPDF, setCurrentPDF }}>
+        <PDFContext.Provider value={{ currentPDFUrl, currentPDF, setCurrentPDF, fetchingPDF, fetchingPDFUrl, setFetchingPDF }}>
             {children}
         </PDFContext.Provider>
     )

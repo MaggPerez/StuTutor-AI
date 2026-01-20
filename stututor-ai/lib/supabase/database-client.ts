@@ -1,5 +1,13 @@
 import { createClient } from './client'
 import { Chat, ChatMessage, PDFDocument } from '@/types/Messages'
+import { User } from '@supabase/supabase-js'
+
+async function getUserId(): Promise<string> {
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('User not authenticated')
+    return user.id
+}
 
 
 export async function createChat(title: string = "New Chat", pdfDocumentId?: string) {
@@ -213,7 +221,9 @@ export async function createPDFDocument(
         .select()
         .single()
 
-    if (error) throw error
+    if (error) {
+        throw new Error('Failed to create PDF document: ' + error.message)
+    }
 
     return transformPDFFromDB(data)
 }
@@ -256,11 +266,12 @@ export async function getPDFDocumentName(chatId: string | null) {
 
 
 /**
- * Stores a PDF file in the database
+ * Stores a PDF file in the storage bucket
  */
-export async function storePDF(file: File) {
+export async function storePDF(file: File, storagePath: string) {
     const supabase = createClient()
-    const { data, error } = await supabase.storage.from('pdf-documents').upload(file.name, file, {
+
+    const { data, error } = await supabase.storage.from('pdf-documents').upload(storagePath, file, {
         upsert: true,
     })
     if (error) {
@@ -285,11 +296,12 @@ export async function getPDFUrl(chatId: string | null) {
     
 
     if (!fileName) {
-        console.error('PDF document name not found')
-        return null
+        return 
     }
+
+    const storagePath = chatId + "/" + fileName
     
-    const { data, error } = await supabase.storage.from('pdf-documents').download(fileName)
+    const { data, error } = await supabase.storage.from('pdf-documents').download(storagePath)
     
     if (error) {
         console.error('Failed to download PDF:', error.message)
