@@ -49,20 +49,12 @@ export const Footer = () => {
             className="flex flex-col items-center gap-4 md:items-start"
             variants={itemVariants}
           >
-            <motion.div
-              className="flex items-center gap-2"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 400 }}
-            >
-              <motion.div
-                className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary"
-                whileHover={{ rotate: 10 }}
-                transition={{ type: "spring", stiffness: 400 }}
-              >
+            <div className="flex items-center gap-2 transition-transform hover:scale-105">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
                 <Sparkles className="h-5 w-5 text-primary-foreground" />
-              </motion.div>
+              </div>
               <span className="text-xl font-bold text-foreground">StuTutor</span>
-            </motion.div>
+            </div>
             <p className="max-w-xs text-center text-sm text-muted-foreground md:text-left">
               AI-powered learning platform that transforms your PDFs into interactive study sessions.
             </p>
@@ -74,11 +66,7 @@ export const Footer = () => {
             variants={itemVariants}
           >
             {links.map((link, index) => (
-              <motion.div
-                key={index}
-                whileHover={{ y: -2 }}
-                transition={{ type: "spring", stiffness: 400 }}
-              >
+              <div key={index} className="transition-transform hover:-translate-y-0.5">
                 {link.isLink ? (
                   <Link href={link.href} className="text-muted-foreground transition-colors hover:text-foreground">
                     {link.label}
@@ -88,7 +76,7 @@ export const Footer = () => {
                     {link.label}
                   </a>
                 )}
-              </motion.div>
+              </div>
             ))}
           </motion.div>
         </div>
@@ -102,23 +90,9 @@ export const Footer = () => {
             &copy; {currentYear} StuTutor. All rights reserved.
           </p>
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            <motion.span
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-            >
-              Built with AI
-            </motion.span>
+            <span>Built with AI</span>
             <span className="text-border">|</span>
-            <motion.span
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.4 }}
-            >
-              Made for Students
-            </motion.span>
+            <span>Made for Students</span>
           </div>
         </motion.div>
       </div>

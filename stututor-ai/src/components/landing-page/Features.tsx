@@ -155,27 +155,19 @@ export const Features = () => {
                 <motion.div
                   key={index}
                   variants={itemVariants}
-                  whileHover={{ y: -8, transition: { duration: 0.2 } }}
-                  className={`group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5 ${sizeClasses[feature.size as keyof typeof sizeClasses]}`}
+                  className={`group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-2 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5 ${sizeClasses[feature.size as keyof typeof sizeClasses]}`}
                 >
                   {/* Background Gradient */}
-                  <motion.div
-                    className={`absolute inset-0 bg-gradient-to-br ${feature.gradient}`}
-                    initial={{ opacity: 0 }}
-                    whileHover={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
                   />
 
                   {/* Content */}
                   <div className="relative z-10">
                     {/* Icon */}
-                    <motion.div
-                      className="mb-4 inline-flex rounded-xl bg-primary/10 p-3 transition-colors group-hover:bg-primary/20"
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                      transition={{ type: "spring", stiffness: 400 }}
-                    >
+                    <div className="mb-4 inline-flex rounded-xl bg-primary/10 p-3 transition-all duration-300 group-hover:bg-primary/20 group-hover:scale-110">
                       <Icon className="h-6 w-6 text-primary" />
-                    </motion.div>
+                    </div>
 
                     {/* Title */}
                     <h3 className={`mb-2 font-bold text-foreground ${feature.size === 'large' ? 'text-xl' : 'text-lg'}`}>
@@ -189,12 +181,7 @@ export const Features = () => {
                   </div>
 
                   {/* Corner Decoration */}
-                  <motion.div
-                    className="absolute -bottom-8 -right-8 h-24 w-24 rounded-full bg-gradient-to-br from-primary/10 to-transparent"
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    whileHover={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3 }}
-                  />
+                  <div className="absolute -bottom-8 -right-8 h-24 w-24 rounded-full bg-gradient-to-br from-primary/10 to-transparent opacity-0 scale-50 transition-all duration-300 group-hover:opacity-100 group-hover:scale-100" />
                 </motion.div>
               );
             })}
@@ -202,24 +189,10 @@ export const Features = () => {
         </motion.div>
       </div>
 
-      {/* Background Decoration */}
+      {/* Background Decoration - Static */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
-        <motion.div
-          className="absolute left-1/4 top-1/4 h-[300px] w-[300px] rounded-full bg-primary/5 blur-[100px]"
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3]
-          }}
-          transition={{ duration: 10, repeat: Infinity }}
-        />
-        <motion.div
-          className="absolute bottom-1/4 right-1/4 h-[300px] w-[300px] rounded-full bg-chart-3/5 blur-[100px]"
-          animate={{
-            scale: [1, 1.15, 1],
-            opacity: [0.3, 0.5, 0.3]
-          }}
-          transition={{ duration: 12, repeat: Infinity, delay: 2 }}
-        />
+        <div className="absolute left-1/4 top-1/4 h-[300px] w-[300px] rounded-full bg-primary/5 blur-[100px]" />
+        <div className="absolute bottom-1/4 right-1/4 h-[300px] w-[300px] rounded-full bg-chart-3/5 blur-[100px]" />
       </div>
     </section>
   );

@@ -67,32 +67,17 @@ const containerVariants = {
     opacity: 1,
     transition: {
       staggerChildren: 0.1,
-      delayChildren: 0.2
+      delayChildren: 0.1
     }
   }
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-      ease: [0.25, 0.46, 0.45, 0.94] as const
-    }
-  }
-};
-
-const headerVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.6,
-      ease: [0.25, 0.46, 0.45, 0.94] as const
-    }
+    transition: { duration: 0.4 }
   }
 };
 
@@ -103,30 +88,21 @@ export const PlatformShowcase = () => {
         {/* Section Header */}
         <motion.div
           className="mx-auto mb-16 max-w-3xl text-center"
-          initial="hidden"
-          whileInView="visible"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
-          variants={containerVariants}
+          transition={{ duration: 0.5 }}
         >
-          <motion.div
-            variants={headerVariants}
-            className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-medium text-primary"
-          >
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
             <GraduationCap className="h-4 w-4" />
             Built for College Students
-          </motion.div>
-          <motion.h2
-            variants={headerVariants}
-            className="mb-6 text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl"
-          >
+          </div>
+          <h2 className="mb-6 text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
             Your complete academic toolkit
-          </motion.h2>
-          <motion.p
-            variants={headerVariants}
-            className="text-lg text-muted-foreground"
-          >
+          </h2>
+          <p className="text-lg text-muted-foreground">
             More than just an AI tutor. StuTutor is a full-featured platform designed to help you manage and excel in your college journey.
-          </motion.p>
+          </p>
         </motion.div>
 
         {/* Capabilities Grid */}
@@ -145,17 +121,12 @@ export const PlatformShowcase = () => {
                 <motion.div
                   key={index}
                   variants={itemVariants}
-                  whileHover={{ y: -8, transition: { duration: 0.2 } }}
-                  className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5"
+                  className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-2 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5"
                 >
                   {/* Icon */}
-                  <motion.div
-                    className={`mb-4 inline-flex rounded-xl ${item.lightColor} p-3`}
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    transition={{ type: "spring", stiffness: 400 }}
-                  >
+                  <div className={`mb-4 inline-flex rounded-xl ${item.lightColor} p-3 transition-transform duration-300 group-hover:scale-110`}>
                     <Icon className={`h-6 w-6 ${item.textColor}`} />
-                  </motion.div>
+                  </div>
 
                   {/* Content */}
                   <h3 className="mb-2 text-lg font-bold text-foreground">
@@ -166,12 +137,7 @@ export const PlatformShowcase = () => {
                   </p>
 
                   {/* Hover Accent */}
-                  <motion.div
-                    className={`absolute -bottom-1 left-0 h-1 ${item.color}`}
-                    initial={{ width: 0 }}
-                    whileHover={{ width: "100%" }}
-                    transition={{ duration: 0.3 }}
-                  />
+                  <div className={`absolute -bottom-1 left-0 h-1 w-0 ${item.color} transition-all duration-300 group-hover:w-full`} />
                 </motion.div>
               );
             })}
@@ -191,17 +157,12 @@ export const PlatformShowcase = () => {
                 <motion.div
                   key={index}
                   variants={itemVariants}
-                  whileHover={{ y: -8, transition: { duration: 0.2 } }}
-                  className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5"
+                  className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-2 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5"
                 >
                   {/* Icon */}
-                  <motion.div
-                    className={`mb-4 inline-flex rounded-xl ${item.lightColor} p-3`}
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    transition={{ type: "spring", stiffness: 400 }}
-                  >
+                  <div className={`mb-4 inline-flex rounded-xl ${item.lightColor} p-3 transition-transform duration-300 group-hover:scale-110`}>
                     <Icon className={`h-6 w-6 ${item.textColor}`} />
-                  </motion.div>
+                  </div>
 
                   {/* Content */}
                   <h3 className="mb-2 text-lg font-bold text-foreground">
@@ -212,12 +173,7 @@ export const PlatformShowcase = () => {
                   </p>
 
                   {/* Hover Accent */}
-                  <motion.div
-                    className={`absolute -bottom-1 left-0 h-1 ${item.color}`}
-                    initial={{ width: 0 }}
-                    whileHover={{ width: "100%" }}
-                    transition={{ duration: 0.3 }}
-                  />
+                  <div className={`absolute -bottom-1 left-0 h-1 w-0 ${item.color} transition-all duration-300 group-hover:w-full`} />
                 </motion.div>
               );
             })}
@@ -227,61 +183,36 @@ export const PlatformShowcase = () => {
         {/* Visual Accent - App Preview Hint */}
         <motion.div
           className="mx-auto mt-16 max-w-4xl"
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
+          transition={{ duration: 0.5 }}
         >
           <div className="relative rounded-2xl border border-border bg-gradient-to-br from-card via-card to-secondary/30 p-8 text-center">
             <div className="flex flex-wrap items-center justify-center gap-3">
               {capabilities.map((item, index) => {
                 const Icon = item.icon;
                 return (
-                  <motion.div
+                  <div
                     key={index}
-                    className={`flex h-12 w-12 items-center justify-center rounded-xl ${item.color} shadow-lg`}
-                    initial={{ opacity: 0, scale: 0 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.4 + index * 0.1, type: "spring", stiffness: 200 }}
-                    whileHover={{ scale: 1.15, rotate: 10 }}
+                    className={`flex h-12 w-12 items-center justify-center rounded-xl ${item.color} shadow-lg transition-transform hover:scale-110`}
                   >
                     <Icon className="h-6 w-6 text-white" />
-                  </motion.div>
+                  </div>
                 );
               })}
             </div>
-            <motion.p
-              className="mt-6 text-sm text-muted-foreground"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 1 }}
-            >
+            <p className="mt-6 text-sm text-muted-foreground">
               All tools seamlessly integrated into one powerful platform
-            </motion.p>
+            </p>
           </div>
         </motion.div>
       </div>
 
-      {/* Background Decoration */}
+      {/* Background Decoration - Static */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
-        <motion.div
-          className="absolute -left-32 top-1/3 h-[400px] w-[400px] rounded-full bg-chart-2/5 blur-[120px]"
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3]
-          }}
-          transition={{ duration: 10, repeat: Infinity }}
-        />
-        <motion.div
-          className="absolute -right-32 bottom-1/3 h-[400px] w-[400px] rounded-full bg-chart-3/5 blur-[120px]"
-          animate={{
-            scale: [1, 1.15, 1],
-            opacity: [0.3, 0.5, 0.3]
-          }}
-          transition={{ duration: 12, repeat: Infinity, delay: 2 }}
-        />
+        <div className="absolute -left-32 top-1/3 h-[400px] w-[400px] rounded-full bg-chart-2/5 blur-[120px]" />
+        <div className="absolute -right-32 bottom-1/3 h-[400px] w-[400px] rounded-full bg-chart-3/5 blur-[120px]" />
       </div>
     </section>
   );

@@ -50,17 +50,10 @@ export const CTASection = () => {
           >
             {/* Badge */}
             <motion.div
-              className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-background/80 px-4 py-2 text-sm font-medium text-foreground backdrop-blur-sm"
+              className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-background/80 px-4 py-2 text-sm font-medium text-foreground backdrop-blur-sm transition-transform hover:scale-105"
               variants={itemVariants}
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 400 }}
             >
-              <motion.div
-                animate={{ rotate: [0, 15, -15, 0] }}
-                transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-              >
-                <Sparkles className="h-4 w-4 text-primary" />
-              </motion.div>
+              <Sparkles className="h-4 w-4 text-primary" />
               Start Learning Today
             </motion.div>
 
@@ -83,21 +76,10 @@ export const CTASection = () => {
             {/* CTA Button */}
             <motion.div variants={itemVariants}>
               <Link href="/signup">
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="inline-block"
-                >
-                  <Button size="lg" className="h-14 gap-2 px-10 text-lg font-semibold">
-                    Get Started Free
-                    <motion.div
-                      animate={{ x: [0, 4, 0] }}
-                      transition={{ duration: 1.5, repeat: Infinity }}
-                    >
-                      <ArrowRight className="h-5 w-5" />
-                    </motion.div>
-                  </Button>
-                </motion.div>
+                <Button size="lg" className="h-14 gap-2 px-10 text-lg font-semibold transition-transform hover:scale-105 active:scale-95">
+                  Get Started Free
+                  <ArrowRight className="h-5 w-5" />
+                </Button>
               </Link>
             </motion.div>
 
@@ -107,48 +89,25 @@ export const CTASection = () => {
               variants={itemVariants}
             >
               {trustIndicators.map((indicator, index) => (
-                <motion.div
+                <div
                   key={index}
-                  className="flex items-center gap-2"
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.5 + index * 0.1 }}
-                  whileHover={{ scale: 1.05 }}
+                  className="flex items-center gap-2 transition-transform hover:scale-105"
                 >
-                  <motion.svg
+                  <svg
                     className="h-5 w-5 text-chart-2"
                     fill="currentColor"
                     viewBox="0 0 20 20"
-                    initial={{ scale: 0 }}
-                    whileInView={{ scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.6 + index * 0.1, type: "spring", stiffness: 200 }}
                   >
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </motion.svg>
+                  </svg>
                   <span>{indicator}</span>
-                </motion.div>
+                </div>
               ))}
             </motion.div>
 
-            {/* Decorative Elements */}
-            <motion.div
-              className="absolute -left-24 -top-24 h-48 w-48 rounded-full bg-primary/20 blur-[80px]"
-              animate={{
-                scale: [1, 1.2, 1],
-                opacity: [0.5, 0.8, 0.5]
-              }}
-              transition={{ duration: 6, repeat: Infinity }}
-            />
-            <motion.div
-              className="absolute -bottom-24 -right-24 h-48 w-48 rounded-full bg-chart-3/20 blur-[80px]"
-              animate={{
-                scale: [1, 1.3, 1],
-                opacity: [0.5, 0.7, 0.5]
-              }}
-              transition={{ duration: 8, repeat: Infinity, delay: 1 }}
-            />
+            {/* Decorative Elements - Static */}
+            <div className="absolute -left-24 -top-24 h-48 w-48 rounded-full bg-primary/20 blur-[80px]" />
+            <div className="absolute -bottom-24 -right-24 h-48 w-48 rounded-full bg-chart-3/20 blur-[80px]" />
           </motion.div>
         </motion.div>
       </div>
