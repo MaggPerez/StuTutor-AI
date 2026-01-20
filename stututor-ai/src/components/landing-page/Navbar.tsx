@@ -42,7 +42,7 @@ export function LandingNavbar() {
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8">
-          {['Features', 'How it Works', 'Success Stories'].map((item, i) => (
+          {['Student Hub', 'Features', 'How it Works', 'Success Stories'].map((item, i) => (
              <motion.div
                key={item}
                initial={{ opacity: 0, y: -20 }}
@@ -92,6 +92,9 @@ export function LandingNavbar() {
             </SheetTrigger>
             <SheetContent>
               <div className="flex flex-col gap-4 mt-8">
+                <Link href="#student-hub" className="text-lg font-medium">
+                  Student Hub
+                </Link>
                 <Link href="#features" className="text-lg font-medium">
                   Features
                 </Link>
