@@ -107,131 +107,6 @@ export default function Courses() {
     }
 
 
-    // if no courses, show the dialog to add a new course
-    if (courses.length === 0) {
-        return (
-            <SidebarProvider
-                style={
-                    {
-                        "--sidebar-width": "calc(var(--spacing) * 72)",
-                        "--header-height": "calc(var(--spacing) * 12)",
-                    } as React.CSSProperties
-                }
-            >
-                <AppSidebar variant="inset" />
-                <SidebarInset className="bg-transparent">
-                    <SiteHeader />
-                    <div className="flex flex-col gap-4 justify-center items-center h-full">
-                        <h1 className="text-2xl font-bold">Set up your courses!</h1>
-                        <p>Click the button below to create a new course</p>
-                        <Dialog>
-                            <DialogTrigger asChild>
-                                <Button>Add Course</Button>
-                            </DialogTrigger>
-                            <DialogContent className="sm:max-w-[425px]">
-
-                                <form onSubmit={onHandleCreateCourse} className="flex flex-col gap-4">
-                                    <DialogHeader>
-                                        <DialogTitle>Add Course</DialogTitle>
-                                        <DialogDescription>
-                                            Add a new course to your library
-                                        </DialogDescription>
-                                    </DialogHeader>
-
-                                    <div className="grid gap-4">
-                                        {/* course name */}
-                                        <div className="grid grid-cols-2 gap-5">
-                                            <div className="flex flex-col gap-2">
-                                                <Label htmlFor="name-1">Course Name</Label>
-                                                <Input id="name-1" name="name" placeholder="Math 101"
-                                                    value={courseName} onChange={(e) => setCourseName(e.target.value)} required />
-                                            </div>
-
-                                            {/* professor */}
-                                            <div className="flex flex-col gap-2">
-                                                <Label htmlFor="professor-1">Professor</Label>
-                                                <Input id="professor-1" name="professor" placeholder="John Doe"
-                                                    value={professor} onChange={(e) => setProfessor(e.target.value)} required />
-                                            </div>
-                                        </div>
-
-                                        {/* date */}
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                            <div className="flex flex-col gap-2">
-                                                <Label htmlFor="date-1">Date</Label>
-                                                <Popover>
-                                                    <PopoverTrigger asChild>
-                                                        <Button variant="outline" className="w-full justify-start text-left font-normal">
-                                                            <CalendarIcon className="mr-2 h-4 w-4" />
-                                                            {date ? format(date, "PPP") : <span>Pick a date</span>}
-                                                        </Button>
-                                                    </PopoverTrigger>
-                                                    <PopoverContent className="w-auto p-0" align="start">
-                                                        <Calendar
-                                                            mode="single"
-                                                            selected={date}
-                                                            onSelect={setDate}
-                                                            initialFocus
-                                                        />
-                                                    </PopoverContent>
-                                                </Popover>
-                                            </div>
-
-                                            {/* time */}
-                                            <div className="flex flex-col gap-2">
-                                                <Label htmlFor="time-1">Time</Label>
-                                                <Input
-                                                    id="time-1"
-                                                    name="time"
-                                                    type="time"
-                                                    value={time}
-                                                    onChange={(e) => setTime((e.target.value))}
-                                                    required
-                                                />
-                                            </div>
-                                        </div>
-
-                                        {/* Icon Selection */}
-                                        <div className="flex flex-col gap-2">
-                                            <Label htmlFor="icon-1">Course Icon</Label>
-                                            <Select value={selectedIcon} onValueChange={(value) => setSelectedIcon(value as CourseIcon)}>
-                                                <SelectTrigger id="icon-1" className="w-full">
-                                                    <SelectValue placeholder="Choose an icon" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {Object.entries(courseIcons).map(([key, { name, icon: IconComponent }]) => (
-                                                        <SelectItem key={key} value={key}>
-                                                            <div className="flex items-center gap-2">
-                                                                <IconComponent className="size-4" />
-                                                                <span>{name}</span>
-                                                            </div>
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-
-                                        {/* course description */}
-                                        <div className="grid gap-3">
-                                            <Label htmlFor="username-1">Description</Label>
-                                            <Input id="username-1" name="username" placeholder="This is a course about math."
-                                                value={description} onChange={(e) => setDescription(e.target.value)} required />
-                                        </div>
-                                    </div>
-                                    <DialogFooter>
-                                        <DialogClose asChild>
-                                            <Button type='button' variant="outline">Cancel</Button>
-                                        </DialogClose>
-                                        <Button type="submit">Save changes</Button>
-                                    </DialogFooter>
-                                </form>
-                            </DialogContent>
-                        </Dialog>
-                    </div>
-                </SidebarInset>
-            </SidebarProvider>
-        )
-    }
 
     return (
         <div className='flex flex-col gap-4'>
@@ -246,7 +121,9 @@ export default function Courses() {
                 <AppSidebar variant="inset" />
                 <SidebarInset className="bg-transparent">
                     <SiteHeader />
-                    <div className="p-6 max-w-7xl mx-auto w-full">
+                    {/* Display Courses if there are any */}
+                    {courses && courses.length > 0 ? (
+                        <div className="p-6 max-w-7xl mx-auto w-full">
                         {/* Page Header */}
                         <div className="mb-6">
                             <h1 className="text-3xl font-bold">Courses</h1>
@@ -403,6 +280,115 @@ export default function Courses() {
                             </Dialog>
                         </div>
                     </div>
+                    ) : (
+                        <div className="flex flex-col gap-4 justify-center items-center h-full">
+                        <h1 className="text-2xl font-bold">Set up your courses!</h1>
+                        <p>Click the button below to create a new course</p>
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <Button>Add Course</Button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[425px]">
+
+                                <form onSubmit={onHandleCreateCourse} className="flex flex-col gap-4">
+                                    <DialogHeader>
+                                        <DialogTitle>Add Course</DialogTitle>
+                                        <DialogDescription>
+                                            Add a new course to your library
+                                        </DialogDescription>
+                                    </DialogHeader>
+
+                                    <div className="grid gap-4">
+                                        {/* course name */}
+                                        <div className="grid grid-cols-2 gap-5">
+                                            <div className="flex flex-col gap-2">
+                                                <Label htmlFor="name-1">Course Name</Label>
+                                                <Input id="name-1" name="name" placeholder="Math 101"
+                                                    value={courseName} onChange={(e) => setCourseName(e.target.value)} required />
+                                            </div>
+
+                                            {/* professor */}
+                                            <div className="flex flex-col gap-2">
+                                                <Label htmlFor="professor-1">Professor</Label>
+                                                <Input id="professor-1" name="professor" placeholder="John Doe"
+                                                    value={professor} onChange={(e) => setProfessor(e.target.value)} required />
+                                            </div>
+                                        </div>
+
+                                        {/* date */}
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div className="flex flex-col gap-2">
+                                                <Label htmlFor="date-1">Date</Label>
+                                                <Popover>
+                                                    <PopoverTrigger asChild>
+                                                        <Button variant="outline" className="w-full justify-start text-left font-normal">
+                                                            <CalendarIcon className="mr-2 h-4 w-4" />
+                                                            {date ? format(date, "PPP") : <span>Pick a date</span>}
+                                                        </Button>
+                                                    </PopoverTrigger>
+                                                    <PopoverContent className="w-auto p-0" align="start">
+                                                        <Calendar
+                                                            mode="single"
+                                                            selected={date}
+                                                            onSelect={setDate}
+                                                            initialFocus
+                                                        />
+                                                    </PopoverContent>
+                                                </Popover>
+                                            </div>
+
+                                            {/* time */}
+                                            <div className="flex flex-col gap-2">
+                                                <Label htmlFor="time-1">Time</Label>
+                                                <Input
+                                                    id="time-1"
+                                                    name="time"
+                                                    type="time"
+                                                    value={time}
+                                                    onChange={(e) => setTime((e.target.value))}
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Icon Selection */}
+                                        <div className="flex flex-col gap-2">
+                                            <Label htmlFor="icon-1">Course Icon</Label>
+                                            <Select value={selectedIcon} onValueChange={(value) => setSelectedIcon(value as CourseIcon)}>
+                                                <SelectTrigger id="icon-1" className="w-full">
+                                                    <SelectValue placeholder="Choose an icon" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {Object.entries(courseIcons).map(([key, { name, icon: IconComponent }]) => (
+                                                        <SelectItem key={key} value={key}>
+                                                            <div className="flex items-center gap-2">
+                                                                <IconComponent className="size-4" />
+                                                                <span>{name}</span>
+                                                            </div>
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+
+                                        {/* course description */}
+                                        <div className="grid gap-3">
+                                            <Label htmlFor="username-1">Description</Label>
+                                            <Input id="username-1" name="username" placeholder="This is a course about math."
+                                                value={description} onChange={(e) => setDescription(e.target.value)} required />
+                                        </div>
+                                    </div>
+                                    <DialogFooter>
+                                        <DialogClose asChild>
+                                            <Button type='button' variant="outline">Cancel</Button>
+                                        </DialogClose>
+                                        <Button type="submit">Save changes</Button>
+                                    </DialogFooter>
+                                </form>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
+                    )}
                 </SidebarInset>
             </SidebarProvider>
         </div>
