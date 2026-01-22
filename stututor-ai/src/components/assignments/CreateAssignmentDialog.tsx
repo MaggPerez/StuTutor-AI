@@ -60,8 +60,17 @@ export default function CreateAssignmentDialog() {
                 progress: progress
             }
             await createAssignment(assignment)
+            toast.success('Assignment created successfully', {
+                description: 'Assignment has been created successfully',
+                duration: 3000,
+                position: 'top-center',
+            })
         } catch (error) {
-            throw new Error('Failed to create assignment: ' + error)
+            toast.error('Failed to create assignment', {
+                description: 'Failed to create assignment',
+                duration: 3000,
+                position: 'top-center',
+            })
         } finally {
             setAssignmentName('')
             setCourse('')
