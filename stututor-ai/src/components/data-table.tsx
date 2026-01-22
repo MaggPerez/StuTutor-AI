@@ -96,7 +96,7 @@ import {
 
 export const schema = z.object({
   id: z.number(),
-  title: z.string(),
+  assignment_name: z.string(),
   course: z.string(),
   type: z.string(),
   status: z.string(),
@@ -158,7 +158,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "title",
+    accessorKey: "assignment_name",
     header: "Assignment",
     cell: ({ row }) => {
       return <TableCellViewer item={row.original} />
@@ -524,12 +524,12 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
     <Drawer direction={isMobile ? "bottom" : "right"}>
       <DrawerTrigger asChild>
         <Button variant="link" className="text-foreground hover:text-primary w-fit px-0 text-left font-medium">
-          {item.title}
+          {item.assignment_name}
         </Button>
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="gap-1 border-b pb-4">
-          <DrawerTitle className="text-2xl">{item.title}</DrawerTitle>
+          <DrawerTitle className="text-2xl">{item.assignment_name}</DrawerTitle>
           <DrawerDescription className="flex items-center gap-2">
             <span className="font-semibold text-foreground">{item.course}</span>
             <span>•</span>
@@ -559,8 +559,8 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
           )}
           <form className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="flex flex-col gap-3">
-              <Label htmlFor="title">Assignment Title</Label>
-              <Input id="title" defaultValue={item.title} className="bg-muted/50" />
+              <Label htmlFor="assignment_name">Assignment Name</Label>
+              <Input id="assignment_name" defaultValue={item.assignment_name} className="bg-muted/50" />
             </div>
             <div className="flex flex-col gap-3">
               <Label htmlFor="course">Course</Label>

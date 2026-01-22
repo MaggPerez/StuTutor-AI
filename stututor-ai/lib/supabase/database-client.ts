@@ -2,6 +2,7 @@ import { createClient } from './client'
 import { Chat, ChatMessage, PDFDocument } from '@/types/Messages'
 import { User } from '@supabase/supabase-js'
 import { Course } from '@/types/Courses'
+import { Assignment } from '@/types/Assignments'
 
 async function getUserId(): Promise<string> {
     const supabase = createClient()
@@ -395,6 +396,33 @@ export async function updateCourse(courseId: string, updates: Partial<Course>) {
 }
 
 
+
+// =============================== ASSIGNMENT OPERATIONS ===============================
+
+/**
+ * 
+ * @param assignment 
+ * @returns The created assignment
+ */
+export async function createAssignment(assignment: Assignment) {
+    const supabase = createClient()
+    const userId = await getUserId()
+
+    const { data, error } = await supabase.from('assignments').insert({
+        ...assignment,
+        created_by: userId
+    }).select().single()
+
+    if (error) {
+        throw new Error('Failed to create assignment: ' + error.message)
+    }
+    return transformAssignmentFromDB(data)
+}
+
+
+
+
+
 // =============================== HELPER FUNCTIONS ===============================
 
 
@@ -467,5 +495,18 @@ function transformCourseFromDB(data: any): Course {
         academic_year: data.academic_year,
         credits: data.credits,
         created_by: data.created_by,
+    }
+}
+
+function transformAssignmentFromDB(data: any): Assignment {
+    return {
+        id: data.id,
+        assignment_name: data.assignment_name,
+        course: data.course,
+        type: data.type,
+        status: data.status,
+        dueDate: data.due_date,
+        priority: data.priority,
+        progress: data.progress,
     }
 }

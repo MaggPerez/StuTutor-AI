@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "title": "Calculus II Problem Set 5",
+    "assignment_name": "Calculus II Problem Set 5",
     "course": "Calculus II",
     "type": "Assignment",
     "status": "In Progress",
@@ -11,7 +11,7 @@
   },
   {
     "id": 2,
-    "title": "Physics Lab Report - Kinematics",
+    "assignment_name": "Physics Lab Report - Kinematics",
     "course": "Physics I",
     "type": "Lab Report",
     "status": "Completed",
@@ -21,7 +21,7 @@
   },
   {
     "id": 3,
-    "title": "Data Structures - Binary Trees",
+    "assignment_name": "Data Structures - Binary Trees",
     "course": "Computer Science",
     "type": "Assignment",
     "status": "Not Started",
@@ -31,7 +31,7 @@
   },
   {
     "id": 4,
-    "title": "English Essay - Shakespeare Analysis",
+    "assignment_name": "English Essay - Shakespeare Analysis",
     "course": "English Literature",
     "type": "Essay",
     "status": "In Progress",
@@ -41,7 +41,7 @@
   },
   {
     "id": 5,
-    "title": "Chemistry Chapter 8 Review",
+    "assignment_name": "Chemistry Chapter 8 Review",
     "course": "Chemistry",
     "type": "Study Notes",
     "status": "Completed",
@@ -51,7 +51,7 @@
   },
   {
     "id": 6,
-    "title": "Midterm Exam Preparation",
+    "assignment_name": "Midterm Exam Preparation",
     "course": "Calculus II",
     "type": "Exam Prep",
     "status": "In Progress",
@@ -61,7 +61,7 @@
   },
   {
     "id": 7,
-    "title": "History Research Paper",
+    "assignment_name": "History Research Paper",
     "course": "World History",
     "type": "Research Paper",
     "status": "In Progress",
@@ -71,7 +71,7 @@
   },
   {
     "id": 8,
-    "title": "Spanish Vocabulary Quiz",
+    "assignment_name": "Spanish Vocabulary Quiz",
     "course": "Spanish II",
     "type": "Quiz",
     "status": "Completed",
@@ -81,7 +81,7 @@
   },
   {
     "id": 9,
-    "title": "Programming Project - Web App",
+    "assignment_name": "Programming Project - Web App",
     "course": "Computer Science",
     "type": "Project",
     "status": "In Progress",
@@ -91,7 +91,7 @@
   },
   {
     "id": 10,
-    "title": "Biology Cell Structure Notes",
+    "assignment_name": "Biology Cell Structure Notes",
     "course": "Biology",
     "type": "Study Notes",
     "status": "Completed",
@@ -101,7 +101,7 @@
   },
   {
     "id": 11,
-    "title": "Physics Quiz - Newton's Laws",
+    "assignment_name": "Physics Quiz - Newton's Laws",
     "course": "Physics I",
     "type": "Quiz",
     "status": "Not Started",
@@ -111,7 +111,7 @@
   },
   {
     "id": 12,
-    "title": "Calculus Practice Problems",
+    "assignment_name": "Calculus Practice Problems",
     "course": "Calculus II",
     "type": "Practice",
     "status": "In Progress",
@@ -121,7 +121,7 @@
   },
   {
     "id": 13,
-    "title": "English Poetry Analysis",
+    "assignment_name": "English Poetry Analysis",
     "course": "English Literature",
     "type": "Assignment",
     "status": "Completed",
@@ -131,7 +131,7 @@
   },
   {
     "id": 14,
-    "title": "Chemistry Lab - Titration",
+    "assignment_name": "Chemistry Lab - Titration",
     "course": "Chemistry",
     "type": "Lab Report",
     "status": "In Progress",
@@ -141,7 +141,7 @@
   },
   {
     "id": 15,
-    "title": "Group Project Presentation",
+    "assignment_name": "Group Project Presentation",
     "course": "World History",
     "type": "Presentation",
     "status": "In Progress",
@@ -151,7 +151,7 @@
   },
   {
     "id": 16,
-    "title": "Spanish Conversation Practice",
+    "assignment_name": "Spanish Conversation Practice",
     "course": "Spanish II",
     "type": "Practice",
     "status": "Not Started",
@@ -161,7 +161,7 @@
   },
   {
     "id": 17,
-    "title": "Algorithm Analysis Assignment",
+    "assignment_name": "Algorithm Analysis Assignment",
     "course": "Computer Science",
     "type": "Assignment",
     "status": "Not Started",
@@ -171,7 +171,7 @@
   },
   {
     "id": 18,
-    "title": "Biology Exam Study Guide",
+    "assignment_name": "Biology Exam Study Guide",
     "course": "Biology",
     "type": "Exam Prep",
     "status": "In Progress",
@@ -181,7 +181,7 @@
   },
   {
     "id": 19,
-    "title": "Physics Problem Set 6",
+    "assignment_name": "Physics Problem Set 6",
     "course": "Physics I",
     "type": "Assignment",
     "status": "Completed",
@@ -191,7 +191,7 @@
   },
   {
     "id": 20,
-    "title": "Reading Summary - Classic Novel",
+    "assignment_name": "Reading Summary - Classic Novel",
     "course": "English Literature",
     "type": "Reading",
     "status": "In Progress",
