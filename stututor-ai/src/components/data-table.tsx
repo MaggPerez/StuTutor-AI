@@ -93,6 +93,8 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
+import CreateAssignmentDialog from "./assignments/CreateAssignmentDialog"
+import { Assignment } from "@/types/Assignments"
 
 export const schema = z.object({
   id: z.number(),
@@ -411,11 +413,12 @@ export function DataTable({
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button variant="default" size="sm" className="h-9 shadow-md shadow-primary/20">
+            <CreateAssignmentDialog />
+          {/* <Button variant="default" size="sm" className="h-9 shadow-md shadow-primary/20">
             <Plus className="size-4 mr-2" />
             <span className="hidden lg:inline">Add Assignment</span>
             <span className="lg:hidden">Add</span>
-          </Button>
+          </Button> */}
         </div>
       </div>
       <TabsContent

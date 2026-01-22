@@ -409,8 +409,14 @@ export async function createAssignment(assignment: Assignment) {
     const userId = await getUserId()
 
     const { data, error } = await supabase.from('assignments').insert({
-        ...assignment,
-        created_by: userId
+        user_id: userId,
+        assignment_name: assignment.assignment_name,
+        course: assignment.course,
+        type: assignment.type,
+        status: assignment.status,
+        due_date: assignment.dueDate,
+        priority: assignment.priority,
+        progress: assignment.progress,
     }).select().single()
 
     if (error) {
