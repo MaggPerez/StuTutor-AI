@@ -51,6 +51,15 @@ export default function CourseItem({ course, onUpdate, onDelete }: CourseItemPro
     const [showEditDialog, setShowEditDialog] = useState(false)
     const [isDeleting, setIsDeleting] = useState(false)
 
+    // Format time to include AM/PM
+    const formatTime = (time: string) => {
+        const [hours, minutes] = time.split(':')
+        const hour = parseInt(hours)
+        const ampm = hour >= 12 ? 'PM' : 'AM'
+        const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour
+        return `${displayHour}:${minutes} ${ampm}`
+    }
+
 
     const handleDelete = async () => {
         if (!course.id) return
@@ -117,18 +126,33 @@ export default function CourseItem({ course, onUpdate, onDelete }: CourseItemPro
                         </DropdownMenu>
                     </div>
                 </CardHeader>
-                <CardContent className="space-y-2">
-                    <div className="space-y-1.5">
-                        <p className="text-sm font-medium text-muted-foreground">
-                            Professor: <span className="text-foreground">{course.professor}</span>
-                        </p>
-                        <p className="text-sm text-muted-foreground line-clamp-2">
-                            {course.description}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                            {course.course_days.join(', ')} at {course.course_start_time} - {course.course_end_time}
-                        </p>
+                <CardContent className="space-y-3 pb-4">
+
+                    {/* professor */}
+                    <div className="flex items-center gap-2">
+                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Professor:</span>
+                        <span className="text-sm font-medium text-foreground">{course.professor}</span>
                     </div>
+
+                    
+
+                    {/* days of week and time range */}
+                    <div className="flex items-center gap-2 pt-1">
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-muted/50 text-xs font-medium">
+                            <span className="text-foreground">{course.course_days.join(', ')}</span>
+                        </div>
+
+
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-muted/50 text-xs font-medium">
+                            <span className="text-foreground">{formatTime(course.course_start_time)} - {formatTime(course.course_end_time)}</span>
+                        </div>
+                    </div>
+
+
+                    {/* description */}
+                    <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+                        Description: {course.description}
+                    </p>
                 </CardContent>
             </Card>
 
