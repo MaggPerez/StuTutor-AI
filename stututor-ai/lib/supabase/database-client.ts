@@ -452,8 +452,9 @@ function transformCourseFromDB(data: any): Course {
         id: data.id,
         title: data.title,
         professor: data.professor,
-        course_date: new Date(data.course_date),
-        course_time: data.course_time,
+        course_days: data.course_days || [],
+        course_start_time: data.course_start_time,
+        course_end_time: data.course_end_time,
         icon: data.icon,
 
         // Optional fields

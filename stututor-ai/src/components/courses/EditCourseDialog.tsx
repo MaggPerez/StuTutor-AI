@@ -3,15 +3,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
-import { CalendarIcon } from 'lucide-react'
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
-import { Calendar } from '../ui/calendar'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
-import { Course, CourseIcon } from '@/types/Courses'
-import { format } from 'date-fns'
+import { Course, CourseIcon, DayOfWeek } from '@/types/Courses'
 import { toast } from 'sonner'
 import { IconMath, IconAtom, IconFlask, IconBook, IconPalette, IconMusic, IconRun, IconLanguage, IconBrain, IconCode } from '@tabler/icons-react'
 import { updateCourse } from '../../../lib/supabase/database-client'
+import DaySelector from './DaySelector'
+import TimeRangeInput from './TimeRangeInput'
 
 const courseIcons = {
     math: { name: "Mathematics", icon: IconMath },
@@ -36,8 +34,9 @@ interface EditCourseDialogProps {
 export default function EditCourseDialog({ course, open, onOpenChange, onUpdate }: EditCourseDialogProps) {
     const [courseName, setCourseName] = useState<string>(course.title)
     const [professor, setProfessor] = useState<string>(course.professor)
-    const [date, setDate] = useState<Date>(course.course_date)
-    const [time, setTime] = useState<string>(course.course_time)
+    const [selectedDays, setSelectedDays] = useState<DayOfWeek[]>(course.course_days)
+    const [startTime, setStartTime] = useState<string>(course.course_start_time)
+    const [endTime, setEndTime] = useState<string>(course.course_end_time)
     const [description, setDescription] = useState<string>(course.description || "")
     const [selectedIcon, setSelectedIcon] = useState<CourseIcon>(course.icon)
     const [isUpdating, setIsUpdating] = useState(false)
@@ -46,15 +45,16 @@ export default function EditCourseDialog({ course, open, onOpenChange, onUpdate 
     useEffect(() => {
         setCourseName(course.title)
         setProfessor(course.professor)
-        setDate(course.course_date)
-        setTime(course.course_time)
+        setSelectedDays(course.course_days)
+        setStartTime(course.course_start_time)
+        setEndTime(course.course_end_time)
         setDescription(course.description || "")
         setSelectedIcon(course.icon)
     }, [course])
 
     async function onHandleUpdateCourse(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
-        if (!courseName || !professor || !date || !time || !description) {
+        if (!courseName || !professor || selectedDays.length === 0 || !startTime || !endTime || !description) {
             toast.error("Please fill in all fields", {
                 description: "All fields are required to update the course",
                 duration: 3000,
@@ -78,8 +78,9 @@ export default function EditCourseDialog({ course, open, onOpenChange, onUpdate 
                 title: courseName,
                 description: description,
                 professor: professor,
-                course_date: date,
-                course_time: time,
+                course_days: selectedDays,
+                course_start_time: startTime,
+                course_end_time: endTime,
                 icon: selectedIcon
             }
 
@@ -131,40 +132,23 @@ export default function EditCourseDialog({ course, open, onOpenChange, onUpdate 
                             </div>
                         </div>
 
-                        {/* date */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="flex flex-col gap-2">
-                                <Label htmlFor="date-1">Date</Label>
-                                <Popover>
-                                    <PopoverTrigger asChild>
-                                        <Button variant="outline" className="w-full justify-start text-left font-normal">
-                                            <CalendarIcon className="mr-2 h-4 w-4" />
-                                            {date ? format(date, "PPP") : <span>Pick a date</span>}
-                                        </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-0" align="start">
-                                        <Calendar
-                                            mode="single"
-                                            selected={date}
-                                            onSelect={(newDate) => newDate && setDate(newDate)}
-                                            initialFocus
-                                        />
-                                    </PopoverContent>
-                                </Popover>
-                            </div>
+                        {/* days of week */}
+                        <div className="flex flex-col gap-2">
+                            <Label>Class Days</Label>
+                            <DaySelector
+                                selectedDays={selectedDays}
+                                onDaysChange={setSelectedDays}
+                            />
+                        </div>
 
-                            {/* time */}
-                            <div className="flex flex-col gap-2">
-                                <Label htmlFor="time-1">Time</Label>
-                                <Input
-                                    id="time-1"
-                                    name="time"
-                                    type="time"
-                                    value={time}
-                                    onChange={(e) => setTime(e.target.value)}
-                                    required
-                                />
-                            </div>
+                        {/* time range */}
+                        <div className="flex flex-col gap-2">
+                            <TimeRangeInput
+                                startTime={startTime}
+                                endTime={endTime}
+                                onStartTimeChange={setStartTime}
+                                onEndTimeChange={setEndTime}
+                            />
                         </div>
 
                         {/* Icon Selection */}

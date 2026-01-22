@@ -1,11 +1,14 @@
 export type CourseIcon = 'math' | 'science' | 'chemistry' | 'literature' | 'art' | 'music' | 'physical' | 'language' | 'psychology' | 'programming'
 
+export type DayOfWeek = 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday'
+
 export interface Course {
     id?: string
     title: string
     professor: string
-    course_date: Date
-    course_time: string
+    course_days: DayOfWeek[]
+    course_start_time: string
+    course_end_time: string
     icon: CourseIcon
 
     description?: string

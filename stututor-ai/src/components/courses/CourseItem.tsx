@@ -126,7 +126,7 @@ export default function CourseItem({ course, onUpdate, onDelete }: CourseItemPro
                             {course.description}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                            {format(course.course_date, "PPP")} at {course.course_time}
+                            {course.course_days.join(', ')} at {course.course_start_time} - {course.course_end_time}
                         </p>
                     </div>
                 </CardContent>
