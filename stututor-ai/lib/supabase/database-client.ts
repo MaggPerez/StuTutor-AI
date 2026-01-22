@@ -344,6 +344,36 @@ export async function getUserCourses() {
 }
 
 
+/**
+ * 
+ * @param courseId 
+ * @returns The deleted course
+ */
+export async function deleteCourse(courseId: string) {
+    const supabase = createClient()
+    const { data, error } = await supabase.from('courses').delete().eq('id', courseId).select().single()
+    if (error) {
+        throw new Error('Failed to delete course: ' + error.message)
+    }
+    return transformCourseFromDB(data)
+}
+
+
+
+/**
+ * 
+ * @param courseId 
+ * @param updates 
+ * @returns The updated course
+ */
+export async function updateCourse(courseId: string, updates: Partial<Course>) {
+    const supabase = createClient()
+    const { data, error } = await supabase.from('courses').update(updates).eq('id', courseId).select().single()
+    if (error) {
+        throw new Error('Failed to update course: ' + error.message)
+    }
+    return transformCourseFromDB(data)
+}
 
 
 // =============================== HELPER FUNCTIONS ===============================
