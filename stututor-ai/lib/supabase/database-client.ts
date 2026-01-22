@@ -7,7 +7,19 @@ async function getUserId(): Promise<string> {
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error('User not authenticated')
-    return user.id
+
+    // Get the user's ID from the users table (not auth.uid())
+    const { data: userData, error } = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_id', user.id)
+        .single()
+
+    if (error || !userData) {
+        throw new Error('User profile not found')
+    }
+
+    return userData.id
 }
 
 
@@ -315,13 +327,18 @@ export async function getPDFUrl(chatId: string | null) {
 // =============================== COURSE OPERATIONS ===============================
 
 /**
- * 
- * @param course 
- * @returns 
+ *
+ * @param course
+ * @returns
  */
 export async function createCourse(course: Course) {
     const supabase = createClient()
-    const { data, error } = await supabase.from('courses').insert(course).select().single()
+    const userId = await getUserId()
+
+    const { data, error } = await supabase.from('courses').insert({
+        ...course,
+        created_by: userId
+    }).select().single()
 
     if (error) {
         throw new Error('Failed to create course: ' + error.message)
@@ -448,5 +465,6 @@ function transformCourseFromDB(data: any): Course {
         semester: data.semester,
         academic_year: data.academic_year,
         credits: data.credits,
+        created_by: data.created_by,
     }
 }

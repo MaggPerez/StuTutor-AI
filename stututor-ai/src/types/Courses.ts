@@ -19,6 +19,7 @@ export interface Course {
     is_archived?: boolean
     is_public?: boolean
     max_students?: number
+    created_by?: string
     created_at?: Date
     updated_at?: Date
 }
