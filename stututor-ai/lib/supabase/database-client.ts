@@ -426,6 +426,21 @@ export async function createAssignment(assignment: Assignment) {
 }
 
 
+/**
+ * 
+ * @returns All assignments for the current user
+ */
+export async function getUserAssignments() {
+    const supabase = createClient()
+    const userId = await getUserId()
+    const { data, error } = await supabase.from('assignments').select('*').eq('user_id', userId)
+    if (error) {
+        throw new Error('Failed to get assignments: ' + error.message)
+    }
+    return data.map(transformAssignmentFromDB)
+}
+
+
 
 
 

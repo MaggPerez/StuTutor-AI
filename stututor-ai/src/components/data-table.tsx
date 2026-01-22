@@ -323,6 +323,11 @@ export function DataTable({
     useSensor(KeyboardSensor, {})
   )
 
+  // Sync internal state when prop changes (e.g., when data is fetched from database)
+  React.useEffect(() => {
+    setData(initialData)
+  }, [initialData])
+
   const dataIds = React.useMemo<UniqueIdentifier[]>(
     () => data?.map(({ id }) => id) || [],
     [data]
