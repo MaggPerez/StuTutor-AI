@@ -18,6 +18,20 @@ export default function Courses() {
         })
     }, [])
 
+    const handleCourseUpdate = (updatedCourse: Course) => {
+        setCourses(prevCourses =>
+            prevCourses.map(course =>
+                course.id === updatedCourse.id ? updatedCourse : course
+            )
+        )
+    }
+
+    const handleCourseDelete = (courseId: string) => {
+        setCourses(prevCourses =>
+            prevCourses.filter(course => course.id !== courseId)
+        )
+    }
+
 
 
     return (
@@ -51,7 +65,12 @@ export default function Courses() {
 
                                 {/* Display Courses */}
                                 {courses.map((course) => (
-                                    <CourseItem key={course.id} course={course} />
+                                    <CourseItem
+                                        key={course.id}
+                                        course={course}
+                                        onUpdate={handleCourseUpdate}
+                                        onDelete={handleCourseDelete}
+                                    />
                                 ))}
 
 
