@@ -345,17 +345,18 @@ export async function getUserCourses() {
 
 
 /**
- * 
- * @param courseId 
- * @returns The deleted course
+ *
+ * @param courseId
+ * @returns void
  */
 export async function deleteCourse(courseId: string) {
     const supabase = createClient()
-    const { data, error } = await supabase.from('courses').delete().eq('id', courseId).select().single()
+
+    //TODO: fix deleting issue where it only soft deletes the course but not the actual course data in the database
+    const { error } = await supabase.from('courses').delete().eq('id', courseId)
     if (error) {
         throw new Error('Failed to delete course: ' + error.message)
     }
-    return transformCourseFromDB(data)
 }
 
 
@@ -368,6 +369,7 @@ export async function deleteCourse(courseId: string) {
  */
 export async function updateCourse(courseId: string, updates: Partial<Course>) {
     const supabase = createClient()
+    //TODO: fix updating issue where it only updates the course but not the actual course data in the database
     const { data, error } = await supabase.from('courses').update(updates).eq('id', courseId).select().single()
     if (error) {
         throw new Error('Failed to update course: ' + error.message)

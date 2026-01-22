@@ -51,7 +51,7 @@ export default function CourseItem({ course, onUpdate, onDelete }: CourseItemPro
     const [showEditDialog, setShowEditDialog] = useState(false)
     const [isDeleting, setIsDeleting] = useState(false)
 
-    //TODO: fix course id issue
+
     const handleDelete = async () => {
         if (!course.id) return
 
@@ -68,7 +68,6 @@ export default function CourseItem({ course, onUpdate, onDelete }: CourseItemPro
     }
 
     const handleEdit = () => {
-        //TODO: fix course id issue
         setShowEditDialog(true)
     }
 
