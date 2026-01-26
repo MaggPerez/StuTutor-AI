@@ -22,7 +22,6 @@ export default function Assignments() {
     useEffect(() => {
         const fetchAssignments = async () => {
             const assignments = await getUserAssignments()
-            console.log("Assignments:", assignments)
             setData(assignments)
 
             // Transform assignments to table data with sequential numeric IDs
@@ -64,6 +63,12 @@ export default function Assignments() {
 
                 {/* Total Assignments Card */}
                 <div className='p-4'>
+
+                    <div className="mb-6">
+                        <h1 className="text-3xl font-bold">Assignments</h1>
+                        <p className="text-muted-foreground mt-1">Manage your assignments</p>
+                    </div>
+
                     <AssignmentStatsCards title="Total Assignments" total={data.length} />
 
                     {/* Assignment table */}
