@@ -16,6 +16,7 @@ import {
   IconSearch,
   IconSettings,
   IconUsers,
+  IconCalendar,
 } from "@tabler/icons-react"
 
 import { NavDocuments } from "@/components/nav-documents"
@@ -61,6 +62,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: "Assignments",
         url: "/assignments",
         icon: IconListDetails,
+      },
+      {
+        title: "Calendar",
+        url: "/calendar",
+        icon: IconCalendar,
       },
       {
         title: "Study Analytics",
