@@ -158,7 +158,10 @@ export default function AddCourseDialog({ courses, setCourses }: { courses: Cour
                             <DialogClose asChild>
                                 <Button type='button' variant="outline">Cancel</Button>
                             </DialogClose>
-                            <Button type="submit">Save changes</Button>
+
+                            <DialogClose asChild>
+                                <Button type="submit">Save changes</Button>
+                            </DialogClose>
                         </DialogFooter>
                     </form>
                 </DialogContent>
