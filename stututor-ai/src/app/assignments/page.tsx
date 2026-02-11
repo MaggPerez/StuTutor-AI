@@ -1,17 +1,9 @@
 "use client"
 import { AppSidebar } from '@/components/app-sidebar'
-import { Button } from '@/components/ui/button'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { DataTable, schema } from "@/components/data-table"
-// import data from "../dashboard/data.json"
-import React, { useState, useEffect } from 'react'
+import { DataTable } from "@/components/data-table"
 import AssignmentStatsCards from '@/components/assignments/assignment-stats-cards'
 import { SiteHeader } from '@/components/site-header'
-import { Assignment } from '@/types/Assignments'
-import { getUserAssignments } from '../../../lib/supabase/database-client'
-import { z } from 'zod'
 import { useUser } from '@/contexts/UserContext'
 
 
@@ -42,7 +34,7 @@ export default function Assignments() {
                     </div>
 
                     {/* Total Assignments Card */}
-                    <AssignmentStatsCards title="Total Assignments" total={assignments.length} />
+                    <AssignmentStatsCards />
 
                     {/* Assignment table */}
                     <DataTable data={assignmentTableData} />

@@ -6,6 +6,7 @@ export interface AssignmentCardProps {
     completed?: number,
     pending?: number,
     overdue?: number,
+    icon: React.ReactNode,
 }
 
 export interface Assignment {
