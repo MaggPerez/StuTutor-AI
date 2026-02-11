@@ -12,41 +12,13 @@ import { SiteHeader } from '@/components/site-header'
 import { Assignment } from '@/types/Assignments'
 import { getUserAssignments } from '../../../lib/supabase/database-client'
 import { z } from 'zod'
+import { useUser } from '@/contexts/UserContext'
 
 
 
 export default function Assignments() {
-    const [data, setData] = useState<Assignment[]>([])
-    const [tableData, setTableData] = useState<z.infer<typeof schema>[]>([])
-
-    useEffect(() => {
-        const fetchAssignments = async () => {
-            const assignments = await getUserAssignments()
-            setData(assignments)
-
-            // Transform assignments to table data with sequential numeric IDs
-            const transformedData: z.infer<typeof schema>[] = assignments.map((assignment, index) => {
-                // Convert ISO timestamp to simple date string (YYYY-MM-DD)
-                const dueDateStr = assignment.dueDate
-                    ? new Date(assignment.dueDate).toISOString().split('T')[0]
-                    : ''
-
-                return {
-                    id: index + 1, // Sequential ID starting from 1
-                    assignment_name: assignment.assignment_name,
-                    course: assignment.course,
-                    type: assignment.type,
-                    status: assignment.status,
-                    dueDate: dueDateStr, // Simple date format like "2025-11-15"
-                    priority: assignment.priority,
-                    progress: assignment.progress,
-                }
-            })
-
-            setTableData(transformedData)
-        }
-        fetchAssignments()
-    }, [])
+    const {assignments, assignmentTableData } = useUser()
+    
     return (
         <SidebarProvider
             style={
@@ -69,10 +41,11 @@ export default function Assignments() {
                         <p className="text-muted-foreground mt-1">Manage your assignments</p>
                     </div>
 
-                    <AssignmentStatsCards title="Total Assignments" total={data.length} />
+                    {/* Total Assignments Card */}
+                    <AssignmentStatsCards title="Total Assignments" total={assignments.length} />
 
                     {/* Assignment table */}
-                    <DataTable data={tableData} />
+                    <DataTable data={assignmentTableData} />
                 </div>
             </SidebarInset>
         </SidebarProvider>
