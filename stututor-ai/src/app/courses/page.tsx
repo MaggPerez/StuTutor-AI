@@ -7,19 +7,15 @@ import { Course } from '@/types/Courses'
 import { SiteHeader } from '@/components/site-header'
 import CourseItem from '@/components/courses/CourseItem'
 import AddCourseDialog from '@/components/courses/AddCourseDialog'
+import { useUser } from '@/contexts/UserContext'
 
 
 export default function Courses() {
-    const [courses, setCourses] = useState<Course[]>([])
-
-    useEffect(() => {
-        getUserCourses().then((courses) => {
-            setCourses(courses)
-        })
-    }, [])
+    const [createdCourses, setCreatedCourses] = useState<Course[]>([])
+    const { courses, setCourses } = useUser()
 
     const handleCourseUpdate = (updatedCourse: Course) => {
-        setCourses(prevCourses =>
+        setCreatedCourses(prevCourses =>
             prevCourses.map(course =>
                 course.id === updatedCourse.id ? updatedCourse : course
             )
@@ -27,7 +23,7 @@ export default function Courses() {
     }
 
     const handleCourseDelete = (courseId: string) => {
-        setCourses(prevCourses =>
+        setCreatedCourses(prevCourses =>
             prevCourses.filter(course => course.id !== courseId)
         )
     }
@@ -75,7 +71,7 @@ export default function Courses() {
 
 
                                 {/* Add Course Dialog */}
-                                <AddCourseDialog courses={courses} setCourses={setCourses} />
+                                <AddCourseDialog courses={createdCourses} setCourses={setCreatedCourses} />
                             </div>
                         </div>
                     ) : (
@@ -84,7 +80,7 @@ export default function Courses() {
                         <div className="flex flex-col gap-4 justify-center items-center h-full">
                             <h1 className="text-2xl font-bold">Set up your courses!</h1>
                             <p>Click the button below to create a new course</p>
-                            <AddCourseDialog courses={courses} setCourses={setCourses} />
+                            <AddCourseDialog courses={createdCourses} setCourses={setCreatedCourses} />
                         </div>
                     )}
                 </SidebarInset>

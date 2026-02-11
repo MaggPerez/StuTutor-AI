@@ -3,10 +3,16 @@
 import React, { createContext, useContext, useEffect, useState } from "react"
 import { User } from "@supabase/supabase-js"
 import { createClient } from "../../lib/supabase/client"
+import { Course } from "@/types/Courses"
+import { getUserAssignments, getUserCourses } from "../../lib/supabase/database-client"
+import { Assignment } from "@/types/Assignments"
 
 interface UserContextType {
   user: User | null
   loading: boolean
+  courses: Course[]
+  setCourses: (courses: Course[]) => void
+  assignments: Assignment[]
 }
 
 // Create a context for the user
@@ -16,6 +22,9 @@ const UserContext = createContext<UserContextType | undefined>(undefined)
 export function UserProvider({ children }: { children: React.ReactNode }) {
   // State for the user
   const [user, setUser] = useState<User | null>(null)
+
+  const [courses, setCourses] = useState<Course[]>([])
+  const [assignments, setAssignments] = useState<Assignment[]>([])
 
   // State for the loading state
   const [loading, setLoading] = useState(true)
@@ -29,7 +38,12 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       try {
         const { data: { user } } = await supabase.auth.getUser()
         setUser(user)
-
+        getUserCourses().then((courses) => {
+          setCourses(courses)
+        })
+        getUserAssignments().then((assignments) => {
+          setAssignments(assignments)
+        })
       } catch (error) {
         console.error("Error fetching user:", error)
 
@@ -55,7 +69,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
   // Return the user context
   return (
-    <UserContext.Provider value={{ user, loading }}>
+    <UserContext.Provider value={{ user, loading, courses, setCourses, assignments }}>
       {children}
     </UserContext.Provider>
   )
