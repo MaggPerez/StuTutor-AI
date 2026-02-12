@@ -1,0 +1,121 @@
+'use client'
+import React, { useState } from 'react'
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '../ui/card'
+import { QuizQuestion } from '@/types/QuizQuestion'
+import { Button } from '../ui/button'
+
+export default function QuizQuestionsCard({ quizId }: { quizId: string }) {
+    const [questions] = useState<QuizQuestion[]>([
+        {
+            id: '1',
+            question: 'What is the capital of France?',
+            answer: 'Paris',
+            choices: ['Paris', 'London', 'Berlin', 'Madrid'],
+            difficulty: 'Easy',
+            topic: 'Geography'
+        },
+        {
+            id: '2',
+            question: 'What is the capital of Germany?',
+            answer: 'Berlin',
+            choices: ['Paris', 'London', 'Berlin', 'Madrid'],
+            difficulty: 'Easy',
+            topic: 'Geography'
+        }
+    ])
+
+    const [currentIndex, setCurrentIndex] = useState(0)
+    const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
+    const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
+    const [score, setScore] = useState(0)
+    const [quizFinished, setQuizFinished] = useState(false)
+
+    const currentQuestion = questions[currentIndex]
+
+    function handleAnswer(choice: string) {
+        if (selectedAnswer !== null) return // prevent changing answer once selected
+        setSelectedAnswer(choice)
+        const correct = choice === currentQuestion.answer
+        setIsCorrect(correct)
+        if (correct) setScore((prev) => prev + 1)
+    }
+
+    function handleNext() {
+        if (currentIndex + 1 < questions.length) {
+            setCurrentIndex((prev) => prev + 1)
+            setSelectedAnswer(null)
+            setIsCorrect(null)
+        } else {
+            setQuizFinished(true)
+        }
+    }
+
+    if (quizFinished) {
+        return (
+            <Card className="max-w-2xl mx-auto">
+                <CardHeader>
+                    <CardTitle className="text-2xl font-bold">Quiz Complete!</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-lg">You scored {score} out of {questions.length}</p>
+                </CardContent>
+            </Card>
+        )
+    }
+
+    return (
+        <div className="max-w-2xl mx-auto">
+            <p className="text-sm text-muted-foreground mb-4">
+                Question {currentIndex + 1} of {questions.length}
+            </p>
+            <Card>
+                <CardHeader>
+                    <CardTitle className="text-2xl font-bold mb-2">
+                        {currentIndex + 1}. {currentQuestion.question}
+                    </CardTitle>
+                    <CardDescription>
+                        {currentQuestion.difficulty} - {currentQuestion.topic}
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="flex flex-col gap-2">
+                        {currentQuestion.choices.map((choice) => {
+                            let variant: 'outline' | 'default' | 'destructive' = 'outline'
+                            if (selectedAnswer !== null) {
+                                if (choice === currentQuestion.answer) {
+                                    variant = 'default' // highlight correct answer green
+                                } else if (choice === selectedAnswer) {
+                                    variant = 'destructive' // highlight wrong pick red
+                                }
+                            }
+
+                            return (
+                                <Button
+                                    key={choice}
+                                    variant={variant}
+                                    className="w-full"
+                                    disabled={selectedAnswer !== null}
+                                    onClick={() => handleAnswer(choice)}
+                                >
+                                    {choice}
+                                </Button>
+                            )
+                        })}
+
+                        {isCorrect !== null && (
+                            <p className={`text-lg font-bold ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
+                                {isCorrect ? 'Correct!' : `Incorrect — the answer is ${currentQuestion.answer}`}
+                            </p>
+                        )}
+
+                        {selectedAnswer !== null && (
+                            <Button className="mt-4" onClick={handleNext}>
+                                {currentIndex + 1 < questions.length ? 'Next Question' : 'See Results'}
+                            </Button>
+                        )}
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+    )
+}
