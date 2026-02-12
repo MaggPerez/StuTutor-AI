@@ -1,20 +1,27 @@
-# StuTutor A.I
-<img width="1800" height="1046" alt="StuTutor AI" src="https://github.com/user-attachments/assets/2c9e8f06-3af1-4ae6-a70b-beb2b18aad37" />
+# StuTutor
+![StuTutor Banner](stututor-ai/public/landing_page.png)
 
-An intelligent AI-powered tutoring platform that helps students with their assignments by analyzing PDF documents and providing interactive study assistance.
+A comprehensive college web application designed to help students manage their studies with AI-assisted tools.
 
 ## 🎯 Project Goal
 
-StuTutor AI is designed to be a comprehensive AI tutor that helps students understand and learn from their course materials. Students can upload PDF documents (textbooks, lecture notes, assignments) 
-and engage in interactive conversations with an AI assistant that understands the content and provides personalized educational support.
+StuTutor is a centralized platform for college students to organize and manage all aspects of their academic life. With built-in AI capabilities, students can get intelligent assistance with their coursework, making studying more efficient and productive.
 
+## Key Features
 
-### Key Features
+### Dashboard
+Central hub for managing your academic activities and getting an overview of your college life.
 
-- **PDF Document Upload**: Upload course materials, textbooks, or assignment documents
-- **AI-Powered Chat**: Ask questions about uploaded PDFs and get intelligent, context-aware responses
-- **Conversation Management**: Organize multiple study sessions with different documents
-- **Real-time PDF Analysis**: Automatic text extraction and AI understanding of document content
-- **Interactive Learning**: Get explanations, summaries, and practice questions based on your materials
+### Courses
+Organize and track all your enrolled courses in one place.
 
-And more to come!
+### Assignments
+Manage your assignments, track deadlines, and stay on top of your coursework.
+
+### Calendar
+Keep track of important dates, classes, and academic events.
+
+### AI Tutor
+AI-powered assistant that can read and analyze documents (PDFs, textbooks, lecture notes) and provide intelligent responses based on the content. Upload your study materials and get instant help with understanding concepts, answering questions, and more.
+
+**Note:** More AI features are coming soon to further enhance your learning experience!
