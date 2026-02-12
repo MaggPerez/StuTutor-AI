@@ -5,7 +5,7 @@ import { DataTable } from "@/components/data-table"
 import { SectionCards } from "@/components/section-cards"
 import QuickActions from "@/components/dashboard/QuickActions"
 import UpcomingTasks from "@/components/dashboard/UpcomingTasks"
-import RecentActivity from "@/components/dashboard/RecentActivity"
+import TodaysClasses from "@/components/dashboard/TodaysClasses"
 import { SiteHeader } from "@/components/site-header"
 import {
   SidebarInset,
@@ -100,17 +100,17 @@ export default async function Page() {
           </section>
 
 
-          {/* Upcoming Tasks and Recent Activity */}
+          {/* Upcoming Tasks and Today's Classes */}
           <div className="grid gap-6 lg:grid-cols-2">
-            <div className="lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-6 ">
               {/* Upcoming Tasks Checklist */}
               <div className="h-fit">
                 <UpcomingTasks />
               </div>
 
-              {/* Recent Activity Feed */}
+              {/* Today's Classes */}
               <div className="h-fit">
-                <RecentActivity />
+                <TodaysClasses />
               </div>
             </div>
           </div>
