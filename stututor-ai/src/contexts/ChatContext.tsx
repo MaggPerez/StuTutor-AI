@@ -193,6 +193,13 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         try {
             await deleteChatFromDb(chatId)
             setChats(prev => prev.filter(c => c.id !== chatId))
+
+            // If we deleted the current chat, clear the state
+            if (currentChatId === chatId) {
+                setCurrentChatId(null)
+                setCurrentChat(null)
+                setMessages([])
+            }
         } catch (error) {
             console.error('Error deleting chat:', error)
             throw error

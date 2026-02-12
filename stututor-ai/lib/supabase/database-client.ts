@@ -115,21 +115,21 @@ export async function updateChat(chatId: string, updates: Partial<Chat>) {
 
 
 /**
- * Deletes a chat (soft delete)
+ * Deletes a chat
  */
 export async function deleteChat(chatId: string) {
     const supabase = createClient()
 
-    const { data, error } = await supabase
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('User not authenticated')
+
+    const { error } = await supabase
         .from('chats')
         .delete()
         .eq('id', chatId)
-        .select()
-        .single()
+        .eq('user_id', user.id)
 
     if (error) throw error
-
-    return transformChatFromDB(data)
 }
 
 
