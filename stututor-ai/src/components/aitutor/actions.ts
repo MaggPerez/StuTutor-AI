@@ -1,11 +1,8 @@
 import { createClient } from '../../../lib/supabase/client'
-import { getChatById } from '../../../lib/supabase/database-client'
 const supabase = createClient()
 
-const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
-
 export async function sendMessage(message: string) {
-    const response = await fetch(`${baseUrl}/gemini/chat`, {
+    const response = await fetch('/api/gemini', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -16,15 +13,15 @@ export async function sendMessage(message: string) {
         throw new Error('Failed to send message')
     }
     const data = await response.json()
-    return data
+    return { message: data.response }
 }
 
 export async function uploadPDF(file: File, question: string) {
     const formData = new FormData()
     formData.append('file', file)
     formData.append('question', question)
-    
-    const response = await fetch(`${baseUrl}/gemini/upload-pdf`, {
+
+    const response = await fetch('/api/gemini', {
         method: 'POST',
         body: formData,
     })
@@ -32,7 +29,7 @@ export async function uploadPDF(file: File, question: string) {
         throw new Error('Failed to upload PDF')
     }
     const data = await response.json()
-    return data
+    return { message: data.response }
 }
 
 
