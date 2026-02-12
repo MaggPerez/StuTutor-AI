@@ -45,16 +45,16 @@ export default async function AITutorPage() {
             active: true
         },
         {
-            title: "Document Summarizer",
-            description: "Upload lengthy documents and get concise summaries and key takeaways in seconds.",
-            icon: <FileText className="h-8 w-8 text-muted-foreground" />,
-            href: null,
-            active: false
-        },
-        {
             title: "Quiz Generator",
             description: "Create custom quizzes from your study materials to test your knowledge and prepare for exams.",
             icon: <Brain className="h-8 w-8 text-muted-foreground" />,
+            href: '/aitutor/quizgen',
+            active: true
+        },
+        {
+            title: "Document Summarizer",
+            description: "Upload lengthy documents and get concise summaries and key takeaways in seconds.",
+            icon: <FileText className="h-8 w-8 text-muted-foreground" />,
             href: null,
             active: false
         },
