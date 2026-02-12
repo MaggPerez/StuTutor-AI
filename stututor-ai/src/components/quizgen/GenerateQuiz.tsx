@@ -13,6 +13,9 @@ import { Brain, FileText } from 'lucide-react'
 export default function GenerateQuiz() {
     const [difficulty, setDifficulty] = useState<string>('Easy')
     const [numQuestions, setNumQuestions] = useState<number>(10)
+    const [topic, setTopic] = useState<string>('')
+
+
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -37,7 +40,7 @@ export default function GenerateQuiz() {
                         {/* Describe your topic */}
                         <div className="flex flex-col gap-2">
                             <Label htmlFor="topic">Describe your topic</Label>
-                            <Input id="topic" name="topic" placeholder="e.g. 'Quiz me on cellular respiration'" />
+                            <Input id="topic" name="topic" placeholder="e.g. 'Quiz me on cellular respiration'" value={topic} onChange={(e) => setTopic(e.target.value)} />
                         </div>
 
                         {/* Difficulty */}
@@ -72,7 +75,7 @@ export default function GenerateQuiz() {
                         <DialogClose asChild>
                             <Button type="button" variant="outline">Cancel</Button>
                         </DialogClose>
-                        <DialogClose asChild>
+                        <DialogClose asChild disabled={!topic}>
                             <Button type="submit">Generate Quiz</Button>
                         </DialogClose>
                     </DialogFooter>

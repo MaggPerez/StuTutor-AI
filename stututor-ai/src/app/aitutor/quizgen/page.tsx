@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { Brain, FileText } from 'lucide-react'
 import GenerateQuiz from '@/components/quizgen/GenerateQuiz'
+import UploadPDFQuiz from '@/components/quizgen/UploadPDFQuiz'
 
 export default function QuizGenerator() {
     return (
@@ -30,14 +31,7 @@ export default function QuizGenerator() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
                         <GenerateQuiz />
 
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2"><FileText className="h-8 w-8 text-muted-foreground" /> Upload a PDF</CardTitle>
-                                <CardDescription>
-                                    Upload a PDF to get started.
-                                </CardDescription>
-                            </CardHeader>
-                        </Card>
+                        <UploadPDFQuiz />
                     </div>
                 </div>
             </SidebarInset>
