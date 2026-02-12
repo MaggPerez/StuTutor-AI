@@ -52,23 +52,26 @@ export default function QuizQuestionsCard({ quizId }: { quizId: string }) {
 
     if (quizFinished) {
         return (
-            <Card className="max-w-2xl mx-auto">
-                <CardHeader>
-                    <CardTitle className="text-2xl font-bold">Quiz Complete!</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <p className="text-lg">You scored {score} out of {questions.length}</p>
-                </CardContent>
-            </Card>
+            <div className="min-h-screen flex items-center justify-center p-4">
+                <Card className="max-w-2xl w-full">
+                    <CardHeader>
+                        <CardTitle className="text-2xl font-bold">Quiz Complete!</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-lg">You scored {score} out of {questions.length}</p>
+                    </CardContent>
+                </Card>
+            </div>
         )
     }
 
     return (
-        <div className="max-w-2xl mx-auto">
-            <p className="text-sm text-muted-foreground mb-4">
-                Question {currentIndex + 1} of {questions.length}
-            </p>
-            <Card>
+        <div className="min-h-screen flex items-center justify-center p-4">
+            <div className="max-w-2xl w-full">
+                <p className="text-sm text-muted-foreground mb-4">
+                    Question {currentIndex + 1} of {questions.length}
+                </p>
+                <Card>
                 <CardHeader>
                     <CardTitle className="text-2xl font-bold mb-2">
                         {currentIndex + 1}. {currentQuestion.question}
@@ -116,6 +119,7 @@ export default function QuizQuestionsCard({ quizId }: { quizId: string }) {
                     </div>
                 </CardContent>
             </Card>
+            </div>
         </div>
     )
 }
