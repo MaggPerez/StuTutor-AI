@@ -1,4 +1,4 @@
-export type QuizQuestion = {
+export interface QuizQuestion {
     id: string
     question: string
     answer: string
