@@ -7,7 +7,7 @@ export async function sendQuizWithTopicToGemini(topic: string, difficulty: strin
         body: JSON.stringify({ topic, difficulty, numQuestions }),
     })
     if (!response.ok) {
-        throw new Error('Failed to send quiz with topic to Gemini')
+        throw new Error(response.statusText)
     }
     const data = await response.json()
     return { message: data.response }
@@ -24,7 +24,7 @@ export async function sendQuizWithPDFToGemini(file: File, difficulty: string, nu
         body: formData,
     })
     if (!response.ok) {
-        throw new Error('Failed to send quiz with PDF to Gemini')
+        throw new Error(response.statusText)
     }
     const data = await response.json()
     return { message: data.response }

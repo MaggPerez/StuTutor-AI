@@ -6,7 +6,7 @@ const ai = new GoogleGenAI({apiKey: process.env.GEMINI_API_KEY});
 
 async function generateQuizFromTopic(topic: string, difficulty: string, numQuestions: number) {
     const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
+        model: "gemini-2.5-flash",
         contents: [
             {
                 text: topic
@@ -46,7 +46,7 @@ async function generateQuizFromPDF(file: File, difficulty: string, numQuestions:
     const buffer = Buffer.from(bytes);
     const base64 = buffer.toString('base64');
     const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
+        model: "gemini-2.5-flash",
         contents: [
             {
                 inlineData: {
@@ -104,6 +104,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             return NextResponse.json({ response });
         }
     } catch (error) {
-        return NextResponse.json({ error: "Failed to generate quiz" }, { status: 500 });
+        console.error('Quiz API error:', error);
+        const message = error instanceof Error ? error.message : 'Unknown error';
+        return NextResponse.json({ error: "Failed to generate quiz", details: message }, { status: 500 });
     }
 }

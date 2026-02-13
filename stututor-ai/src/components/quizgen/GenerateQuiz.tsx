@@ -10,9 +10,26 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Brain, FileText } from 'lucide-react'
 import { useQuiz } from '@/contexts/QuizContext'
+import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
+import { Spinner } from '../ui/spinner'
 
 export default function GenerateQuiz() {
-    const { difficulty, setDifficulty, numQuestions, setNumQuestions, topic, setTopic, generateQuiz } = useQuiz()
+    const { difficulty, setDifficulty, numQuestions, setNumQuestions, topic, setTopic, generateQuiz, isLoading } = useQuiz()
+    const router = useRouter()
+    async function handleGenerateQuiz(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault()
+        if (topic && difficulty && numQuestions) {
+            const id = await generateQuiz()
+            if (id) {
+                router.push(`/aitutor/quizgen/${id}`)
+            } else {
+                toast.error('Failed to generate quiz')
+            }
+        } else {
+            toast.error('Please fill in all fields')
+        }
+    }
 
 
     return (
@@ -26,6 +43,9 @@ export default function GenerateQuiz() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
+                        {isLoading && <div className="flex items-center justify-center">
+                            <Spinner className="size-10 animate-spin" /> Generating quiz...
+                        </div>}
                     </CardContent>
                 </Card>
             </DialogTrigger>
@@ -33,7 +53,7 @@ export default function GenerateQuiz() {
                 <DialogHeader>
                     <DialogTitle>Generate Quiz</DialogTitle>
                 </DialogHeader>
-                <form onSubmit={generateQuiz}>  
+                <form onSubmit={handleGenerateQuiz}>  
                     <div className="flex flex-col gap-6">
 
                         {/* Describe your topic */}

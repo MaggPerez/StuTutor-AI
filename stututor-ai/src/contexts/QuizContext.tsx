@@ -15,7 +15,8 @@ interface QuizContextType {
     numQuestions: number
     setNumQuestions: (numQuestions: number) => void
     isLoading: boolean
-    generateQuiz: () => Promise<void>
+    generateQuiz: () => Promise<string | null>
+    quizId: string | null
 }
 
 
@@ -27,32 +28,33 @@ export function QuizProvider({ children }: { children: React.ReactNode }) {
     const [numQuestions, setNumQuestions] = useState<number>(10)
     const [questions, setQuestions] = useState<QuizQuestion[]>([])
     const [isLoading, setIsLoading] = useState(true)
-    const router = useRouter()
+    const [quizId, setQuizId] = useState<string | null>(null)
 
     
-    useEffect(() => {
-        if (topic && difficulty && numQuestions) {
-            generateQuiz()
-        }
-    }, [topic, difficulty, numQuestions])
 
 
-    async function generateQuiz() {
+
+    async function generateQuiz(): Promise<string | null> {
         try {
             setIsLoading(true)
             const quiz = await sendQuizWithTopicToGemini(topic, difficulty, numQuestions)
-            const quizQuestions = JSON.parse(quiz.message) as QuizQuestion[]
+            const parsed = JSON.parse(quiz.message)
+            const quizQuestions = parsed.questions as QuizQuestion[]
             setQuestions(quizQuestions)
+            const id = crypto.randomUUID()
+            setQuizId(id)
             setIsLoading(false)
+            return id
         } catch (error) {
             console.error('Error generating quiz:', error)
             setIsLoading(false)
+            return null
         }
     }
 
 
     return (
-        <QuizContext.Provider value={{ questions, setQuestions, topic, setTopic, difficulty, setDifficulty, numQuestions, setNumQuestions, isLoading, generateQuiz }}>
+        <QuizContext.Provider value={{ questions, setQuestions, topic, setTopic, difficulty, setDifficulty, numQuestions, setNumQuestions, isLoading, generateQuiz, quizId }}>
             {children}
         </QuizContext.Provider>
     )
