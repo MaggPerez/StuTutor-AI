@@ -9,11 +9,10 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Brain, FileText } from 'lucide-react'
+import { useQuiz } from '@/contexts/QuizContext'
 
 export default function GenerateQuiz() {
-    const [difficulty, setDifficulty] = useState<string>('Easy')
-    const [numQuestions, setNumQuestions] = useState<number>(10)
-    const [topic, setTopic] = useState<string>('')
+    const { difficulty, setDifficulty, numQuestions, setNumQuestions, topic, setTopic, generateQuiz } = useQuiz()
 
 
     return (
@@ -34,7 +33,7 @@ export default function GenerateQuiz() {
                 <DialogHeader>
                     <DialogTitle>Generate Quiz</DialogTitle>
                 </DialogHeader>
-                <form action="">
+                <form onSubmit={generateQuiz}>  
                     <div className="flex flex-col gap-6">
 
                         {/* Describe your topic */}

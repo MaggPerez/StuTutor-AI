@@ -2,6 +2,7 @@
 
 import { ChatProvider } from '@/contexts/ChatContext'
 import { PDFProvider } from '@/contexts/PDFContext'
+import { QuizProvider } from '@/contexts/QuizContext'
 
 export default function AITutorLayout({
     children,
@@ -11,7 +12,9 @@ export default function AITutorLayout({
     return (
         <ChatProvider>
             <PDFProvider>
-                {children}
+                <QuizProvider>
+                    {children}
+                </QuizProvider>
             </PDFProvider>
         </ChatProvider>
     )

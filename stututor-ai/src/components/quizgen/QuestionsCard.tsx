@@ -4,26 +4,11 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '../ui
 import { QuizQuestion } from '@/types/QuizQuestion'
 import { Button } from '../ui/button'
 import Link from 'next/link'
+import { useQuiz } from '@/contexts/QuizContext'
+import { Spinner } from '../ui/spinner'
 
 export default function QuizQuestionsCard({ quizId }: { quizId: string }) {
-    const [questions] = useState<QuizQuestion[]>([
-        {
-            id: '1',
-            question: 'What is the capital of France?',
-            answer: 'Paris',
-            choices: ['Paris', 'London', 'Berlin', 'Madrid'],
-            difficulty: 'Easy',
-            topic: 'Geography'
-        },
-        {
-            id: '2',
-            question: 'What is the capital of Germany?',
-            answer: 'Berlin',
-            choices: ['Paris', 'London', 'Berlin', 'Madrid'],
-            difficulty: 'Easy',
-            topic: 'Geography'
-        }
-    ])
+    const { questions, isLoading } = useQuiz()
 
     const [currentIndex, setCurrentIndex] = useState(0)
     const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
@@ -31,7 +16,18 @@ export default function QuizQuestionsCard({ quizId }: { quizId: string }) {
     const [score, setScore] = useState(0)
     const [quizFinished, setQuizFinished] = useState(false)
 
-    const currentQuestion = questions[currentIndex]
+    if (isLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center p-4">
+                <h1 className="text-2xl font-bold"><Spinner className="size-10 animate-spin" />Generating quiz...</h1>
+            </div>
+        )
+    }
+
+    const currentQuestion = questions[currentIndex] || null
+    if (!currentQuestion) {
+        return <div>No questions found</div>
+    }
 
     function handleAnswer(choice: string) {
         if (selectedAnswer !== null) return // prevent changing answer once selected
