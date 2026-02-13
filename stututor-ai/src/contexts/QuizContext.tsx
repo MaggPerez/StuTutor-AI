@@ -27,7 +27,7 @@ export function QuizProvider({ children }: { children: React.ReactNode }) {
     const [difficulty, setDifficulty] = useState<string>('Easy')
     const [numQuestions, setNumQuestions] = useState<number>(10)
     const [questions, setQuestions] = useState<QuizQuestion[]>([])
-    const [isLoading, setIsLoading] = useState(true)
+    const [isLoading, setIsLoading] = useState(false)
     const [quizId, setQuizId] = useState<string | null>(null)
 
     
