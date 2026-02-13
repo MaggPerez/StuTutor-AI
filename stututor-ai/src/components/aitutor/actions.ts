@@ -2,7 +2,7 @@ import { createClient } from '../../../lib/supabase/client'
 const supabase = createClient()
 
 export async function sendMessage(message: string) {
-    const response = await fetch('/api/gemini', {
+    const response = await fetch('/api/gemini/chat', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -21,7 +21,7 @@ export async function uploadPDF(file: File, question: string) {
     formData.append('file', file)
     formData.append('question', question)
 
-    const response = await fetch('/api/gemini', {
+    const response = await fetch('/api/gemini/chat', {
         method: 'POST',
         body: formData,
     })
