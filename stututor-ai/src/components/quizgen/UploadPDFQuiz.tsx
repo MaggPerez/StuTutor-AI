@@ -7,12 +7,19 @@ import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { Label } from '../ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
+import { useQuiz } from '@/contexts/QuizContext'
+import { useRouter } from 'next/navigation'
+import { Spinner } from '../ui/spinner'
+import { toast } from 'sonner'
+
+
 
 export default function UploadPDFQuiz() {
     const [isDragActive, setIsDragActive] = useState(false)
     const [selectedFile, setSelectedFile] = useState<File | null>(null)
-    const [numQuestions, setNumQuestions] = useState<number>(10)
-    const [difficulty, setDifficulty] = useState<string>('Easy')
+    const { generateQuizFromPDF, isLoading, setFile, numQuestions, setNumQuestions, difficulty, setDifficulty } = useQuiz()
+    const router = useRouter()
+
     const handleDrag = (e: React.DragEvent) => {
         e.preventDefault()
         e.stopPropagation()
@@ -30,6 +37,7 @@ export default function UploadPDFQuiz() {
         const file = e.dataTransfer.files[0]
         if (file) {
             setSelectedFile(file)
+            setFile(file)
         }
     }
 
@@ -37,13 +45,28 @@ export default function UploadPDFQuiz() {
         const file = e.target.files?.[0]
         if (file) {
             setSelectedFile(file)
+            setFile(file)
         }
     }
 
     const handleCancel = () => {
         setSelectedFile(null)
+        setFile(null as unknown as File)
     }
 
+    const handleGenerateQuiz = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        if (selectedFile && numQuestions && difficulty) {
+            const id = await generateQuizFromPDF()
+            if (id) {
+                router.push(`/aitutor/quizgen/${id}`)
+            } else {
+                toast.error('Failed to generate quiz')
+            }
+        } else {
+            toast.error('Please fill in all fields')
+        }
+    }
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -58,6 +81,9 @@ export default function UploadPDFQuiz() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
+                        {isLoading && <div className="flex items-center justify-center">
+                            <Spinner className="size-10 animate-spin" /> Generating quiz...
+                        </div>}
                     </CardContent>
                 </Card>
             </DialogTrigger>
@@ -66,7 +92,7 @@ export default function UploadPDFQuiz() {
                     <DialogTitle>Upload a PDF</DialogTitle>
                 </DialogHeader>
 
-                <form action="" className="flex flex-col gap-6">
+                <form onSubmit={handleGenerateQuiz} className="flex flex-col gap-6">
                     <div className="flex flex-col gap-2">
                         <Label htmlFor="pdf-upload" className="text-sm font-medium">PDF Document</Label>
 

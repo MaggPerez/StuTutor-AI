@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { QuizQuestion } from '@/types/QuizQuestion'
-import { sendQuizWithTopicToGemini } from '../components/quizgen/quizApi'
+import { sendQuizWithPDFToGemini, sendQuizWithTopicToGemini } from '../components/quizgen/quizApi'
 import { useRouter } from 'next/navigation'
 
 interface QuizContextType {
@@ -17,6 +17,8 @@ interface QuizContextType {
     isLoading: boolean
     generateQuiz: () => Promise<string | null>
     quizId: string | null
+    generateQuizFromPDF: () => Promise<string | null>
+    setFile: (file: File) => void
 }
 
 
@@ -26,6 +28,7 @@ export function QuizProvider({ children }: { children: React.ReactNode }) {
     const [topic, setTopic] = useState<string>('')
     const [difficulty, setDifficulty] = useState<string>('Easy')
     const [numQuestions, setNumQuestions] = useState<number>(10)
+    const [file, setFile] = useState<File | null>(null)
     const [questions, setQuestions] = useState<QuizQuestion[]>([])
     const [isLoading, setIsLoading] = useState(false)
     const [quizId, setQuizId] = useState<string | null>(null)
@@ -53,8 +56,28 @@ export function QuizProvider({ children }: { children: React.ReactNode }) {
     }
 
 
+    async function generateQuizFromPDF(): Promise<string | null> {
+        try {
+            setIsLoading(true)
+            const quiz = await sendQuizWithPDFToGemini(file as File, difficulty, numQuestions)
+            const parsed = JSON.parse(quiz.message)
+            const quizQuestions = parsed.questions as QuizQuestion[]
+            setQuestions(quizQuestions)
+            const id = crypto.randomUUID()
+            setQuizId(id)
+            setIsLoading(false)
+            return id
+        }
+        catch (error) {
+            console.error('Error generating quiz:', error)
+            setIsLoading(false)
+            return null
+        }
+    }
+
+
     return (
-        <QuizContext.Provider value={{ questions, setQuestions, topic, setTopic, difficulty, setDifficulty, numQuestions, setNumQuestions, isLoading, generateQuiz, quizId }}>
+        <QuizContext.Provider value={{ questions, setQuestions, topic, setTopic, difficulty, setDifficulty, numQuestions, setNumQuestions, isLoading, generateQuiz, quizId, generateQuizFromPDF, setFile }}>
             {children}
         </QuizContext.Provider>
     )
