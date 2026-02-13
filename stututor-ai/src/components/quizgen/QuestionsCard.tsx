@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '../ui/card'
 import { QuizQuestion } from '@/types/QuizQuestion'
 import { Button } from '../ui/button'
+import Link from 'next/link'
 
 export default function QuizQuestionsCard({ quizId }: { quizId: string }) {
     const [questions] = useState<QuizQuestion[]>([
@@ -58,7 +59,22 @@ export default function QuizQuestionsCard({ quizId }: { quizId: string }) {
                         <CardTitle className="text-2xl font-bold">Quiz Complete!</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-lg">You scored {score} out of {questions.length}</p>
+
+                        <div className="flex flex-col gap-2">
+                            <p className="text-lg">You scored {score} out of {questions.length}</p>
+
+                            <div className="flex flex-row gap-2">
+                                <Link href="/aitutor/quizgen" className="w-full">
+                                    <Button className="w-full" variant="outline">View Results</Button>
+                                </Link>
+                                <Link href="/aitutor/quizgen/{quizId}" className="w-full">
+                                    <Button className="w-full" variant="secondary">Retake Quiz</Button>
+                                </Link>
+                                <Link href="/aitutor/quizgen" className="w-full">
+                                    <Button className="w-full">Exit Quiz</Button>
+                                </Link>
+                            </div>
+                        </div>
                     </CardContent>
                 </Card>
             </div>
@@ -72,53 +88,53 @@ export default function QuizQuestionsCard({ quizId }: { quizId: string }) {
                     Question {currentIndex + 1} of {questions.length}
                 </p>
                 <Card>
-                <CardHeader>
-                    <CardTitle className="text-2xl font-bold mb-2">
-                        {currentIndex + 1}. {currentQuestion.question}
-                    </CardTitle>
-                    <CardDescription>
-                        {currentQuestion.difficulty} - {currentQuestion.topic}
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="flex flex-col gap-2">
-                        {currentQuestion.choices.map((choice) => {
-                            let variant: 'outline' | 'default' | 'destructive' = 'outline'
-                            if (selectedAnswer !== null) {
-                                if (choice === currentQuestion.answer) {
-                                    variant = 'default' // highlight correct answer green
-                                } else if (choice === selectedAnswer) {
-                                    variant = 'destructive' // highlight wrong pick red
+                    <CardHeader>
+                        <CardTitle className="text-2xl font-bold mb-2">
+                            {currentIndex + 1}. {currentQuestion.question}
+                        </CardTitle>
+                        <CardDescription>
+                            {currentQuestion.difficulty} - {currentQuestion.topic}
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="flex flex-col gap-2">
+                            {currentQuestion.choices.map((choice) => {
+                                let variant: 'outline' | 'default' | 'destructive' = 'outline'
+                                if (selectedAnswer !== null) {
+                                    if (choice === currentQuestion.answer) {
+                                        variant = 'default' // highlight correct answer green
+                                    } else if (choice === selectedAnswer) {
+                                        variant = 'destructive' // highlight wrong pick red
+                                    }
                                 }
-                            }
 
-                            return (
-                                <Button
-                                    key={choice}
-                                    variant={variant}
-                                    className="w-full"
-                                    disabled={selectedAnswer !== null}
-                                    onClick={() => handleAnswer(choice)}
-                                >
-                                    {choice}
+                                return (
+                                    <Button
+                                        key={choice}
+                                        variant={variant}
+                                        className="w-full"
+                                        disabled={selectedAnswer !== null}
+                                        onClick={() => handleAnswer(choice)}
+                                    >
+                                        {choice}
+                                    </Button>
+                                )
+                            })}
+
+                            {isCorrect !== null && (
+                                <p className={`text-lg font-bold ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
+                                    {isCorrect ? 'Correct!' : `Incorrect — the answer is ${currentQuestion.answer}`}
+                                </p>
+                            )}
+
+                            {selectedAnswer !== null && (
+                                <Button className="mt-4" onClick={handleNext}>
+                                    {currentIndex + 1 < questions.length ? 'Next Question' : 'See Results'}
                                 </Button>
-                            )
-                        })}
-
-                        {isCorrect !== null && (
-                            <p className={`text-lg font-bold ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
-                                {isCorrect ? 'Correct!' : `Incorrect — the answer is ${currentQuestion.answer}`}
-                            </p>
-                        )}
-
-                        {selectedAnswer !== null && (
-                            <Button className="mt-4" onClick={handleNext}>
-                                {currentIndex + 1 < questions.length ? 'Next Question' : 'See Results'}
-                            </Button>
-                        )}
-                    </div>
-                </CardContent>
-            </Card>
+                            )}
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
         </div>
     )
