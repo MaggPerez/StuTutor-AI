@@ -9,7 +9,6 @@ import { Label } from '../ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { useQuiz } from '@/contexts/QuizContext'
 import { useRouter } from 'next/navigation'
-import { Spinner } from '../ui/spinner'
 import { toast } from 'sonner'
 
 
@@ -17,7 +16,7 @@ import { toast } from 'sonner'
 export default function UploadPDFQuiz() {
     const [isDragActive, setIsDragActive] = useState(false)
     const [selectedFile, setSelectedFile] = useState<File | null>(null)
-    const { generateQuizFromPDF, isLoading, setFile, numQuestions, setNumQuestions, difficulty, setDifficulty } = useQuiz()
+    const { generateQuizFromPDF, setFile, numQuestions, setNumQuestions, difficulty, setDifficulty } = useQuiz()
     const router = useRouter()
 
     const handleDrag = (e: React.DragEvent) => {
@@ -57,12 +56,13 @@ export default function UploadPDFQuiz() {
     const handleGenerateQuiz = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         if (selectedFile && numQuestions && difficulty) {
-            const id = await generateQuizFromPDF()
-            if (id) {
-                router.push(`/aitutor/quizgen/${id}`)
-            } else {
-                toast.error('Failed to generate quiz')
-            }
+            const id = crypto.randomUUID()
+            generateQuizFromPDF(id).then((result) => {
+                if (!result) {
+                    toast.error('Failed to generate quiz')
+                }
+            })
+            router.push(`/aitutor/quizgen/${id}`)
         } else {
             toast.error('Please fill in all fields')
         }
@@ -81,9 +81,6 @@ export default function UploadPDFQuiz() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        {isLoading && <div className="flex items-center justify-center">
-                            <Spinner className="size-10 animate-spin" /> Generating quiz...
-                        </div>}
                     </CardContent>
                 </Card>
             </DialogTrigger>

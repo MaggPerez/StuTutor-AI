@@ -5,27 +5,27 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Brain, FileText } from 'lucide-react'
 import { useQuiz } from '@/contexts/QuizContext'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
-import { Spinner } from '../ui/spinner'
 
 export default function GenerateQuiz() {
     const { difficulty, setDifficulty, numQuestions, setNumQuestions, topic, setTopic, generateQuiz, isLoading } = useQuiz()
     const router = useRouter()
+    
     async function handleGenerateQuiz(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
         if (topic && difficulty && numQuestions) {
-            const id = await generateQuiz()
-            if (id) {
-                router.push(`/aitutor/quizgen/${id}`)
-            } else {
-                toast.error('Failed to generate quiz')
-            }
+            const id = crypto.randomUUID()
+            generateQuiz(id).then((result) => {
+                if (!result) {
+                    toast.error('Failed to generate quiz')
+                }
+            })
+            router.push(`/aitutor/quizgen/${id}`)
         } else {
             toast.error('Please fill in all fields')
         }
@@ -43,9 +43,7 @@ export default function GenerateQuiz() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        {isLoading && <div className="flex items-center justify-center">
-                            <Spinner className="size-10 animate-spin" /> Generating quiz...
-                        </div>}
+
                     </CardContent>
                 </Card>
             </DialogTrigger>

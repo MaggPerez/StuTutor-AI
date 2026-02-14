@@ -1,9 +1,8 @@
 "use client"
 
-import React, { createContext, useContext, useState, useEffect } from 'react'
+import React, { createContext, useContext, useState } from 'react'
 import { QuizQuestion } from '@/types/QuizQuestion'
 import { sendQuizWithPDFToGemini, sendQuizWithTopicToGemini } from '../components/quizgen/quizApi'
-import { useRouter } from 'next/navigation'
 
 interface QuizContextType {
     questions: QuizQuestion[]
@@ -15,9 +14,9 @@ interface QuizContextType {
     numQuestions: number
     setNumQuestions: (numQuestions: number) => void
     isLoading: boolean
-    generateQuiz: () => Promise<string | null>
+    generateQuiz: (id?: string) => Promise<string | null>
     quizId: string | null
-    generateQuizFromPDF: () => Promise<string | null>
+    generateQuizFromPDF: (id?: string) => Promise<string | null>
     setFile: (file: File) => void
 }
 
@@ -27,27 +26,29 @@ const QuizContext = createContext<QuizContextType | undefined>(undefined)
 export function QuizProvider({ children }: { children: React.ReactNode }) {
     const [topic, setTopic] = useState<string>('')
     const [difficulty, setDifficulty] = useState<string>('Easy')
-    const [numQuestions, setNumQuestions] = useState<number>(10)
+    const [numQuestions, setNumQuestions] = useState<number>(5)
     const [file, setFile] = useState<File | null>(null)
     const [questions, setQuestions] = useState<QuizQuestion[]>([])
     const [isLoading, setIsLoading] = useState(false)
     const [quizId, setQuizId] = useState<string | null>(null)
 
-    
 
-
-
-    async function generateQuiz(): Promise<string | null> {
+    /**
+     * Generates a quiz from a topic
+     * @param id - The ID of the quiz to generate
+     * @returns The ID of the quiz
+     */
+    async function generateQuiz(id?: string): Promise<string | null> {
         try {
+            const quizUuid = id || crypto.randomUUID()
             setIsLoading(true)
+            setQuizId(quizUuid)
             const quiz = await sendQuizWithTopicToGemini(topic, difficulty, numQuestions)
             const parsed = JSON.parse(quiz.message)
             const quizQuestions = parsed.questions as QuizQuestion[]
             setQuestions(quizQuestions)
-            const id = crypto.randomUUID()
-            setQuizId(id)
             setIsLoading(false)
-            return id
+            return quizUuid
         } catch (error) {
             console.error('Error generating quiz:', error)
             setIsLoading(false)
@@ -56,17 +57,22 @@ export function QuizProvider({ children }: { children: React.ReactNode }) {
     }
 
 
-    async function generateQuizFromPDF(): Promise<string | null> {
+    /**
+     * Generates a quiz from a PDF
+     * @param id - The ID of the quiz to generate
+     * @returns The ID of the quiz
+     */
+    async function generateQuizFromPDF(id?: string): Promise<string | null> {
         try {
+            const quizUuid = id || crypto.randomUUID()
             setIsLoading(true)
+            setQuizId(quizUuid)
             const quiz = await sendQuizWithPDFToGemini(file as File, difficulty, numQuestions)
             const parsed = JSON.parse(quiz.message)
             const quizQuestions = parsed.questions as QuizQuestion[]
             setQuestions(quizQuestions)
-            const id = crypto.randomUUID()
-            setQuizId(id)
             setIsLoading(false)
-            return id
+            return quizUuid
         }
         catch (error) {
             console.error('Error generating quiz:', error)
