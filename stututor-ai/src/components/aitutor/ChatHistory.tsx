@@ -45,11 +45,11 @@ export default function ChatHistory({ initialActiveChatId }: { initialActiveChat
 
     async function handleNewChat() {
         const newChatId = await createNewChat()
-        router.push(`/aitutor/${newChatId}`)
+        router.push(`/aitutor/chat/${newChatId}`)
     }
 
     function handleChatClick(chatId: string) {
-        router.push(`/aitutor/${chatId}`)
+        router.push(`/aitutor/chat/${chatId}`)
     }
 
     return (
