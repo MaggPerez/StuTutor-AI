@@ -31,6 +31,7 @@ export default function StudyNotesPage() {
                         </p>
                     </div>
 
+                    <div className="hidden lg:block">
                         <ResizablePanelGroup direction="horizontal" className="h-full space-x-4">
                             <ResizablePanel className="h-full w-full">
                                 <InputNotes />
@@ -40,6 +41,12 @@ export default function StudyNotesPage() {
                                 <DocumentViewer />
                             </ResizablePanel>
                         </ResizablePanelGroup>
+                    </div>
+
+                    <div className="lg:hidden">
+                        <InputNotes />
+                        <DocumentViewer />
+                    </div>
                 </div>
             </SidebarInset>
         </SidebarProvider>

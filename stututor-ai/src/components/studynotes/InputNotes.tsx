@@ -5,6 +5,7 @@ import { CheckCircle, File, Upload } from 'lucide-react'
 import { useStudyNotes } from '@/contexts/StudyNotesContext'
 import { Input } from '../ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
+import { FieldSeparator } from '../ui/field'
 
 
 export default function InputNotes() {
@@ -41,8 +42,6 @@ export default function InputNotes() {
 
     return (
         <div className="space-y-4 ">
-            <h1 className="text-2xl font-bold">Upload your study notes</h1>
-            <p className="text-lg text-muted-foreground">Upload a PDF file or just use the chat to generate study notes</p>
 
             <form className="flex flex-col gap-4">
 
@@ -119,6 +118,11 @@ export default function InputNotes() {
                                 onChange={handleFileChange}
                             />
                         </label>
+
+                        {/* Field Separator */}
+                        <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
+                            Or use the form to generate notes
+                        </FieldSeparator>
 
                         {/* Topic selection */}
                         <div className="flex flex-col gap-8">
