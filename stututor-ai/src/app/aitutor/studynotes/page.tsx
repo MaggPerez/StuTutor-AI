@@ -23,7 +23,7 @@ export default function StudyNotesPage() {
             <AppSidebar variant="inset" />
             <SidebarInset className="bg-transparent">
                 <SiteHeader />
-                <div className="container mx-auto py-10 px-4 max-w-7xl">
+                <div className="container mx-auto py-10 px-4 max-w-10xl">
                     <div className="mb-10 space-y-4">
                         <h1 className="text-4xl font-bold">Study Notes Summarizer</h1>
                         <p className="text-xl text-muted-foreground max-w-3xl">
@@ -31,15 +31,15 @@ export default function StudyNotesPage() {
                         </p>
                     </div>
 
-                    <ResizablePanelGroup direction="horizontal" className="h-full">
-                        <ResizablePanel className="h-full w-full">
-                            <InputNotes />
-                        </ResizablePanel>
-                        <ResizableHandle />
-                        <ResizablePanel className="h-full">
-                            <DocumentViewer />
-                        </ResizablePanel>
-                    </ResizablePanelGroup>
+                        <ResizablePanelGroup direction="horizontal" className="h-full space-x-4">
+                            <ResizablePanel className="h-full w-full">
+                                <InputNotes />
+                            </ResizablePanel>
+                            <ResizableHandle />
+                            <ResizablePanel className="h-full w-full">
+                                <DocumentViewer />
+                            </ResizablePanel>
+                        </ResizablePanelGroup>
                 </div>
             </SidebarInset>
         </SidebarProvider>
