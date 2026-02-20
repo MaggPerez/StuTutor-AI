@@ -18,14 +18,18 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { usePDF } from '@/contexts/PDFContext';
 
 // Set up the worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
+interface PDFViewerProps {
+  file: File | Blob | null
+  fetchingFile?: File | Blob | null
+  fetchPDFUrl?: string | null
+  setFile?: (file: File) => void
+}
 
-
-export default function PDFViewer() {
+export default function PDFViewer({ file, fetchingFile, fetchPDFUrl, setFile }: PDFViewerProps) {
   const [numPages, setNumPages] = useState<number>(0);
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [scale, setScale] = useState<number>(1.0);
@@ -33,7 +37,6 @@ export default function PDFViewer() {
   const [loading, setLoading] = useState<boolean>(true);
   const [inputPage, setInputPage] = useState<string>('1');
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { currentPDF, setCurrentPDF, fetchingPDF, fetchingPDFUrl } = usePDF();
 
   // Constraints
   const minScale = 0.5;
@@ -46,7 +49,7 @@ export default function PDFViewer() {
     setScale(1.0);
     setRotation(0);
     setNumPages(0);
-  }, [fetchingPDFUrl, currentPDF]);
+  }, [file, fetchPDFUrl]);
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
     setNumPages(numPages);
@@ -79,7 +82,7 @@ export default function PDFViewer() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-        setCurrentPDF(file)
+        setFile?.(file)
     }
 }
 
@@ -212,9 +215,9 @@ export default function PDFViewer() {
             <div className="flex justify-center p-8 min-h-full">
 
               {/* PDF Document */}
-                {currentPDF || fetchingPDF ? (
+                {file || fetchingFile ? (
                   <Document 
-                  file={currentPDF || fetchingPDF} 
+                  file={file || fetchingFile} 
                   onLoadSuccess={onDocumentLoadSuccess}
                   onLoadStart={onDocumentLoadStart}
                   loading={

@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import { StudyNotes } from '@/types/StudyNotes'
 
 interface StudyNotesContextType {
@@ -21,6 +21,20 @@ export function StudyNotesProvider({ children }: { children: React.ReactNode }) 
         practice_questions: []
     })
     const [file, setFile] = useState<File | null>(null)
+
+    // testing file with constitution.pdf
+    useEffect(() => {
+        fetch('/constitution.pdf')
+            .then(res => {
+                if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`)
+                return res.blob()
+            })
+            .then(blob => {
+                const file = new File([blob], 'constitution.pdf', { type: 'application/pdf' })
+                setFile(file)
+            })
+            .catch(err => console.error('PDF fetch error:', err))
+    }, [])
 
     return (
         <StudyNotesContext.Provider value={{ notes, setNotes, file, setFile }}>
