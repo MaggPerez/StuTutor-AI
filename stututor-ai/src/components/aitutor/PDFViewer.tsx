@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
@@ -109,6 +109,14 @@ export default function PDFViewer({ file, pdf, fetchingFile, fetchPDFUrl, setFil
     setInputPage(pageNumber.toString());
   }, [pageNumber]);
 
+  // Convert jsPDF instance to a format react-pdf can consume
+  const pdfSource = useMemo(() => {
+    if (file) return file;
+    if (pdf) return { data: new Uint8Array(pdf.output('arraybuffer')) };
+    if (fetchingFile) return fetchingFile;
+    return null;
+  }, [file, pdf, fetchingFile]);
+
   return (
     <div className="flex flex-col h-full w-full bg-gray-100/50 dark:bg-zinc-900/50 border rounded-md overflow-hidden">
       {/* Toolbar */}
@@ -217,9 +225,9 @@ export default function PDFViewer({ file, pdf, fetchingFile, fetchPDFUrl, setFil
             <div className="flex justify-center p-8 min-h-full">
 
               {/* PDF Document */}
-                {file || pdf || fetchingFile ? (
-                  <Document 
-                  file={(file || pdf || fetchingFile) as File} 
+                {pdfSource ? (
+                  <Document
+                  file={pdfSource}
                   onLoadSuccess={onDocumentLoadSuccess}
                   onLoadStart={onDocumentLoadStart}
                   loading={
