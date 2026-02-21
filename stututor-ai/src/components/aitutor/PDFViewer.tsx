@@ -18,18 +18,20 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { jsPDF } from 'jspdf';
 
 // Set up the worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 interface PDFViewerProps {
-  file: File | Blob | null
+  file?: File | Blob | null
+  pdf?: jsPDF | null
   fetchingFile?: File | Blob | null
   fetchPDFUrl?: string | null
   setFile?: (file: File) => void
 }
 
-export default function PDFViewer({ file, fetchingFile, fetchPDFUrl, setFile }: PDFViewerProps) {
+export default function PDFViewer({ file, pdf, fetchingFile, fetchPDFUrl, setFile }: PDFViewerProps) {
   const [numPages, setNumPages] = useState<number>(0);
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [scale, setScale] = useState<number>(1.0);
@@ -49,7 +51,7 @@ export default function PDFViewer({ file, fetchingFile, fetchPDFUrl, setFile }: 
     setScale(1.0);
     setRotation(0);
     setNumPages(0);
-  }, [file, fetchPDFUrl]);
+  }, [file, pdf, fetchPDFUrl]);
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
     setNumPages(numPages);
@@ -215,9 +217,9 @@ export default function PDFViewer({ file, fetchingFile, fetchPDFUrl, setFile }: 
             <div className="flex justify-center p-8 min-h-full">
 
               {/* PDF Document */}
-                {file || fetchingFile ? (
+                {file || pdf || fetchingFile ? (
                   <Document 
-                  file={file || fetchingFile} 
+                  file={(file || pdf || fetchingFile) as File} 
                   onLoadSuccess={onDocumentLoadSuccess}
                   onLoadStart={onDocumentLoadStart}
                   loading={

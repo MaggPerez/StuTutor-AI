@@ -16,11 +16,11 @@ const PDFViewer = dynamic(() => import('@/components/aitutor/PDFViewer'), {
 
 
 export default function DocumentViewer() {
-    const { file } = useStudyNotes()
+    const { file, pdf } = useStudyNotes()
     return (
         <div className="h-full w-full">
-            {file ? (
-                <PDFViewer file={file} />
+            {file || pdf ? (
+                <PDFViewer file={file} pdf={pdf} />
             ) : (
                 // message to user to upload a PDF file or use the chat to generate a PDF file
                 <div className="flex flex-col items-center justify-center h-64 gap-4">
