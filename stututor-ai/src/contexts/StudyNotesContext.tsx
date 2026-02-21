@@ -70,13 +70,96 @@ export function StudyNotesProvider({ children }: { children: React.ReactNode }) 
     }
 
     function generatePDFDocument(notes: StudyNotes) {
-        // create a PDF document
         const pdf = new jsPDF()
-        pdf.text(notes.summary, 10, 10)
-        pdf.text(notes.key_concepts.join('\n'), 10, 30)
-        pdf.text(notes.important_terms.join('\n'), 10, 50)
-        pdf.text(notes.practice_questions.join('\n'), 10, 70)
-        // pdf.save('notes.pdf')
+        const pageWidth = pdf.internal.pageSize.getWidth()
+        const pageHeight = pdf.internal.pageSize.getHeight()
+        const margin = 15
+        const maxWidth = pageWidth - margin * 2
+        const lineHeight = 7
+        let y = margin
+
+        // Helper: add a new page if needed and return updated y
+        function checkPageBreak(requiredSpace: number) {
+            if (y + requiredSpace > pageHeight - margin) {
+                pdf.addPage()
+                y = margin
+            }
+        }
+
+        // Helper: write a heading
+        function addHeading(text: string) {
+            checkPageBreak(lineHeight * 2)
+            y += 5
+            pdf.setFontSize(16)
+            pdf.setFont('helvetica', 'bold')
+            pdf.text(text, margin, y)
+            y += lineHeight + 3
+        }
+
+        // Helper: write wrapped body text
+        function addBody(text: string) {
+            pdf.setFontSize(11)
+            pdf.setFont('helvetica', 'normal')
+            const lines: string[] = pdf.splitTextToSize(text, maxWidth)
+            for (const line of lines) {
+                checkPageBreak(lineHeight)
+                pdf.text(line, margin, y)
+                y += lineHeight
+            }
+        }
+
+        // Helper: write a bulleted list
+        function addList(items: string[], numbered = false) {
+            pdf.setFontSize(11)
+            pdf.setFont('helvetica', 'normal')
+            const bulletIndent = margin + 5
+            const bulletMaxWidth = maxWidth - 5
+            items.forEach((item, i) => {
+                const prefix = numbered ? `${i + 1}. ` : '• '
+                const lines: string[] = pdf.splitTextToSize(prefix + item, bulletMaxWidth)
+                for (const line of lines) {
+                    checkPageBreak(lineHeight)
+                    pdf.text(line, bulletIndent, y)
+                    y += lineHeight
+                }
+            })
+        }
+
+        // Title
+        if (notes.topic) {
+            pdf.setFontSize(22)
+            pdf.setFont('helvetica', 'bold')
+            const titleLines: string[] = pdf.splitTextToSize(notes.topic, maxWidth)
+            for (const line of titleLines) {
+                checkPageBreak(10)
+                pdf.text(line, margin, y)
+                y += 10
+            }
+            y += 5
+        }
+
+        // Summary
+        addHeading('Summary')
+        addBody(notes.summary)
+
+        // Key Concepts
+        if (notes.key_concepts.length > 0) {
+            addHeading('Key Concepts')
+            addList(notes.key_concepts)
+        }
+
+        // Important Terms
+        if (notes.important_terms.length > 0) {
+            addHeading('Important Terms')
+            addList(notes.important_terms)
+        }
+
+        // Practice Questions
+        if (notes.practice_questions.length > 0) {
+            addHeading('Practice Questions')
+            addList(notes.practice_questions, true)
+        }
+
         setPdf(pdf)
     }
 
