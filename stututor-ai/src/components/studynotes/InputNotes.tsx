@@ -6,13 +6,14 @@ import { useStudyNotes } from '@/contexts/StudyNotesContext'
 import { Input } from '../ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { FieldSeparator } from '../ui/field'
+import { Loader2 } from 'lucide-react'
 
 
 export default function InputNotes() {
     const [isDragActive, setIsDragActive] = useState(false)
     const [selectedFile, setSelectedFile] = useState<File | null>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
-    const { setFile, topic, setTopic, focus, setFocus, course, setCourse, generateNotesFromTopic, generateNotesFromPDF } = useStudyNotes()
+    const { setFile, topic, setTopic, focus, setFocus, course, setCourse, generateNotesFromTopic, generateNotesFromPDF, isLoading } = useStudyNotes()
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
@@ -97,7 +98,7 @@ export default function InputNotes() {
                                 </div>
 
                                 {/* Generate Notes button */}
-                                <Button type="submit">Generate Notes</Button>
+                                <Button type="submit" disabled={isLoading}>{isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Generate Notes'}</Button>
                             </div>
                         </div>
                     </form>
@@ -173,7 +174,7 @@ export default function InputNotes() {
                                 </div>
 
                                 {/* Generate Notes button */}
-                                <Button type="submit">Generate Notes</Button>
+                                <Button type="submit" disabled={isLoading}>{isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Generate Notes'}</Button>
                             </div>
                         </div>
                     </form>

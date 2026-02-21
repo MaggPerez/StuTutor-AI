@@ -19,6 +19,7 @@ interface StudyNotesContextType {
     pdf: jsPDF | null
     generateNotesFromTopic: (topic: string, course?: string, focus?: string) => Promise<void | null>
     generateNotesFromPDF: (file: File, course?: string, focus?: string) => Promise<void | null>
+    isLoading: boolean
 }
 
 const StudyNotesContext = createContext<StudyNotesContextType | undefined>(undefined)
@@ -36,6 +37,7 @@ export function StudyNotesProvider({ children }: { children: React.ReactNode }) 
     const [focus, setFocus] = useState<string>('')
     const [course, setCourse] = useState<string>('')
     const [pdf, setPdf] = useState<jsPDF | null>(null)
+    const [isLoading, setIsLoading] = useState(false)
 
     // testing file with constitution.pdf
     // useEffect(() => {
@@ -53,20 +55,23 @@ export function StudyNotesProvider({ children }: { children: React.ReactNode }) 
 
 
     async function generateNotesFromTopic(topic: string, course?: string, focus?: string): Promise<void | null> {
+        setIsLoading(true)
         await generateStudyNotesWithTopic(topic, focus).then((notes) => {
             generatePDFDocument(JSON.parse(notes.message))
         }).catch((error) => {
             throw new Error('Error generating notes from topic:', error)
         })
-
+        setIsLoading(false)
     }
 
     async function generateNotesFromPDF(file: File, course?: string, focus?: string): Promise<void | null> {
+        setIsLoading(true)
         await generateStudyNotesWithPDF(file, focus).then((notes) => {
             generatePDFDocument(JSON.parse(notes.message))
         }).catch((error) => {
             throw new Error('Error generating notes from PDF:', error)
         })
+        setIsLoading(false)
     }
 
     function generatePDFDocument(notes: StudyNotes) {
@@ -164,7 +169,7 @@ export function StudyNotesProvider({ children }: { children: React.ReactNode }) 
     }
 
     return (
-        <StudyNotesContext.Provider value={{ notes, setNotes, file, setFile, topic, setTopic, focus, setFocus, course, setCourse, pdf, generateNotesFromTopic, generateNotesFromPDF }}>
+        <StudyNotesContext.Provider value={{ notes, setNotes, file, setFile, topic, setTopic, focus, setFocus, course, setCourse, pdf, generateNotesFromTopic, generateNotesFromPDF, isLoading }}>
             {children}
         </StudyNotesContext.Provider>
     )
