@@ -7,12 +7,14 @@ import { Input } from '../ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { FieldSeparator } from '../ui/field'
 import { Loader2 } from 'lucide-react'
+import { Course } from '@/types/Courses'
 
 
 export default function InputNotes() {
     const [isDragActive, setIsDragActive] = useState(false)
     const [selectedFile, setSelectedFile] = useState<File | null>(null)
-    const { topic, setTopic, focus, setFocus, course, setCourse, generateNotesFromTopic, generateNotesFromPDF, isLoading, pdf, downloadPDF } = useStudyNotes()
+    const { topic, setTopic, focus, setFocus, selectedCourse, setSelectedCourse,
+        generateNotesFromTopic, generateNotesFromPDF, isLoading, pdf, downloadPDF, userCourses } = useStudyNotes()
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
@@ -41,13 +43,13 @@ export default function InputNotes() {
 
     function handleSubmitTopic(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
-        generateNotesFromTopic(topic, course, focus)
+        generateNotesFromTopic(topic, selectedCourse?.id, focus)
     }
 
-    
+
     function handleSubmitPDF(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
-        generateNotesFromPDF(selectedFile as File, course, focus)
+        generateNotesFromPDF(selectedFile as File, selectedCourse?.id, focus)
     }
 
 
@@ -73,19 +75,14 @@ export default function InputNotes() {
                             <div className="flex flex-col gap-8">
                                 <div>
                                     <p className="text-lg font-bold">For what course are these notes for? (Skip if not applicable)</p>
-                                    <Select value={course} onValueChange={(value) => setCourse(value)}>
+                                    <Select value={selectedCourse?.id || ''} onValueChange={(value) => setSelectedCourse(userCourses.find((course) => course.id === value) as Course)}>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select a course" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="history-101">History 101</SelectItem>
-                                            <SelectItem value="math-101">Math 101</SelectItem>
-                                            <SelectItem value="science-101">Science 101</SelectItem>
-                                            <SelectItem value="english-101">English 101</SelectItem>
-                                            <SelectItem value="art-101">Art 101</SelectItem>
-                                            <SelectItem value="music-101">Music 101</SelectItem>
-                                            <SelectItem value="pe-101">PE 101</SelectItem>
-                                            <SelectItem value="social-studies-101">Social Studies 101</SelectItem>
+                                            {userCourses.map((course) => (
+                                                <SelectItem key={course.id} value={course.id || ''}>{course.title}</SelectItem>
+                                            ))}
                                         </SelectContent>
                                     </Select>
                                 </div>
@@ -154,19 +151,14 @@ export default function InputNotes() {
                                 {/* Course selection */}
                                 <div>
                                     <p className="text-lg font-bold">These notes are for what course? (Skip if not applicable)</p>
-                                    <Select value={course} onValueChange={(value) => setCourse(value)}>
+                                    <Select value={selectedCourse?.id || ''} onValueChange={(value) => setSelectedCourse(userCourses.find((course) => course.id === value) as Course)}>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select a course" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="history-101">History 101</SelectItem>
-                                            <SelectItem value="math-101">Math 101</SelectItem>
-                                            <SelectItem value="science-101">Science 101</SelectItem>
-                                            <SelectItem value="english-101">English 101</SelectItem>
-                                            <SelectItem value="art-101">Art 101</SelectItem>
-                                            <SelectItem value="music-101">Music 101</SelectItem>
-                                            <SelectItem value="pe-101">PE 101</SelectItem>
-                                            <SelectItem value="social-studies-101">Social Studies 101</SelectItem>
+                                            {userCourses.map((course) => (
+                                                <SelectItem key={course.id} value={course.id || ''}>{course.title}</SelectItem>
+                                            ))}
                                         </SelectContent>
                                     </Select>
                                 </div>

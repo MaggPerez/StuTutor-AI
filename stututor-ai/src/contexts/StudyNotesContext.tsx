@@ -4,6 +4,8 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { StudyNotes } from '@/types/StudyNotes'
 import { generateStudyNotesWithTopic, generateStudyNotesWithPDF } from '../components/studynotes/studynotesApi'
 import { jsPDF } from 'jspdf'
+import { getUserCourses } from '../../lib/supabase/database-client'
+import { Course } from '@/types/Courses'
 
 interface StudyNotesContextType {
     notes: StudyNotes
@@ -14,13 +16,14 @@ interface StudyNotesContextType {
     setTopic: (topic: string) => void
     focus: string
     setFocus: (focus: string) => void
-    course: string
-    setCourse: (course: string) => void
+    selectedCourse: Course | null
+    setSelectedCourse: (course: Course) => void
     pdf: jsPDF | null
     generateNotesFromTopic: (topic: string, course?: string, focus?: string) => Promise<void | null>
     generateNotesFromPDF: (file: File, course?: string, focus?: string) => Promise<void | null>
     isLoading: boolean
     downloadPDF: () => void
+    userCourses: Course[]
 }
 
 const StudyNotesContext = createContext<StudyNotesContextType | undefined>(undefined)
@@ -36,9 +39,17 @@ export function StudyNotesProvider({ children }: { children: React.ReactNode }) 
     const [file, setFile] = useState<File | null>(null)
     const [topic, setTopic] = useState<string>('')
     const [focus, setFocus] = useState<string>('')
-    const [course, setCourse] = useState<string>('')
+    const [selectedCourse, setSelectedCourse] = useState<Course | null>(null)
     const [pdf, setPdf] = useState<jsPDF | null>(null)
     const [isLoading, setIsLoading] = useState(false)
+    const [userCourses, setUserCourses] = useState<Course[]>([])
+
+    // Fetch user courses when the component mounts
+    useEffect(() => {
+        getUserCourses().then((courses) => {
+            setUserCourses(courses)
+        })
+    }, [])
 
     // testing file with constitution.pdf
     // useEffect(() => {
@@ -207,7 +218,7 @@ export function StudyNotesProvider({ children }: { children: React.ReactNode }) 
 
     return (
         <StudyNotesContext.Provider value={{ notes, setNotes, file, setFile, topic, setTopic, focus, setFocus, 
-        course, setCourse, pdf, generateNotesFromTopic, generateNotesFromPDF, isLoading, downloadPDF }}>
+        selectedCourse, setSelectedCourse, pdf, generateNotesFromTopic, generateNotesFromPDF, isLoading, downloadPDF, userCourses }}>
             {children}
         </StudyNotesContext.Provider>
     )
