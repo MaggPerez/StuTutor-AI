@@ -4,4 +4,7 @@ export interface StudyNotes {
     key_concepts: string[]
     important_terms: string[]
     practice_questions: string[]
+    topic?: string
+    course?: string
+    focus?: string
 }
