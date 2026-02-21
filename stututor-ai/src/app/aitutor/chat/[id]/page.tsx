@@ -12,7 +12,7 @@ import { useParams } from 'next/navigation'
 import { usePDF } from '@/contexts/PDFContext'
 
 // Import PDFViewer without SSR
-const PDFViewer = dynamic(() => import('@/components/aitutor/PDFViewer'), {
+const PDFViewer = dynamic(() => import('@/components/PDFViewer'), {
     ssr: false,
     loading: () => <div className="flex flex-col items-center justify-center h-full">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />

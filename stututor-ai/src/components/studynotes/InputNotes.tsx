@@ -1,5 +1,5 @@
 'use client'
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { Button } from '../ui/button'
 import { CheckCircle, File, Upload } from 'lucide-react'
 import { useStudyNotes } from '@/contexts/StudyNotesContext'
@@ -12,8 +12,7 @@ import { Loader2 } from 'lucide-react'
 export default function InputNotes() {
     const [isDragActive, setIsDragActive] = useState(false)
     const [selectedFile, setSelectedFile] = useState<File | null>(null)
-    const fileInputRef = useRef<HTMLInputElement>(null)
-    const { setFile, topic, setTopic, focus, setFocus, course, setCourse, generateNotesFromTopic, generateNotesFromPDF, isLoading } = useStudyNotes()
+    const { topic, setTopic, focus, setFocus, course, setCourse, generateNotesFromTopic, generateNotesFromPDF, isLoading, pdf, downloadPDF } = useStudyNotes()
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
@@ -98,7 +97,12 @@ export default function InputNotes() {
                                 </div>
 
                                 {/* Generate Notes button */}
-                                <Button type="submit" disabled={isLoading}>{isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Generate Notes'}</Button>
+                                <Button type="submit" disabled={isLoading} className="cursor-pointer">{isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Generate Notes'}</Button>
+
+                                {/* Download PDF button */}
+                                {pdf && (
+                                    <Button type="button" variant="outline" className="cursor-pointer" onClick={downloadPDF}>Download PDF</Button>
+                                )}
                             </div>
                         </div>
                     </form>
@@ -174,7 +178,12 @@ export default function InputNotes() {
                                 </div>
 
                                 {/* Generate Notes button */}
-                                <Button type="submit" disabled={isLoading}>{isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Generate Notes'}</Button>
+                                <Button type="submit" disabled={isLoading} className="cursor-pointer">{isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Generate Notes'}</Button>
+
+                                {/* Download PDF button */}
+                                {pdf && (
+                                    <Button type="button" variant="outline" className="cursor-pointer" onClick={downloadPDF}>Download PDF</Button>
+                                )}
                             </div>
                         </div>
                     </form>

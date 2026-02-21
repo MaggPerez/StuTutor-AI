@@ -3,10 +3,9 @@ import React from 'react'
 import { useStudyNotes } from '@/contexts/StudyNotesContext'
 import dynamic from 'next/dynamic'
 import { File, Loader2 } from 'lucide-react'
-import { Button } from '../ui/button'
 
 // Import PDFViewer without SSR
-const PDFViewer = dynamic(() => import('@/components/aitutor/PDFViewer'), {
+const PDFViewer = dynamic(() => import('@/components/PDFViewer'), {
     ssr: false,
     loading: () => <div className="flex flex-col items-center justify-center h-full">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />

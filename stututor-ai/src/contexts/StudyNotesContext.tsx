@@ -20,6 +20,7 @@ interface StudyNotesContextType {
     generateNotesFromTopic: (topic: string, course?: string, focus?: string) => Promise<void | null>
     generateNotesFromPDF: (file: File, course?: string, focus?: string) => Promise<void | null>
     isLoading: boolean
+    downloadPDF: () => void
 }
 
 const StudyNotesContext = createContext<StudyNotesContextType | undefined>(undefined)
@@ -54,9 +55,18 @@ export function StudyNotesProvider({ children }: { children: React.ReactNode }) 
     // }, [])
 
 
+    /**
+     * 
+     * Generates notes from a topic
+     * @param topic - The topic to generate notes from
+     * @param course - The course to generate notes for
+     * @param focus - The focus to generate notes for
+     * @returns void or null
+     */
     async function generateNotesFromTopic(topic: string, course?: string, focus?: string): Promise<void | null> {
         setIsLoading(true)
         await generateStudyNotesWithTopic(topic, focus).then((notes) => {
+            setNotes(JSON.parse(notes.message))
             generatePDFDocument(JSON.parse(notes.message))
         }).catch((error) => {
             throw new Error('Error generating notes from topic:', error)
@@ -64,9 +74,17 @@ export function StudyNotesProvider({ children }: { children: React.ReactNode }) 
         setIsLoading(false)
     }
 
+    /**
+     * Generates notes from a PDF file
+     * @param file - The PDF file to generate notes from
+     * @param course - The course to generate notes for
+     * @param focus - The focus to generate notes for
+     * @returns void or null
+     */
     async function generateNotesFromPDF(file: File, course?: string, focus?: string): Promise<void | null> {
         setIsLoading(true)
         await generateStudyNotesWithPDF(file, focus).then((notes) => {
+            setNotes(JSON.parse(notes.message))
             generatePDFDocument(JSON.parse(notes.message))
         }).catch((error) => {
             throw new Error('Error generating notes from PDF:', error)
@@ -74,6 +92,11 @@ export function StudyNotesProvider({ children }: { children: React.ReactNode }) 
         setIsLoading(false)
     }
 
+    /**
+     * Generates a PDF document from the notes
+     * @param notes - The notes to generate a PDF document from
+     * @returns void
+     */
     function generatePDFDocument(notes: StudyNotes) {
         const pdf = new jsPDF()
         const pageWidth = pdf.internal.pageSize.getWidth()
@@ -168,8 +191,23 @@ export function StudyNotesProvider({ children }: { children: React.ReactNode }) 
         setPdf(pdf)
     }
 
+    /**
+     * Downloads the PDF document
+     * @returns void
+     */
+    function downloadPDF() {
+        if (pdf) {
+            const fileName = notes.topic ? notes.topic + '.pdf' : 'notes.pdf'
+            pdf.save(fileName)
+        }
+        else {
+            throw new Error('PDF not found')
+        }
+    }
+
     return (
-        <StudyNotesContext.Provider value={{ notes, setNotes, file, setFile, topic, setTopic, focus, setFocus, course, setCourse, pdf, generateNotesFromTopic, generateNotesFromPDF, isLoading }}>
+        <StudyNotesContext.Provider value={{ notes, setNotes, file, setFile, topic, setTopic, focus, setFocus, 
+        course, setCourse, pdf, generateNotesFromTopic, generateNotesFromPDF, isLoading, downloadPDF }}>
             {children}
         </StudyNotesContext.Provider>
     )
