@@ -51,19 +51,6 @@ export function StudyNotesProvider({ children }: { children: React.ReactNode }) 
         })
     }, [])
 
-    // testing file with constitution.pdf
-    // useEffect(() => {
-    //     fetch('/constitution.pdf')
-    //         .then(res => {
-    //             if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`)
-    //             return res.blob()
-    //         })
-    //         .then(blob => {
-    //             const file = new File([blob], 'constitution.pdf', { type: 'application/pdf' })
-    //             setFile(file)
-    //         })
-    //         .catch(err => console.error('PDF fetch error:', err))
-    // }, [])
 
 
     /**
