@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
@@ -18,14 +18,20 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { usePDF } from '@/contexts/PDFContext';
+import { jsPDF } from 'jspdf';
 
 // Set up the worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
+interface PDFViewerProps {
+  file?: File | Blob | null
+  pdf?: jsPDF | null
+  fetchingFile?: File | Blob | null
+  fetchPDFUrl?: string | null
+  setFile?: (file: File) => void
+}
 
-
-export default function PDFViewer() {
+export default function PDFViewer({ file, pdf, fetchingFile, fetchPDFUrl, setFile }: PDFViewerProps) {
   const [numPages, setNumPages] = useState<number>(0);
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [scale, setScale] = useState<number>(1.0);
@@ -33,7 +39,6 @@ export default function PDFViewer() {
   const [loading, setLoading] = useState<boolean>(true);
   const [inputPage, setInputPage] = useState<string>('1');
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { currentPDF, setCurrentPDF, fetchingPDF, fetchingPDFUrl } = usePDF();
 
   // Constraints
   const minScale = 0.5;
@@ -46,7 +51,7 @@ export default function PDFViewer() {
     setScale(1.0);
     setRotation(0);
     setNumPages(0);
-  }, [fetchingPDFUrl, currentPDF]);
+  }, [file, pdf, fetchPDFUrl]);
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
     setNumPages(numPages);
@@ -79,7 +84,7 @@ export default function PDFViewer() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-        setCurrentPDF(file)
+        setFile?.(file)
     }
 }
 
@@ -103,6 +108,14 @@ export default function PDFViewer() {
   useEffect(() => {
     setInputPage(pageNumber.toString());
   }, [pageNumber]);
+
+  // Convert jsPDF instance to a format react-pdf can consume
+  const pdfSource = useMemo(() => {
+    if (file) return file;
+    if (pdf) return { data: new Uint8Array(pdf.output('arraybuffer')) };
+    if (fetchingFile) return fetchingFile;
+    return null;
+  }, [file, pdf, fetchingFile]);
 
   return (
     <div className="flex flex-col h-full w-full bg-gray-100/50 dark:bg-zinc-900/50 border rounded-md overflow-hidden">
@@ -212,9 +225,9 @@ export default function PDFViewer() {
             <div className="flex justify-center p-8 min-h-full">
 
               {/* PDF Document */}
-                {currentPDF || fetchingPDF ? (
-                  <Document 
-                  file={currentPDF || fetchingPDF} 
+                {pdfSource ? (
+                  <Document
+                  file={pdfSource}
                   onLoadSuccess={onDocumentLoadSuccess}
                   onLoadStart={onDocumentLoadStart}
                   loading={

@@ -52,11 +52,11 @@ export default async function AITutorPage() {
             active: true
         },
         {
-            title: "Document Summarizer",
-            description: "Upload lengthy documents and get concise summaries and key takeaways in seconds.",
+            title: "Study Notes Summarizer",
+            description: "Upload your study notes and get concise summaries and key takeaways in seconds. Export your notes in PDF format.",
             icon: <FileText className="h-8 w-8 text-muted-foreground" />,
-            href: null,
-            active: false
+            href: '/aitutor/studynotes',
+            active: true
         },
         {
             title: "Essay Assistant",

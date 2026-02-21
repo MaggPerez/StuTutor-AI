@@ -17,6 +17,7 @@ import {
   IconSettings,
   IconUsers,
   IconCalendar,
+  IconNote,
 } from "@tabler/icons-react"
 
 import { NavDocuments } from "@/components/nav-documents"
@@ -160,6 +161,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     ],
     // Documents navigation items
     documents: [
+      {
+        name: "My Notes",
+        url: "#",
+        icon: IconNote,
+      },
       {
         name: "Study Groups",
         url: "#",
