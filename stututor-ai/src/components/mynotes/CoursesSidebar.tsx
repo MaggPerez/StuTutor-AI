@@ -18,6 +18,7 @@ import {
     Icon,
 } from '@tabler/icons-react'
 import { BookOpen } from 'lucide-react'
+import { useUser } from '@/contexts/UserContext'
 
 const courseIcons: Record<CourseIcon, { name: string; icon: Icon }> = {
     math: { name: 'Mathematics', icon: IconMath },
@@ -32,45 +33,7 @@ const courseIcons: Record<CourseIcon, { name: string; icon: Icon }> = {
     programming: { name: 'Programming', icon: IconCode },
 }
 
-// Placeholder courses for UI development
-const placeholderCourses: Course[] = [
-    {
-        id: '1',
-        title: 'Calculus II',
-        professor: 'Dr. Smith',
-        course_days: ['Monday', 'Wednesday', 'Friday'],
-        course_start_time: '09:00',
-        course_end_time: '10:00',
-        icon: 'math',
-    },
-    {
-        id: '2',
-        title: 'Organic Chemistry',
-        professor: 'Dr. Johnson',
-        course_days: ['Tuesday', 'Thursday'],
-        course_start_time: '11:00',
-        course_end_time: '12:30',
-        icon: 'chemistry',
-    },
-    {
-        id: '3',
-        title: 'Data Structures',
-        professor: 'Prof. Lee',
-        course_days: ['Monday', 'Wednesday'],
-        course_start_time: '14:00',
-        course_end_time: '15:30',
-        icon: 'programming',
-    },
-    {
-        id: '4',
-        title: 'American Literature',
-        professor: 'Dr. Williams',
-        course_days: ['Tuesday', 'Thursday'],
-        course_start_time: '13:00',
-        course_end_time: '14:30',
-        icon: 'literature',
-    },
-]
+
 
 interface CoursesSidebarProps {
     selectedCourseId: string | null
@@ -78,9 +41,8 @@ interface CoursesSidebarProps {
 }
 
 export default function CoursesSidebar({ selectedCourseId, onSelectCourse }: CoursesSidebarProps) {
+    const { courses } = useUser()
     // TODO: Replace with actual user courses from Supabase
-    const courses = placeholderCourses
-
     return (
         <div className="flex flex-col h-full border rounded-md bg-background">
             <div className="p-4 border-b shrink-0">

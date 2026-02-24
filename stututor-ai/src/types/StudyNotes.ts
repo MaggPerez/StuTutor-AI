@@ -8,3 +8,12 @@ export interface StudyNotes {
     course?: string
     focus?: string
 }
+
+
+export interface Note {
+    id: string
+    title: string
+    courseId: string
+    topic: string
+    createdAt: string
+}

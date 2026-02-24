@@ -6,6 +6,7 @@ import { generateStudyNotesWithTopic, generateStudyNotesWithPDF } from '../compo
 import { jsPDF } from 'jspdf'
 import { getUserCourses } from '../../lib/supabase/database-client'
 import { Course } from '@/types/Courses'
+import { storeGeneratedNotes } from '../../lib/supabase/database-client'
 
 interface StudyNotesContextType {
     notes: StudyNotes
@@ -63,12 +64,21 @@ export function StudyNotesProvider({ children }: { children: React.ReactNode }) 
      */
     async function generateNotesFromTopic(topic: string, course?: string, focus?: string): Promise<void | null> {
         setIsLoading(true)
+
         await generateStudyNotesWithTopic(topic, focus).then((notes) => {
             setNotes(JSON.parse(notes.message))
-            generatePDFDocument(JSON.parse(notes.message))
+            const pdfDocument = generatePDFDocument(JSON.parse(notes.message)) as jsPDF
+
+            if (course && pdfDocument) {
+                const pdfBlob = pdfDocument.output('blob') as BlobPart
+                const topicNotesFile = new File([pdfBlob], `${topic}.pdf`, { type: 'application/pdf' })
+                storeGeneratedNotes(topicNotesFile, topic, course)
+            }
+
         }).catch((error) => {
             throw new Error('Error generating notes from topic:', error)
         })
+
         setIsLoading(false)
     }
 
@@ -83,7 +93,13 @@ export function StudyNotesProvider({ children }: { children: React.ReactNode }) 
         setIsLoading(true)
         await generateStudyNotesWithPDF(file, focus).then((notes) => {
             setNotes(JSON.parse(notes.message))
-            generatePDFDocument(JSON.parse(notes.message))
+            const pdfDocument = generatePDFDocument(JSON.parse(notes.message)) as jsPDF
+
+            if (course && pdfDocument) {
+                const pdfBlob = pdfDocument.output('blob') as BlobPart
+                const courseNotesFile = new File([pdfBlob], `${file.name}.pdf`, { type: 'application/pdf' })
+                storeGeneratedNotes(courseNotesFile, file.name, course)
+            }
         }).catch((error) => {
             throw new Error('Error generating notes from PDF:', error)
         })
@@ -93,7 +109,7 @@ export function StudyNotesProvider({ children }: { children: React.ReactNode }) 
     /**
      * Generates a PDF document from the notes
      * @param notes - The notes to generate a PDF document from
-     * @returns void
+     * @returns the PDF document as a jsPDF object
      */
     function generatePDFDocument(notes: StudyNotes) {
         const pdf = new jsPDF()
@@ -187,6 +203,7 @@ export function StudyNotesProvider({ children }: { children: React.ReactNode }) 
         }
 
         setPdf(pdf)
+        return pdf
     }
 
     /**
@@ -204,8 +221,10 @@ export function StudyNotesProvider({ children }: { children: React.ReactNode }) 
     }
 
     return (
-        <StudyNotesContext.Provider value={{ notes, setNotes, file, setFile, topic, setTopic, focus, setFocus, 
-        selectedCourse, setSelectedCourse, pdf, generateNotesFromTopic, generateNotesFromPDF, isLoading, downloadPDF, userCourses }}>
+        <StudyNotesContext.Provider value={{
+            notes, setNotes, file, setFile, topic, setTopic, focus, setFocus,
+            selectedCourse, setSelectedCourse, pdf, generateNotesFromTopic, generateNotesFromPDF, isLoading, downloadPDF, userCourses
+        }}>
             {children}
         </StudyNotesContext.Provider>
     )

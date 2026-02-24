@@ -3,14 +3,9 @@
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
 import { FileText, Calendar, StickyNote } from 'lucide-react'
+import { Note } from '@/types/StudyNotes'
 
-interface Note {
-    id: string
-    title: string
-    courseId: string
-    createdAt: string
-    topic: string
-}
+
 
 // Placeholder notes for UI development
 const placeholderNotes: Record<string, Note[]> = {
