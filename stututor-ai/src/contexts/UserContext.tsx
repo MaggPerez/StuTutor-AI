@@ -4,10 +4,11 @@ import React, { createContext, useContext, useEffect, useState } from "react"
 import { User } from "@supabase/supabase-js"
 import { createClient } from "../../lib/supabase/client"
 import { Course } from "@/types/Courses"
-import { getUserAssignments, getUserCourses } from "../../lib/supabase/database-client"
+import { getAllUserNotes, getUserAssignments, getUserCourses } from "../../lib/supabase/database-client"
 import { Assignment } from "@/types/Assignments"
 import { schema } from "@/components/data-table"
 import { z } from "zod"
+import { Note } from "@/types/StudyNotes"
 
 interface UserContextType {
   user: User | null
@@ -16,6 +17,8 @@ interface UserContextType {
   setCourses: (courses: Course[]) => void
   assignments: Assignment[]
   assignmentTableData: z.infer<typeof schema>[]
+  userNotes: Note[]
+  setUserNotes: (notes: Note[]) => void
 }
 
 // Create a context for the user
@@ -27,6 +30,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [courses, setCourses] = useState<Course[]>([])
   const [assignments, setAssignments] = useState<Assignment[]>([])
+  const [userNotes, setUserNotes] = useState<Note[]>([])
   const [assignmentTableData, setAssignmentTableData] = useState<z.infer<typeof schema>[]>([])
 
   // State for the loading state of the user's data
@@ -43,7 +47,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       try {
         const { data: { user } } = await supabase.auth.getUser()
 
-        //fetching user, courses, and assignments
+        //fetching user, courses, assignments, and notes
         setUser(user)
         getUserCourses().then((courses) => {
           setCourses(courses)
@@ -52,6 +56,9 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           setAssignments(assignments)
           setAssignmentTableData(convertAssignmentsToTableData(assignments))
         })
+        getAllUserNotes().then((notes) => {
+          setUserNotes(notes)
+      })
 
 
       } catch (error) {
@@ -112,7 +119,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
   // Return the user context
   return (
-    <UserContext.Provider value={{ user, loading, courses, setCourses, assignments, assignmentTableData }}>
+    <UserContext.Provider value={{ user, loading, courses, setCourses, assignments, assignmentTableData, userNotes, setUserNotes }}>
       {children}
     </UserContext.Provider>
   )

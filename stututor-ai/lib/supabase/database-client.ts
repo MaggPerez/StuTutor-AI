@@ -488,6 +488,38 @@ export async function storeGeneratedNotes(notesFile: File, title: string, course
 
 
 
+/**
+ * 
+ * @returns All notes for the current user
+ */
+export async function getAllUserNotes(): Promise<Note[]> {
+    const supabase = createClient()
+    const userId = await getUserId()
+    const { data, error } = await supabase
+        .from('notes')
+        .select('*')
+        .eq('created_by', userId)
+    if (error) throw new Error('Failed to get notes: ' + error.message)
+    return data.map(transformNoteFromDB)
+}
+
+
+/**
+ * 
+ * @param storagePath 
+ * @returns The signed URL for the note
+ */
+export async function getNoteSignedUrl(storagePath: string): Promise<string> {
+    const supabase = createClient()
+    const { data, error } = await supabase.storage
+        .from('notes')
+        .createSignedUrl(storagePath, 3600) // 1 hour expiry
+    if (error) throw new Error('Failed to get signed URL: ' + error.message)
+    return data.signedUrl
+}
+
+
+
 // =============================== HELPER FUNCTIONS ===============================
 
 
@@ -539,6 +571,9 @@ function transformPDFFromDB(data: any): PDFDocument {
     }
 }
 
+/**
+ * Transform database course to TypeScript interface
+ */
 function transformCourseFromDB(data: any): Course {
     return {
         // Required fields
@@ -563,6 +598,9 @@ function transformCourseFromDB(data: any): Course {
     }
 }
 
+/**
+ * Transform database assignment to TypeScript interface
+ */
 function transformAssignmentFromDB(data: any): Assignment {
     return {
         id: data.id,
@@ -573,5 +611,20 @@ function transformAssignmentFromDB(data: any): Assignment {
         dueDate: data.due_date,
         priority: data.priority,
         progress: data.progress,
+    }
+}
+
+
+/**
+ * Transform database note to TypeScript interface
+ */
+function transformNoteFromDB(data: any): Note {
+    return {
+        id: data.id,
+        title: data.title,
+        courseId: data.course_id,
+        fileName: data.file_name,
+        storagePath: data.storage_path,
+        createdAt: data.created_at,
     }
 }

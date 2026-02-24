@@ -9,10 +9,12 @@ import CoursesSidebar from '@/components/mynotes/CoursesSidebar'
 import NotesList from '@/components/mynotes/NotesList'
 import NotesPDFViewer from '@/components/mynotes/NotesPDFViewer'
 import React from 'react'
+import { useUser } from '@/contexts/UserContext'
 
 export default function MyNotes() {
-    const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null)
-    const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null)
+    const { courses, userNotes } = useUser()
+    const [selectedCourseId, setSelectedCourseId] = useState<string | null>(courses[0]?.id ?? null)
+    const [selectedNoteId, setSelectedNoteId] = useState<string | null>(userNotes[0]?.id ?? null)
 
     const handleSelectCourse = (courseId: string) => {
         setSelectedCourseId(courseId)

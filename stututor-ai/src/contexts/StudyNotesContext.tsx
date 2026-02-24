@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, useContext, useEffect, useState } from 'react'
-import { StudyNotes } from '@/types/StudyNotes'
+import { Note, StudyNotes } from '@/types/StudyNotes'
 import { generateStudyNotesWithTopic, generateStudyNotesWithPDF } from '../components/studynotes/studynotesApi'
 import { jsPDF } from 'jspdf'
 import { getUserCourses } from '../../lib/supabase/database-client'
@@ -43,15 +43,16 @@ export function StudyNotesProvider({ children }: { children: React.ReactNode }) 
     const [selectedCourse, setSelectedCourse] = useState<Course | null>(null)
     const [pdf, setPdf] = useState<jsPDF | null>(null)
     const [isLoading, setIsLoading] = useState(false)
-    const [userCourses, setUserCourses] = useState<Course[]>([])
 
+    // States for the user's courses and notes
+    const [userCourses, setUserCourses] = useState<Course[]>([])
     // Fetch user courses when the component mounts
     useEffect(() => {
         getUserCourses().then((courses) => {
             setUserCourses(courses)
         })
-    }, [])
-
+        
+    }, [selectedCourse])
 
 
     /**

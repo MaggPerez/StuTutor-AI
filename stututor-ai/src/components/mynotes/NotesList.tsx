@@ -3,31 +3,8 @@
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
 import { FileText, Calendar, StickyNote } from 'lucide-react'
-import { Note } from '@/types/StudyNotes'
+import { useUser } from '@/contexts/UserContext'
 
-
-
-// Placeholder notes for UI development
-const placeholderNotes: Record<string, Note[]> = {
-    '1': [
-        { id: 'n1', title: 'Integration by Parts', courseId: '1', createdAt: '2026-02-18', topic: 'Chapter 7 - Techniques of Integration' },
-        { id: 'n2', title: 'Trigonometric Substitution', courseId: '1', createdAt: '2026-02-15', topic: 'Chapter 7 - Techniques of Integration' },
-        { id: 'n3', title: 'Sequences and Series', courseId: '1', createdAt: '2026-02-10', topic: 'Chapter 11 - Infinite Sequences' },
-    ],
-    '2': [
-        { id: 'n4', title: 'Alkanes & Cycloalkanes', courseId: '2', createdAt: '2026-02-17', topic: 'Chapter 4 - Hydrocarbons' },
-        { id: 'n5', title: 'Stereochemistry', courseId: '2', createdAt: '2026-02-12', topic: 'Chapter 5 - Stereoisomerism' },
-    ],
-    '3': [
-        { id: 'n6', title: 'Binary Search Trees', courseId: '3', createdAt: '2026-02-19', topic: 'Trees & Graphs' },
-        { id: 'n7', title: 'Hash Tables', courseId: '3', createdAt: '2026-02-14', topic: 'Hashing' },
-        { id: 'n8', title: 'Graph Traversals (BFS/DFS)', courseId: '3', createdAt: '2026-02-08', topic: 'Trees & Graphs' },
-        { id: 'n9', title: 'Dynamic Programming', courseId: '3', createdAt: '2026-02-03', topic: 'Algorithm Design' },
-    ],
-    '4': [
-        { id: 'n10', title: 'The Great Gatsby Analysis', courseId: '4', createdAt: '2026-02-16', topic: 'Modernist Fiction' },
-    ],
-}
 
 interface NotesListProps {
     selectedCourseId: string | null
@@ -36,8 +13,8 @@ interface NotesListProps {
 }
 
 export default function NotesList({ selectedCourseId, selectedNoteId, onSelectNote }: NotesListProps) {
-    // TODO: Replace with actual notes from Supabase
-    const notes = selectedCourseId ? (placeholderNotes[selectedCourseId] ?? []) : []
+    const { userNotes } = useUser()
+    const notes = selectedCourseId ? (userNotes.filter((note) => note.courseId === selectedCourseId) ?? []) : []
 
     return (
         <div className="flex flex-col h-full border rounded-md bg-background">
@@ -103,7 +80,7 @@ export default function NotesList({ selectedCourseId, selectedNoteId, onSelectNo
                                             {note.title}
                                         </p>
                                         <p className="text-xs text-muted-foreground truncate">
-                                            {note.topic}
+                                            {note.fileName}
                                         </p>
                                         <div className="flex items-center gap-1 text-xs text-muted-foreground">
                                             <Calendar className="size-3" />

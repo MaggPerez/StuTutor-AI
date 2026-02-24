@@ -14,6 +14,7 @@ export interface Note {
     id: string
     title: string
     courseId: string
-    topic: string
+    fileName: string
+    storagePath: string
     createdAt: string
 }
