@@ -42,14 +42,7 @@ export default async function Page() {
       <AppSidebar variant="inset" />
       <SidebarInset className="bg-transparent">
 
-        {/* Cinematic Ambient Glow */}
-        <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-          {/* Deep dark background */}
-          <div className="absolute inset-0 bg-background" />
 
-          {/* Central #e0c2ff Ambient Glow */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-primary/10 rounded-full mix-blend-screen filter blur-[120px] opacity-40 animate-pulse pointer-events-none" />
-        </div>
 
         <SiteHeader />
 
