@@ -59,7 +59,7 @@ export default function QuickActions() {
   ]
 
   return (
-    <Card className="border-t-4 border-t-purple-500 shadow-lg bg-card/50 backdrop-blur-sm">
+    <Card className="shadow-lg bg-card/50 backdrop-blur-sm">
       <CardHeader>
         <CardTitle className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
           Quick Actions
@@ -74,13 +74,13 @@ export default function QuickActions() {
             <Button
               key={action.id}
               variant={action.variant}
-              className="h-auto flex-col items-center justify-center gap-2 p-4 text-center hover:scale-105 transition-all duration-200 border-primary/20"
+              className="h-auto flex-col items-center justify-center gap-2 p-4 text-center hover:scale-105 transition-all duration-200 border border-border/50 hover:border-border"
               asChild
             >
               <Link href={action.href}>
                 <div className={`p-2.5 rounded-full ${action.variant === 'secondary'
-                    ? 'bg-primary/20 text-primary'
-                    : 'bg-muted text-muted-foreground'
+                  ? 'bg-primary/20 text-primary'
+                  : 'bg-muted text-muted-foreground'
                   }`}>
                   {action.icon}
                 </div>
