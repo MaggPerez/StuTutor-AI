@@ -2,8 +2,9 @@
 
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
-import { FileText, Calendar, StickyNote } from 'lucide-react'
+import { FileText, Calendar, StickyNote, Download } from 'lucide-react'
 import { useUser } from '@/contexts/UserContext'
+import { getNoteSignedUrl } from '../../../lib/supabase/database-client'
 
 
 interface NotesListProps {
@@ -13,6 +14,23 @@ interface NotesListProps {
 }
 
 export default function NotesList({ selectedCourseId, selectedNoteId, onSelectNote }: NotesListProps) {
+
+    async function handleDownloadNote(noteId: string) {
+        const note = userNotes.find((note) => note.id === noteId)
+        if (!note) return
+        const signedUrl = await getNoteSignedUrl(note.storagePath)
+        const response = await fetch(signedUrl)
+        const blob = await response.blob()
+        const blobUrl = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = blobUrl
+        a.download = note.fileName
+        a.click()
+        URL.revokeObjectURL(blobUrl)
+    }
+
+
+
     const { userNotes } = useUser()
     const notes = selectedCourseId ? (userNotes.filter((note) => note.courseId === selectedCourseId) ?? []) : []
 
@@ -55,11 +73,11 @@ export default function NotesList({ selectedCourseId, selectedNoteId, onSelectNo
                             const isSelected = selectedNoteId === note.id
 
                             return (
-                                <button
+                                <div
                                     key={note.id}
                                     onClick={() => onSelectNote(note.id)}
                                     className={cn(
-                                        'w-full flex items-start gap-3 px-3 py-3 rounded-lg text-left transition-all duration-150',
+                                        'w-full flex items-start gap-3 px-3 py-3 rounded-lg text-left transition-all duration-150 cursor-pointer',
                                         isSelected
                                             ? 'bg-primary/10 text-primary border border-primary/20'
                                             : 'hover:bg-muted/60 text-foreground'
@@ -79,15 +97,26 @@ export default function NotesList({ selectedCourseId, selectedNoteId, onSelectNo
                                         <p className="text-sm font-medium leading-snug">
                                             {note.title}
                                         </p>
-                                        <p className="text-xs text-muted-foreground truncate">
-                                            {note.fileName}
-                                        </p>
+                                        <div className="flex items-center gap-2">
+                                            <p className="text-xs text-muted-foreground truncate flex-1">
+                                                {note.fileName}
+                                            </p>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation()
+                                                    handleDownloadNote(note.id)
+                                                }}
+                                                className="shrink-0 rounded p-0.5 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                                            >
+                                                <Download className="size-4" />
+                                            </button>
+                                        </div>
                                         <div className="flex items-center gap-1 text-xs text-muted-foreground">
                                             <Calendar className="size-3" />
                                             <span>{note.createdAt}</span>
                                         </div>
                                     </div>
-                                </button>
+                                </div>
                             )
                         })}
                     </div>
