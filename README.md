@@ -21,7 +21,27 @@ Manage your assignments, track deadlines, and stay on top of your coursework.
 ### Calendar
 Keep track of important dates, classes, and academic events.
 
-### AI Tutor
-AI-powered assistant that can read and analyze documents (PDFs, textbooks, lecture notes) and provide intelligent responses based on the content. Upload your study materials and get instant help with understanding concepts, answering questions, and more.
+### My Notes
+Where users' generated notes are stored while using the A.I Study Notes Summarizer. The notes are saved based on the course the user chooses.
 
-**Note:** More AI features are coming soon to further enhance your learning experience!
+### AI Tutor
+AI-powered assistant with multiple tools to enhance your learning experience:
+
+#### 1. Study Notes Summarizer
+- Input a topic or upload a PDF document
+- AI generates comprehensive study notes including:
+  - Title of the topic
+  - Summary
+  - Key Concepts
+  - Important Terms
+  - Practice Questions
+
+#### 2. Quiz Generator
+- Input a topic or upload a PDF document
+- AI generates quiz questions from both topic-based content and uploaded PDFs
+- Test your knowledge and reinforce learning
+
+#### 3. AI Chat Tutor
+- Upload a PDF document
+- Ask Q&A questions about the document content
+- Get instant, accurate answers based on your study materials
