@@ -42,18 +42,13 @@ export default async function Page() {
       <AppSidebar variant="inset" />
       <SidebarInset className="bg-transparent">
 
-        {/* Animated Background - Phantom Theme */}
+        {/* Cinematic Ambient Glow */}
         <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
           {/* Deep dark background */}
           <div className="absolute inset-0 bg-background" />
 
-          {/* Grid Pattern */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#8b5cf61a_1px,transparent_1px),linear-gradient(to_bottom,#8b5cf61a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
-
-          {/* Glowing Orbs */}
-          <div className="absolute top-0 -left-4 w-96 h-96 bg-purple-600/20 rounded-full mix-blend-screen filter blur-3xl opacity-30 animate-pulse" />
-          <div className="absolute top-0 -right-4 w-96 h-96 bg-teal-500/10 rounded-full mix-blend-screen filter blur-3xl opacity-30 animate-pulse delay-1000" />
-          <div className="absolute -bottom-32 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-indigo-600/10 rounded-full mix-blend-screen filter blur-3xl opacity-20" />
+          {/* Central #e0c2ff Ambient Glow */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-primary/10 rounded-full mix-blend-screen filter blur-[120px] opacity-40 animate-pulse pointer-events-none" />
         </div>
 
         <SiteHeader />

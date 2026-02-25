@@ -8,9 +8,6 @@ export function Footer() {
   return (
     <footer className="w-full bg-[#05050A] rounded-t-[4rem] text-muted-foreground px-6 py-16 md:px-16 md:py-24 mt-0 border-t border-border/10 relative overflow-hidden">
 
-      {/* Noise Overlay */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-screen bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
-
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 lg:gap-8 relative z-10 block">
 
         {/* Brand Area */}

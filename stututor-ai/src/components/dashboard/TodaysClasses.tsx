@@ -69,12 +69,12 @@ export default function TodaysClasses() {
   }
 
   return (
-    <Card className="h-full border-t-4 border-t-blue-500 shadow-md bg-card/50 backdrop-blur-sm">
+    <Card className="h-full shadow-md bg-card/60 backdrop-blur-sm relative overflow-hidden bg-gradient-to-br from-card to-primary/5">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <Calendar className="size-5 text-blue-500" />
+              <Calendar className="size-5 text-primary" />
               Today's Classes
             </CardTitle>
             <CardDescription>
@@ -99,13 +99,12 @@ export default function TodaysClasses() {
               return (
                 <div
                   key={course.id}
-                  className={`group relative p-4 rounded-lg border transition-all ${
-                    inSession
-                      ? 'bg-green-50/50 dark:bg-green-950/20 border-green-200 dark:border-green-900 shadow-md'
-                      : upcoming
+                  className={`group relative p-4 rounded-lg border transition-all ${inSession
+                    ? 'bg-green-50/50 dark:bg-green-950/20 border-green-200 dark:border-green-900 shadow-md'
+                    : upcoming
                       ? 'bg-orange-50/50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-900'
                       : 'bg-muted/30 hover:bg-muted/50 border-border'
-                  }`}
+                    }`}
                 >
                   {/* In Session Badge */}
                   {inSession && (
@@ -149,13 +148,12 @@ export default function TodaysClasses() {
                   </div>
 
                   {/* Time */}
-                  <div className={`flex items-center gap-2 text-sm ${
-                    inSession
-                      ? 'text-green-600 dark:text-green-400 font-medium'
-                      : upcoming
+                  <div className={`flex items-center gap-2 text-sm ${inSession
+                    ? 'text-green-600 dark:text-green-400 font-medium'
+                    : upcoming
                       ? 'text-orange-600 dark:text-orange-400 font-medium'
                       : 'text-muted-foreground'
-                  }`}>
+                    }`}>
                     <Clock className="size-3.5 shrink-0" />
                     <span>
                       {formatTime(course.course_start_time)} - {formatTime(course.course_end_time)}

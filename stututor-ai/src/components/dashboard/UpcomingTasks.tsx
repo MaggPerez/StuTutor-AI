@@ -11,13 +11,13 @@ export default function UpcomingTasks() {
 
 
   return (
-    <Card className="h-full border-t-4 border-t-pink-500 shadow-md bg-card/50 backdrop-blur-sm">
+    <Card className="h-full shadow-md bg-card/60 backdrop-blur-sm relative overflow-hidden bg-gradient-to-br from-card to-primary/5">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="flex items-center gap-2 text-lg">
-                <CalendarDays className="size-5 text-pink-500" />
-                Upcoming Assignments
+              <CalendarDays className="size-5 text-primary" />
+              Upcoming Assignments
             </CardTitle>
             <CardDescription>
               {assignments.filter(assignment => assignment.status !== "Completed").length} pending
@@ -46,11 +46,10 @@ export default function UpcomingTasks() {
                 return (
                   <div
                     key={assignment.id}
-                    className={`group relative p-4 rounded-lg border transition-all hover:shadow-md ${
-                      isOverdue
-                        ? 'bg-red-50/50 dark:bg-red-950/20 border-red-200 dark:border-red-900'
-                        : 'bg-muted/30 hover:bg-muted/50 border-border'
-                    }`}
+                    className={`group relative p-4 rounded-lg border transition-all hover:shadow-md ${isOverdue
+                      ? 'bg-red-50/50 dark:bg-red-950/20 border-red-200 dark:border-red-900'
+                      : 'bg-muted/30 hover:bg-muted/50 border-border'
+                      }`}
                   >
                     {/* Overdue indicator */}
                     {isOverdue && (
@@ -77,13 +76,12 @@ export default function UpcomingTasks() {
                       {/* Priority badge */}
                       <Badge
                         variant="outline"
-                        className={`shrink-0 ${
-                          assignment.priority.toLowerCase() === 'high'
-                            ? 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800'
-                            : assignment.priority.toLowerCase() === 'medium'
+                        className={`shrink-0 ${assignment.priority.toLowerCase() === 'high'
+                          ? 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800'
+                          : assignment.priority.toLowerCase() === 'medium'
                             ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-200 dark:border-orange-800'
                             : 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-200 dark:border-green-800'
-                        }`}
+                          }`}
                       >
                         {assignment.priority}
                       </Badge>
@@ -95,22 +93,21 @@ export default function UpcomingTasks() {
                         {assignment.type}
                       </Badge>
 
-                      <div className={`flex items-center gap-1.5 ${
-                        isOverdue
-                          ? 'text-red-600 dark:text-red-400 font-medium'
-                          : daysUntilDue <= 2
+                      <div className={`flex items-center gap-1.5 ${isOverdue
+                        ? 'text-red-600 dark:text-red-400 font-medium'
+                        : daysUntilDue <= 2
                           ? 'text-orange-600 dark:text-orange-400 font-medium'
                           : 'text-muted-foreground'
-                      }`}>
+                        }`}>
                         <Clock className="size-3.5" />
                         <span>
                           {isOverdue
                             ? `${Math.abs(daysUntilDue)} days overdue`
                             : daysUntilDue === 0
-                            ? 'Due today'
-                            : daysUntilDue === 1
-                            ? 'Due tomorrow'
-                            : `Due in ${daysUntilDue} days`
+                              ? 'Due today'
+                              : daysUntilDue === 1
+                                ? 'Due tomorrow'
+                                : `Due in ${daysUntilDue} days`
                           }
                         </span>
                         <span className="text-xs text-muted-foreground ml-1">
@@ -127,13 +124,12 @@ export default function UpcomingTasks() {
                       </div>
                       <Progress
                         value={assignment.progress}
-                        className={`h-2 ${
-                          assignment.progress === 100
-                            ? '[&>div]:bg-green-500'
-                            : isOverdue && assignment.progress < 50
+                        className={`h-2 ${assignment.progress === 100
+                          ? '[&>div]:bg-green-500'
+                          : isOverdue && assignment.progress < 50
                             ? '[&>div]:bg-red-500'
                             : '[&>div]:bg-pink-500'
-                        }`}
+                          }`}
                       />
                     </div>
                   </div>
