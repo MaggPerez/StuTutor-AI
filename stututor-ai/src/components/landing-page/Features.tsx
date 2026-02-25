@@ -1,199 +1,211 @@
-'use client'
-import {
-  MessageSquare,
-  BookOpen,
-  Zap,
-  Shield,
-  Brain,
-  FileSearch,
-  Clock,
-  Sparkles,
-} from 'lucide-react';
-import { motion } from 'framer-motion';
+"use client";
 
-const features = [
-  {
-    icon: MessageSquare,
-    title: 'Natural Conversations',
-    description: 'Chat naturally with AI about your documents. Ask questions the way you would ask a tutor.',
-    size: 'large',
-    gradient: 'from-primary/20 to-chart-3/20',
-  },
-  {
-    icon: BookOpen,
-    title: 'Smart Summaries',
-    description: 'Get concise summaries of any section or the entire document.',
-    size: 'small',
-    gradient: 'from-chart-2/20 to-chart-5/20',
-  },
-  {
-    icon: Zap,
-    title: 'Instant Responses',
-    description: 'No waiting. Get answers in real-time.',
-    size: 'small',
-    gradient: 'from-chart-4/20 to-chart-3/20',
-  },
-  {
-    icon: Brain,
-    title: 'Deep Understanding',
-    description: 'AI comprehends context, not just keywords. Get answers that truly understand your questions.',
-    size: 'medium',
-    gradient: 'from-chart-3/20 to-primary/20',
-  },
-  {
-    icon: FileSearch,
-    title: 'Content Analysis',
-    description: 'Automatically extract key concepts, themes, and important information from your documents.',
-    size: 'medium',
-    gradient: 'from-chart-5/20 to-chart-2/20',
-  },
-  {
-    icon: Clock,
-    title: 'Chat History',
-    description: 'All conversations saved. Pick up where you left off.',
-    size: 'small',
-    gradient: 'from-primary/20 to-chart-5/20',
-  },
-  {
-    icon: Shield,
-    title: 'Secure & Private',
-    description: 'Your documents are encrypted and protected.',
-    size: 'small',
-    gradient: 'from-chart-2/20 to-primary/20',
-  },
-  {
-    icon: Sparkles,
-    title: 'Study Materials',
-    description: 'Generate practice questions, flashcards, and study guides tailored to your learning needs.',
-    size: 'large',
-    gradient: 'from-chart-4/20 to-chart-2/20',
-  },
-];
+import React, { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { MousePointer2, Settings, DownloadCloud } from "lucide-react";
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.1
-    }
-  }
-};
+// --- Sub-components for Cards ---
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 30, scale: 0.95 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: {
-      duration: 0.5,
-      ease: [0.25, 0.46, 0.45, 0.94] as const
-    }
-  }
-};
+function DiagnosticShuffler() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [cards, setCards] = useState([
+    { id: 1, title: "Course Hub", desc: "Syllabi & Materials" },
+    { id: 2, title: "Assignment Tracker", desc: "Deadlines sync" },
+    { id: 3, title: "Lecture Vault", desc: "Audio & Notes" },
+  ]);
 
-const headerVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] as const }
-  }
-};
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCards((prev) => {
+        const next = [...prev];
+        const last = next.pop()!;
+        next.unshift(last);
+        return next;
+      });
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
-export const Features = () => {
   return (
-    <section id="features" className="relative overflow-hidden bg-background py-24 lg:py-32">
-      <div className="container mx-auto px-4">
-        {/* Section Header */}
-        <motion.div
-          className="mx-auto mb-16 max-w-2xl text-center"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-        >
-          <motion.p
-            variants={headerVariants}
-            className="mb-4 text-sm font-semibold uppercase tracking-wider text-primary"
+    <div className="relative h-48 w-full flex items-center justify-center translate-y-4">
+      {cards.map((card, i) => {
+        const isTop = i === 0;
+        const isMiddle = i === 1;
+        const isBottom = i === 2;
+
+        return (
+          <div
+            key={card.id}
+            className="absolute w-64 p-4 rounded-xl border border-border bg-card shadow-lg flex flex-col gap-2 transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+            style={{
+              zIndex: 3 - i,
+              transform: `translateY(${i * 12}px) scale(${1 - i * 0.05})`,
+              opacity: 1 - i * 0.2,
+            }}
           >
-            Features
-          </motion.p>
-          <motion.h2
-            variants={headerVariants}
-            className="mb-6 text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl"
-          >
-            Everything you need to excel
-          </motion.h2>
-          <motion.p
-            variants={headerVariants}
-            className="text-lg text-muted-foreground"
-          >
-            Powerful AI-driven tools designed to accelerate your learning
-          </motion.p>
-        </motion.div>
-
-        {/* Bento Grid */}
-        <motion.div
-          className="mx-auto max-w-6xl"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
-          variants={containerVariants}
-        >
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {features.map((feature, index) => {
-              const Icon = feature.icon;
-              const sizeClasses = {
-                small: 'lg:col-span-1',
-                medium: 'sm:col-span-2 lg:col-span-2',
-                large: 'sm:col-span-2',
-              };
-
-              return (
-                <motion.div
-                  key={index}
-                  variants={itemVariants}
-                  className={`group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-2 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5 ${sizeClasses[feature.size as keyof typeof sizeClasses]}`}
-                >
-                  {/* Background Gradient */}
-                  <div
-                    className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
-                  />
-
-                  {/* Content */}
-                  <div className="relative z-10">
-                    {/* Icon */}
-                    <div className="mb-4 inline-flex rounded-xl bg-primary/10 p-3 transition-all duration-300 group-hover:bg-primary/20 group-hover:scale-110">
-                      <Icon className="h-6 w-6 text-primary" />
-                    </div>
-
-                    {/* Title */}
-                    <h3 className={`mb-2 font-bold text-foreground ${feature.size === 'large' ? 'text-xl' : 'text-lg'}`}>
-                      {feature.title}
-                    </h3>
-
-                    {/* Description */}
-                    <p className={`text-muted-foreground ${feature.size === 'small' ? 'text-sm' : ''}`}>
-                      {feature.description}
-                    </p>
-                  </div>
-
-                  {/* Corner Decoration */}
-                  <div className="absolute -bottom-8 -right-8 h-24 w-24 rounded-full bg-gradient-to-br from-primary/10 to-transparent opacity-0 scale-50 transition-all duration-300 group-hover:opacity-100 group-hover:scale-100" />
-                </motion.div>
-              );
-            })}
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                <Settings className="w-4 h-4 text-primary" />
+              </div>
+              <div>
+                <h4 className="font-sans font-bold text-sm text-foreground">{card.title}</h4>
+                <p className="font-mono text-[10px] text-muted-foreground uppercase">{card.desc}</p>
+              </div>
+            </div>
           </div>
-        </motion.div>
+        );
+      })}
+    </div>
+  );
+}
+
+function TelemetryTypewriter() {
+  const [text, setText] = useState("");
+  const fullText = "> Generating quiz from Lecture 4...\n> Extracting key terms...\n> Action: Flashcards prepared.\n> Ready for review.";
+
+  useEffect(() => {
+    let index = 0;
+    const interval = setInterval(() => {
+      setText(fullText.substring(0, index));
+      index++;
+      if (index > fullText.length) {
+        clearInterval(interval);
+        setTimeout(() => {
+          index = 0;
+        }, 5000); // Wait and then could restart, but keeping it simple
+      }
+    }, 50);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="w-full h-48 bg-background/50 rounded-xl p-4 font-mono text-xs sm:text-sm text-muted-foreground border border-border/50 relative overflow-hidden flex flex-col justify-end">
+      <div className="absolute top-3 left-4 flex items-center gap-2">
+        <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+        <span className="text-[10px] uppercase tracking-wider text-primary">Live AI Feed</span>
+      </div>
+      <div className="whitespace-pre-wrap mt-8">
+        {text}
+        <span className="inline-block w-2 h-4 bg-primary ml-1 animate-pulse align-middle" />
+      </div>
+    </div>
+  );
+}
+
+function CursorScheduler() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ repeat: -1, repeatDelay: 1 });
+
+      // Reset
+      tl.set(".custom-cursor", { x: 0, y: 0, scale: 1, opacity: 0 });
+      tl.set(".day-cell", { backgroundColor: "transparent", color: "var(--muted-foreground)" });
+      tl.set(".save-btn-sim", { scale: 1 });
+
+      // Animate Cursor Entry
+      tl.to(".custom-cursor", { opacity: 1, duration: 0.3 })
+        .to(".custom-cursor", { x: 100, y: 40, duration: 1, ease: "power2.inOut" })
+
+        // Click action
+        .to(".custom-cursor", { scale: 0.8, duration: 0.1 })
+        .to(".day-cell.target-day", { backgroundColor: "var(--primary)", color: "var(--primary-foreground)", duration: 0.2 }, "-=0.1")
+        .to(".custom-cursor", { scale: 1, duration: 0.1 })
+
+        // Move to Save
+        .to(".custom-cursor", { x: 100, y: 100, duration: 1, ease: "power2.inOut", delay: 0.2 })
+
+        // Click Save
+        .to(".custom-cursor", { scale: 0.8, duration: 0.1 })
+        .to(".save-btn-sim", { scale: 0.95, duration: 0.1 }, "-=0.1")
+        .to(".custom-cursor", { scale: 1, duration: 0.1 })
+        .to(".save-btn-sim", { scale: 1, duration: 0.1 })
+
+        // Exit
+        .to(".custom-cursor", { opacity: 0, duration: 0.3, delay: 0.5 });
+
+    }, containerRef);
+    return () => ctx.revert();
+  }, []);
+
+  const days = ["S", "M", "T", "W", "T", "F", "S"];
+
+  return (
+    <div ref={containerRef} className="relative w-full h-48 bg-background/30 rounded-xl p-4 flex flex-col items-center justify-center overflow-hidden border border-border/50">
+      <div className="flex gap-2 relative z-10 block">
+        {days.map((d, i) => (
+          <div key={i} className={`day-cell w-8 h-8 rounded-md border border-border flex items-center justify-center font-mono text-xs ${i === 2 ? "target-day" : ""}`}>
+            {d}
+          </div>
+        ))}
+      </div>
+      <div className="mt-8 save-btn-sim px-4 py-1.5 rounded-full bg-secondary text-secondary-foreground text-xs font-sans font-medium relative z-10 border border-border block">
+        Generate Path
       </div>
 
-      {/* Background Decoration - Static */}
-      <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute left-1/4 top-1/4 h-[300px] w-[300px] rounded-full bg-primary/5 blur-[100px]" />
-        <div className="absolute bottom-1/4 right-1/4 h-[300px] w-[300px] rounded-full bg-chart-3/5 blur-[100px]" />
+      {/* Animated Cursor */}
+      <div className="custom-cursor absolute top-4 left-4 z-20 pointer-events-none drop-shadow-md">
+        <MousePointer2 className="w-6 h-6 text-foreground fill-foreground/20" />
+      </div>
+    </div>
+  );
+}
+
+// --- Main Feature Section ---
+
+export function Features() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(".feature-card", {
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 75%",
+        },
+        y: 60,
+        opacity: 0,
+        duration: 1,
+        stagger: 0.15,
+        ease: "power2.out",
+      });
+    }, sectionRef);
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <section id="features" ref={sectionRef} className="py-24 md:py-32 px-6 md:px-16 max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+        {/* Card 1 */}
+        <div className="feature-card bg-card border border-border rounded-[2rem] p-8 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col justify-between overflow-hidden">
+          <div className="mb-8">
+            <h3 className="font-sans font-bold text-xl md:text-2xl text-foreground mb-2">Centralized Hub</h3>
+            <p className="font-serif text-muted-foreground text-lg italic">A unified space for your college journey.</p>
+          </div>
+          <DiagnosticShuffler />
+        </div>
+
+        {/* Card 2 */}
+        <div className="feature-card bg-card border border-border rounded-[2rem] p-8 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col justify-between overflow-hidden">
+          <div className="mb-8">
+            <h3 className="font-sans font-bold text-xl md:text-2xl text-foreground mb-2">AI Document Tools</h3>
+            <p className="font-serif text-muted-foreground text-lg italic">Generate quizzes, notes, & flashcards instantly.</p>
+          </div>
+          <TelemetryTypewriter />
+        </div>
+
+        {/* Card 3 */}
+        <div className="feature-card bg-card border border-border rounded-[2rem] p-8 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col justify-between overflow-hidden">
+          <div className="mb-8">
+            <h3 className="font-sans font-bold text-xl md:text-2xl text-foreground mb-2">Adaptive Roadmaps</h3>
+            <p className="font-serif text-muted-foreground text-lg italic">Intelligent scheduling tailored to your courses.</p>
+          </div>
+          <CursorScheduler />
+        </div>
+
       </div>
     </section>
   );
-};
+}

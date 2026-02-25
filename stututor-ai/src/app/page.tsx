@@ -1,17 +1,19 @@
+import { Navbar } from '@/components/landing-page/Navbar';
 import { Hero } from '@/components/landing-page/Hero';
-import { PlatformShowcase } from '@/components/landing-page/PlatformShowcase';
-import { HowItWorks } from '@/components/landing-page/HowItWorks';
 import { Features } from '@/components/landing-page/Features';
+import { Philosophy } from '@/components/landing-page/Philosophy';
+import { Protocol } from '@/components/landing-page/Protocol';
 import { CTASection } from '@/components/landing-page/CTASection';
 import { Footer } from '@/components/landing-page/Footer';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 relative">
+      <Navbar />
       <Hero />
-      <PlatformShowcase />
-      <HowItWorks />
       <Features />
+      <Philosophy />
+      <Protocol />
       <CTASection />
       <Footer />
     </div>

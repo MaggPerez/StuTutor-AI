@@ -1,101 +1,61 @@
-'use client'
-import { Sparkles } from 'lucide-react';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
+"use client";
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.1
-    }
-  }
-};
+import React from "react";
+import Link from "next/link";
+import { Sparkles } from "lucide-react";
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as const }
-  }
-};
-
-const links = [
-  { href: '#toolkit', label: 'Toolkit' },
-  { href: '#how-it-works', label: 'How it Works' },
-  { href: '#features', label: 'Features' },
-  { href: '/login', label: 'Sign In', isLink: true },
-  { href: '/signup', label: 'Get Started', isLink: true },
-];
-
-export const Footer = () => {
-  const currentYear = new Date().getFullYear();
-
+export function Footer() {
   return (
-    <motion.footer
-      className="border-t border-border bg-card/50"
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-50px" }}
-      variants={containerVariants}
-    >
-      <div className="container mx-auto px-4 py-12">
-        <div className="flex flex-col items-center justify-between gap-8 md:flex-row">
-          {/* Logo & Description */}
-          <motion.div
-            className="flex flex-col items-center gap-4 md:items-start"
-            variants={itemVariants}
-          >
-            <div className="flex items-center gap-2 transition-transform hover:scale-105">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-                <Sparkles className="h-5 w-5 text-primary-foreground" />
-              </div>
-              <span className="text-xl font-bold text-foreground">StuTutor</span>
-            </div>
-            <p className="max-w-xs text-center text-sm text-muted-foreground md:text-left">
-              AI-powered learning platform that transforms your PDFs into interactive study sessions.
-            </p>
-          </motion.div>
+    <footer className="w-full bg-[#05050A] rounded-t-[4rem] text-muted-foreground px-6 py-16 md:px-16 md:py-24 mt-0 border-t border-border/10 relative overflow-hidden">
 
-          {/* Links */}
-          <motion.div
-            className="flex flex-wrap items-center justify-center gap-6 text-sm"
-            variants={itemVariants}
-          >
-            {links.map((link, index) => (
-              <div key={index} className="transition-transform hover:-translate-y-0.5">
-                {link.isLink ? (
-                  <Link href={link.href} className="text-muted-foreground transition-colors hover:text-foreground">
-                    {link.label}
-                  </Link>
-                ) : (
-                  <a href={link.href} className="text-muted-foreground transition-colors hover:text-foreground">
-                    {link.label}
-                  </a>
-                )}
-              </div>
-            ))}
-          </motion.div>
+      {/* Noise Overlay */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-screen bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
+
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 lg:gap-8 relative z-10 block">
+
+        {/* Brand Area */}
+        <div className="md:col-span-2 flex flex-col justify-between items-start h-full">
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <Sparkles className="w-6 h-6 text-primary" />
+              <span className="font-sans font-bold text-2xl text-foreground">StuTutor</span>
+            </div>
+            <p className="font-serif italic text-lg max-w-sm mb-8">
+              Intelligence beyond the classroom. The centralized college productivity app.
+            </p>
+          </div>
+
+          {/* Status Indicator */}
+          <div className="flex items-center gap-3 bg-card/30 border border-border/30 rounded-full px-4 py-2 mt-auto">
+            <div className="relative flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+            </div>
+            <span className="font-mono text-xs text-foreground/80 tracking-widest uppercase">System Operational</span>
+          </div>
         </div>
 
-        {/* Bottom Bar */}
-        <motion.div
-          className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 md:flex-row"
-          variants={itemVariants}
-        >
-          <p className="text-sm text-muted-foreground">
-            &copy; {currentYear} StuTutor. All rights reserved.
-          </p>
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            <span>Built with AI</span>
-            <span className="text-border">|</span>
-            <span>Made for Students</span>
+        {/* Links Navigation */}
+        <div className="flex flex-col gap-4">
+          <h4 className="font-sans text-foreground font-semibold mb-2">Platform</h4>
+          <Link href="#features" className="hover:text-primary transition-colors hover:translate-y-[-1px] max-w-fit">Features</Link>
+          <Link href="#philosophy" className="hover:text-primary transition-colors hover:translate-y-[-1px] max-w-fit">Methodology</Link>
+          <Link href="#protocol" className="hover:text-primary transition-colors hover:translate-y-[-1px] max-w-fit">Protocol</Link>
+          <Link href="#" className="hover:text-primary transition-colors hover:translate-y-[-1px] max-w-fit">Pricing</Link>
+        </div>
+
+        {/* Legal / Socials */}
+        <div className="flex flex-col gap-4">
+          <h4 className="font-sans text-foreground font-semibold mb-2">Legal Docs</h4>
+          <Link href="#" className="hover:text-primary transition-colors hover:translate-y-[-1px] max-w-fit">Privacy Policy</Link>
+          <Link href="#" className="hover:text-primary transition-colors hover:translate-y-[-1px] max-w-fit">Terms of Service</Link>
+          <Link href="#" className="hover:text-primary transition-colors hover:translate-y-[-1px] max-w-fit">Data Security</Link>
+
+          <div className="mt-8 text-xs font-mono opacity-50">
+            &copy; {new Date().getFullYear()} StuTutor. All Rights Reserved.
           </div>
-        </motion.div>
+        </div>
       </div>
-    </motion.footer>
+    </footer>
   );
-};
+}

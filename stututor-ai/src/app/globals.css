@@ -3,119 +3,80 @@
 
 @custom-variant dark (&:is(.dark *));
 
-:root {
-  /* Gamified Light Mode - Clean but playful */
-  --background: #fdfbff; /* Very pale violet tint */
-  --foreground: #1e1b4b; /* Deep Indigo */
-  
-  --card: #ffffff;
-  --card-foreground: #1e1b4b;
-  
-  --popover: #ffffff;
-  --popover-foreground: #1e1b4b;
-  
-  --primary: #6d28d9; /* Vivid Purple */
-  --primary-foreground: #ffffff;
-  
-  --secondary: #e9d5ff; /* Light Purple */
-  --secondary-foreground: #4c1d95; /* Dark Purple */
-  
-  --muted: #f3f4f6;
-  --muted-foreground: #6b7280;
-  
-  --accent: #f5f3ff;
-  --accent-foreground: #4c1d95;
-  
-  --destructive: #ef4444;
-  --destructive-foreground: #ffffff;
-  
-  --border: #e5e7eb;
-  --input: #e5e7eb;
-  
-  --ring: #8b5cf6; /* Violet Ring */
-  
-  --chart-1: #7c3aed; /* Violet 600 */
-  --chart-2: #2dd4bf; /* Teal 400 */
-  --chart-3: #f472b6; /* Pink 400 */
-  --chart-4: #fbbf24; /* Amber 400 */
-  --chart-5: #60a5fa; /* Blue 400 */
-  
-  --sidebar: #fdfbff;
-  --sidebar-foreground: #1e1b4b;
-  --sidebar-primary: #6d28d9;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f3e8ff;
-  --sidebar-accent-foreground: #1e1b4b;
-  --sidebar-border: #e5e7eb;
-  --sidebar-ring: #7c3aed;
-  
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+@theme {
+  --color-primary-accent: #e0c2ff;
+  --color-background-void: #0A0A14;
+}
 
-  /* More rounded for that "App" feel */
-  --radius: 1rem; 
-  
-  /* Standard Shadows */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+:root {
+  /* Set light mode to same as dark or just subtle light */
+  --background: #faf8f5;
+  --foreground: #0a0a14;
+  --card: #ffffff;
+  --card-foreground: #0a0a14;
+  --popover: #ffffff;
+  --popover-foreground: #0a0a14;
+  --primary: #e0c2ff;
+  --primary-foreground: #0a0a14;
+  --secondary: #2a2a35;
+  --secondary-foreground: #faf8f5;
+  --muted: #e5e5e5;
+  --muted-foreground: #71717a;
+  --accent: #e0c2ff;
+  --accent-foreground: #0a0a14;
+  --destructive: #ef4444;
+  --destructive-foreground: #faf8f5;
+  --border: #e4e4e7;
+  --input: #e4e4e7;
+  --ring: #e0c2ff;
+  --radius: 2rem;
+
+  --font-sans: var(--font-sora), system-ui, sans-serif;
+  --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
+  --font-mono: var(--font-fira), monospace;
 }
 
 .dark {
-  /* Phantom Wallet / Gamified Dark Mode */
-  --background: #0f0c18; /* Deep Dark Violet-Black */
-  --foreground: #ffffff;
-  
-  --card: #1c172b; /* Dark Violet Card */
-  --card-foreground: #ffffff;
-  
-  --popover: #1c172b;
-  --popover-foreground: #ffffff;
-  
-  /* Vibrant Electric Purple */
-  --primary: #8b5cf6; /* Violet 500 */
-  --primary-foreground: #ffffff;
-  
-  /* Secondary Actions - Deep but slightly lighter */
-  --secondary: #2e2448; 
-  --secondary-foreground: #e9d5ff;
-  
-  --muted: #2e2448;
-  --muted-foreground: #a78bfa; /* Soft Violet Text */
-  
-  --accent: #2e2448;
-  --accent-foreground: #ffffff;
-  
-  --destructive: #ff4d4d;
-  --destructive-foreground: #ffffff;
-  
-  --border: #362c52; /* Subtle Violet Border */
-  --input: #362c52;
-  
-  --ring: #8b5cf6;
-  
-  /* Gamified / Crypto Charts - Neon Tones */
-  --chart-1: #a78bfa; /* Violet */
-  --chart-2: #2dd4bf; /* Cyan/Teal */
-  --chart-3: #f472b6; /* Pink */
-  --chart-4: #fbbf24; /* Amber */
-  --chart-5: #38bdf8; /* Sky Blue */
-  
-  --sidebar: #0f0c18;
-  --sidebar-foreground: #ffffff;
-  --sidebar-primary: #8b5cf6;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #2e2448;
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: #362c52;
-  --sidebar-ring: #8b5cf6;
+  /* Midnight Luxe / Vapor Clinic Mix */
+  --background: #0A0A14;
+  /* Deep Void */
+  --foreground: #FAF8F5;
+  /* Ivory / Ghost */
 
-  /* Glowing Shadows for Dark Mode */
-  --shadow-sm: 0 0 10px -2px rgba(139, 92, 246, 0.1);
-  --shadow: 0 0 15px -3px rgba(139, 92, 246, 0.2);
-  --shadow-md: 0 0 25px -5px rgba(139, 92, 246, 0.3);
-  --shadow-lg: 0 0 40px -10px rgba(139, 92, 246, 0.4);
+  /* Components */
+  --card: #12121A;
+  --card-foreground: #FAF8F5;
+  --popover: #12121A;
+  --popover-foreground: #FAF8F5;
+
+  /* Accent */
+  --primary: #e0c2ff;
+  /* Lavender Accent requested */
+  --primary-foreground: #0A0A14;
+  /* Dark text on lavender */
+
+  --secondary: #1E1E26;
+  --secondary-foreground: #FAF8F5;
+
+  --muted: #1E1E26;
+  --muted-foreground: #8E8E9F;
+
+  --accent: #2A2A35;
+  /* Slate */
+  --accent-foreground: #e0c2ff;
+
+  --destructive: #E63B2E;
+  --destructive-foreground: #FAF8F5;
+
+  --border: #2A2A35;
+  --input: #2A2A35;
+  --ring: #e0c2ff;
+
+  /* Shadows for Dark Mode Glows */
+  --shadow-sm: 0 0 10px -2px rgba(224, 194, 255, 0.1);
+  --shadow: 0 0 15px -3px rgba(224, 194, 255, 0.2);
+  --shadow-md: 0 0 25px -5px rgba(224, 194, 255, 0.3);
+  --shadow-lg: 0 0 40px -10px rgba(224, 194, 255, 0.4);
 }
 
 @theme inline {
@@ -138,19 +99,6 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
 
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
@@ -160,27 +108,58 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-
-  --shadow-2xs: var(--shadow-2xs);
-  --shadow-xs: var(--shadow-xs);
-  --shadow-sm: var(--shadow-sm);
-  --shadow: var(--shadow);
-  --shadow-md: var(--shadow-md);
-  --shadow-lg: var(--shadow-lg);
-  --shadow-xl: var(--shadow-xl);
-  --shadow-2xl: var(--shadow-2xl);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
-  html, body, #root {
+
+  html,
+  body,
+  #root {
     height: 100%;
     margin: 0;
     padding: 0;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Cinematic UI Utilities */
+.noise-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0.05;
+}
+
+.magnetic-btn {
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.magnetic-btn:hover {
+  transform: scale(1.03);
+}
+
+.text-drama {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.smooth-transition {
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
