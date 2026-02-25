@@ -60,7 +60,7 @@ export default async function Page() {
             <div className="space-y-1">
 
               {/* Welcome Message */}
-              <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-purple-400 via-pink-400 to-teal-400 bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold tracking-tight text-[#e0c2ff]">
                 Good {timeOfDay}, {user?.user_metadata.full_name}!
               </h1>
 
