@@ -9,8 +9,8 @@ import { useUser } from '@/contexts/UserContext'
 
 
 export default function Assignments() {
-    const {assignments, assignmentTableData } = useUser()
-    
+    const { assignments, assignmentTableData } = useUser()
+
     return (
         <SidebarProvider
             style={
@@ -21,7 +21,7 @@ export default function Assignments() {
             }
         >
             <AppSidebar variant="inset" />
-            <SidebarInset className="bg-transparent">
+            <SidebarInset>
 
                 <SiteHeader />
 

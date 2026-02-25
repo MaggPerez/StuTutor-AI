@@ -63,7 +63,7 @@ export default function Calendar() {
             }
         >
             <AppSidebar variant="inset" />
-            <SidebarInset className="bg-transparent">
+            <SidebarInset>
                 <SiteHeader />
                 <div className="flex flex-col h-[calc(100vh-var(--header-height))] p-4 lg:p-6">
                     <div className="mb-6 shrink-0">

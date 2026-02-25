@@ -36,7 +36,7 @@ export default function MyNotes() {
                 }
             >
                 <AppSidebar variant="inset" />
-                <SidebarInset className="bg-transparent">
+                <SidebarInset>
                     <SiteHeader />
                     <div className="flex flex-col h-[calc(100vh-var(--header-height))]">
                         <div className="px-4 py-4 shrink-0">

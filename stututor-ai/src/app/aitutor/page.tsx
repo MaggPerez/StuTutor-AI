@@ -91,7 +91,7 @@ export default async function AITutorPage() {
             }
         >
             <AppSidebar variant="inset" />
-            <SidebarInset className="bg-transparent">
+            <SidebarInset>
                 <SiteHeader />
                 <div className="container mx-auto py-10 px-4 max-w-7xl">
                     <div className="mb-10 space-y-4">
