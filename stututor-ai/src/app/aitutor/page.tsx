@@ -47,14 +47,14 @@ export default async function AITutorPage() {
         {
             title: "Quiz Generator",
             description: "Create custom quizzes from your study materials to test your knowledge and prepare for exams.",
-            icon: <Brain className="h-8 w-8 text-muted-foreground" />,
+            icon: <Brain className="h-8 w-8 text-primary" />,
             href: '/aitutor/quizgen',
             active: true
         },
         {
             title: "Study Notes Summarizer",
             description: "Upload your study notes and get concise summaries and key takeaways in seconds. Export your notes in PDF format.",
-            icon: <FileText className="h-8 w-8 text-muted-foreground" />,
+            icon: <FileText className="h-8 w-8 text-primary" />,
             href: '/aitutor/studynotes',
             active: true
         },

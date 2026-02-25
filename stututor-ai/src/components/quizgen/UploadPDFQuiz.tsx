@@ -73,7 +73,7 @@ export default function UploadPDFQuiz() {
                 <Card className="cursor-pointer hover:shadow-lg transition-all duration-300">
                     <CardHeader>
                         {/* Card title */}
-                        <CardTitle className="flex items-center gap-2"><FileText className="h-8 w-8 text-muted-foreground" /> Upload a PDF</CardTitle>
+                        <CardTitle className="flex items-center gap-2"><FileText className="h-8 w-8 text-primary" /> Upload a PDF</CardTitle>
 
                         {/* Card description */}
                         <CardDescription>
