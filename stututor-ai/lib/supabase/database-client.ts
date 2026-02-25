@@ -3,6 +3,8 @@ import { Chat, ChatMessage, PDFDocument } from '@/types/Messages'
 import { User } from '@supabase/supabase-js'
 import { Course } from '@/types/Courses'
 import { Assignment } from '@/types/Assignments'
+import { Note } from '@/types/StudyNotes'
+import { StudyNotes } from '@/types/StudyNotes'
 
 async function getUserId(): Promise<string> {
     const supabase = createClient()
@@ -442,6 +444,80 @@ export async function getUserAssignments() {
 
 
 
+// =============================== STUDY NOTES OPERATIONS ===============================
+
+
+/**
+ * Stores generated notes in the notes storage bucket and inserts a record into the notes table.
+ * @param notesFile - The PDF file to store
+ * @param title - The display title for the note
+ * @param courseId - The course this note belongs to
+ */
+export async function storeGeneratedNotes(notesFile: File, title: string, courseId: string) {
+    const supabase = createClient()
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('User not authenticated')
+
+    const userId = await getUserId()
+    const storagePath = `${user.id}/${courseId}/${notesFile.name}`
+
+    // Upload to the notes storage bucket
+    const { error: uploadError } = await supabase.storage.from('notes').upload(storagePath, notesFile, {
+        upsert: true,
+    })
+    if (uploadError) {
+        throw new Error('Failed to store generated notes: ' + uploadError.message)
+    }
+
+    // Insert a record into the notes table
+    const { data, error: insertError } = await supabase.from('notes').insert({
+        course_id: courseId,
+        created_by: userId,
+        title: title,
+        file_name: notesFile.name,
+        storage_path: storagePath,
+    }).select().single()
+
+    if (insertError) {
+        throw new Error('Failed to save note record: ' + insertError.message)
+    }
+
+    return data
+}
+
+
+
+/**
+ * 
+ * @returns All notes for the current user
+ */
+export async function getAllUserNotes(): Promise<Note[]> {
+    const supabase = createClient()
+    const userId = await getUserId()
+    const { data, error } = await supabase
+        .from('notes')
+        .select('*')
+        .eq('created_by', userId)
+    if (error) throw new Error('Failed to get notes: ' + error.message)
+    return data.map(transformNoteFromDB)
+}
+
+
+/**
+ * 
+ * @param storagePath 
+ * @returns The signed URL for the note
+ */
+export async function getNoteSignedUrl(storagePath: string): Promise<string> {
+    const supabase = createClient()
+    const { data, error } = await supabase.storage
+        .from('notes')
+        .createSignedUrl(storagePath, 3600) // 1 hour expiry
+    if (error) throw new Error('Failed to get signed URL: ' + error.message)
+    return data.signedUrl
+}
+
 
 
 // =============================== HELPER FUNCTIONS ===============================
@@ -495,6 +571,9 @@ function transformPDFFromDB(data: any): PDFDocument {
     }
 }
 
+/**
+ * Transform database course to TypeScript interface
+ */
 function transformCourseFromDB(data: any): Course {
     return {
         // Required fields
@@ -519,6 +598,9 @@ function transformCourseFromDB(data: any): Course {
     }
 }
 
+/**
+ * Transform database assignment to TypeScript interface
+ */
 function transformAssignmentFromDB(data: any): Assignment {
     return {
         id: data.id,
@@ -529,5 +611,20 @@ function transformAssignmentFromDB(data: any): Assignment {
         dueDate: data.due_date,
         priority: data.priority,
         progress: data.progress,
+    }
+}
+
+
+/**
+ * Transform database note to TypeScript interface
+ */
+function transformNoteFromDB(data: any): Note {
+    return {
+        id: data.id,
+        title: data.title,
+        courseId: data.course_id,
+        fileName: data.file_name,
+        storagePath: data.storage_path,
+        createdAt: data.created_at,
     }
 }

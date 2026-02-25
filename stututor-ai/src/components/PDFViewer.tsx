@@ -114,8 +114,9 @@ export default function PDFViewer({ file, pdf, fetchingFile, fetchPDFUrl, setFil
     if (file) return file;
     if (pdf) return { data: new Uint8Array(pdf.output('arraybuffer')) };
     if (fetchingFile) return fetchingFile;
+    if (fetchPDFUrl) return fetchPDFUrl;
     return null;
-  }, [file, pdf, fetchingFile]);
+  }, [file, pdf, fetchingFile, fetchPDFUrl]);
 
   return (
     <div className="flex flex-col h-full w-full bg-gray-100/50 dark:bg-zinc-900/50 border rounded-md overflow-hidden">

@@ -163,7 +163,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     documents: [
       {
         name: "My Notes",
-        url: "#",
+        url: "/mynotes",
         icon: IconNote,
       },
       {
