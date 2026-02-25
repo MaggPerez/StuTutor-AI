@@ -38,7 +38,7 @@ export default function Courses() {
                 }
             >
                 <AppSidebar variant="inset" />
-                <SidebarInset className="bg-transparent">
+                <SidebarInset>
                     <SiteHeader />
 
                     {/* Display Courses if there are any */}

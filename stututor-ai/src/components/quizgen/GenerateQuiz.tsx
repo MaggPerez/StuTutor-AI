@@ -37,7 +37,7 @@ export default function GenerateQuiz() {
             <DialogTrigger asChild>
                 <Card className="cursor-pointer hover:shadow-lg transition-all duration-300">
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2"><Brain className="h-8 w-8 text-muted-foreground" /> Generate Quiz</CardTitle>
+                        <CardTitle className="flex items-center gap-2"><Brain className="h-8 w-8 text-primary" /> Generate Quiz</CardTitle>
                         <CardDescription>
                             Generate a quiz based on your topic of choice.
                         </CardDescription>

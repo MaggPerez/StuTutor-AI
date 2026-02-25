@@ -24,7 +24,7 @@ export function SectionCards() {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
       {/* Assignments Due Card */}
-      <Card className="relative overflow-hidden border-l-4 border-l-pink-500 bg-gradient-to-br from-card to-pink-500/5 dark:from-card dark:to-pink-900/10 shadow-sm hover:shadow-md transition-shadow">
+      <Card className="relative overflow-hidden bg-gradient-to-br from-card to-pink-500/5 dark:from-card dark:to-pink-900/10 shadow-sm hover:shadow-md transition-shadow">
         <CardHeader className="pb-2">
           <CardDescription>Assignments Due</CardDescription>
           <CardTitle className="text-3xl font-bold tabular-nums text-foreground">
@@ -46,7 +46,7 @@ export function SectionCards() {
 
 
       {/* Active Courses Card */}
-      <Card className="relative overflow-hidden border-l-4 border-l-teal-500 bg-gradient-to-br from-card to-teal-500/5 dark:from-card dark:to-teal-900/10 shadow-sm hover:shadow-md transition-shadow">
+      <Card className="relative overflow-hidden bg-gradient-to-br from-card to-teal-500/5 dark:from-card dark:to-teal-900/10 shadow-sm hover:shadow-md transition-shadow">
         <CardHeader className="pb-2">
           <CardDescription>Active Courses</CardDescription>
           <CardTitle className="text-3xl font-bold tabular-nums text-foreground">
@@ -68,7 +68,7 @@ export function SectionCards() {
 
 
       {/* Study Time Card */}
-      <Card className="relative overflow-hidden border-l-4 border-l-purple-500 bg-gradient-to-br from-card to-purple-500/5 dark:from-card dark:to-purple-900/10 shadow-sm hover:shadow-md transition-shadow">
+      <Card className="relative overflow-hidden bg-gradient-to-br from-card to-purple-500/5 dark:from-card dark:to-purple-900/10 shadow-sm hover:shadow-md transition-shadow">
         <CardHeader className="pb-2">
           <CardDescription>Study Time This Week</CardDescription>
           <CardTitle className="text-3xl font-bold tabular-nums text-foreground">
@@ -82,18 +82,18 @@ export function SectionCards() {
           </CardAction>
         </CardHeader>
         <CardFooter className="pt-0">
-            <p className="text-xs text-muted-foreground">
-              8.5 hours more than last week
-            </p>
+          <p className="text-xs text-muted-foreground">
+            8.5 hours more than last week
+          </p>
         </CardFooter>
       </Card>
 
-      
 
-      
+
+
 
       {/* Study Streak Card */}
-      <Card className="relative overflow-hidden border-l-4 border-l-amber-500 bg-gradient-to-br from-card to-amber-500/5 dark:from-card dark:to-amber-900/10 shadow-sm hover:shadow-md transition-shadow">
+      <Card className="relative overflow-hidden bg-gradient-to-br from-card to-amber-500/5 dark:from-card dark:to-amber-900/10 shadow-sm hover:shadow-md transition-shadow">
         <CardHeader className="pb-2">
           <CardDescription>Study Streak</CardDescription>
           <CardTitle className="text-3xl font-bold tabular-nums text-foreground">
