@@ -2,8 +2,8 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react"
 import { User } from "@supabase/supabase-js"
-import { createClient } from "../../lib/supabase/client"
-import { createPDFDocument, getPDFDocument, updateChat, getChatById, storePDF, getPDFUrl } from "../../lib/supabase/database-client"
+import { createClient } from "@/lib/supabase/client"
+import { createPDFDocument, getPDFDocument, updateChat, getChatById, storePDF, getPDFUrl } from "@/lib/supabase/database-client"
 import { useChat } from "./ChatContext"
 import { Chat } from "../types/Messages"
 

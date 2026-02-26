@@ -1,7 +1,4 @@
 import { AppSidebar } from "@/components/app-sidebar"
-import { ChartAreaInteractive } from "@/components/chart-area-interactive"
-import { ChartPieLegend } from "@/components/chart-pie-legend"
-import { DataTable } from "@/components/data-table"
 import { SectionCards } from "@/components/section-cards"
 import QuickActions from "@/components/dashboard/QuickActions"
 import UpcomingTasks from "@/components/dashboard/UpcomingTasks"
@@ -14,10 +11,8 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Sparkles, Calendar } from "lucide-react"
 
-import data from "./data.json"
+import { createClient } from "@/lib/supabase/server"
 
-import { createClient } from "../../../lib/supabase/server"
-import { redirect } from "next/navigation"
 
 export default async function Page() {
   const currentDate = new Date()
@@ -26,9 +21,6 @@ export default async function Page() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user) {
-    redirect('/login')
-  }
 
   return (
     <SidebarProvider

@@ -19,20 +19,10 @@ import {
 import { AppSidebar } from '@/components/app-sidebar'
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
 import { SiteHeader } from '@/components/site-header'
-import { redirect } from 'next/navigation'
-import { createChat } from '../../../lib/supabase/database'
-import { createClient } from '../../../lib/supabase/server'
+import { createChat } from '@/lib/supabase/database'
 
 
 export default async function AITutorPage() {
-    // Check if user is authenticated
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) {
-        redirect('/dashboard')
-    }
-
     const chat = await createChat()
 
 

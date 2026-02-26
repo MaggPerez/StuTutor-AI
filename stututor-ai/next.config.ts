@@ -4,8 +4,6 @@ const nextConfig: NextConfig = {
   /* config options here */
 };
 
-module.exports = {
-  // swcMinify: false,
-}
+
 
 export default nextConfig;

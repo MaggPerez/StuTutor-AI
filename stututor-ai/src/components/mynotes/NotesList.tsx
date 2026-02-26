@@ -4,7 +4,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
 import { FileText, Calendar, StickyNote, Download } from 'lucide-react'
 import { useUser } from '@/contexts/UserContext'
-import { getNoteSignedUrl } from '../../../lib/supabase/database-client'
+import { getNoteSignedUrl } from '@/lib/supabase/database-client'
 
 
 interface NotesListProps {

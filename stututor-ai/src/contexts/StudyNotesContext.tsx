@@ -4,9 +4,9 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { Note, StudyNotes } from '@/types/StudyNotes'
 import { generateStudyNotesWithTopic, generateStudyNotesWithPDF } from '../components/studynotes/studynotesApi'
 import { jsPDF } from 'jspdf'
-import { getUserCourses } from '../../lib/supabase/database-client'
+import { getUserCourses } from '@/lib/supabase/database-client'
 import { Course } from '@/types/Courses'
-import { storeGeneratedNotes } from '../../lib/supabase/database-client'
+import { storeGeneratedNotes } from '@/lib/supabase/database-client'
 
 interface StudyNotesContextType {
     notes: StudyNotes

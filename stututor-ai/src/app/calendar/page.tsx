@@ -8,7 +8,7 @@ import { WeekView } from '@/components/calendar/week-view'
 import { MiniCalendarCard } from '@/components/calendar/mini-calendar-card'
 import { UpcomingAssignmentsCard } from '@/components/calendar/upcoming-assignments-card'
 import { Assignment } from '@/types/Assignments'
-import { getUserAssignments } from '../../../lib/supabase/database-client'
+import { getUserAssignments } from '@/lib/supabase/database-client'
 
 export default function Calendar() {
     const [currentDate, setCurrentDate] = useState(new Date())

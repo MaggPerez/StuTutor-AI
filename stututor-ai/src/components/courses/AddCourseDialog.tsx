@@ -9,7 +9,7 @@ import { Plus } from 'lucide-react'
 import { Course, CourseIcon, DayOfWeek } from '@/types/Courses'
 import { toast } from 'sonner'
 import { IconMath, IconAtom, IconFlask, IconBook, IconPalette, IconMusic, IconRun, IconLanguage, IconBrain, IconCode } from '@tabler/icons-react'
-import { createCourse } from '../../../lib/supabase/database-client'
+import { createCourse } from '@/lib/supabase/database-client'
 import DaySelector from './DaySelector'
 import TimeRangeInput from './TimeRangeInput'
 

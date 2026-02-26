@@ -10,7 +10,7 @@ import {
     createMessage,
     updateChat,
     deleteChat as deleteChatFromDb
-} from '../../lib/supabase/database-client'
+} from '@/lib/supabase/database-client'
 
 interface ChatContextType {
     currentChatId: string | null

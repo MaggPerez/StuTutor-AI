@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic'
 import { useEffect, useState } from 'react'
 import { File, Loader2 } from 'lucide-react'
 import { useUser } from '@/contexts/UserContext'
-import { getNoteSignedUrl } from '../../../lib/supabase/database-client'
+import { getNoteSignedUrl } from '@/lib/supabase/database-client'
 
 const PDFViewer = dynamic(() => import('@/components/PDFViewer'), {
     ssr: false,

@@ -2,9 +2,9 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react"
 import { User } from "@supabase/supabase-js"
-import { createClient } from "../../lib/supabase/client"
+import { createClient } from "@/lib/supabase/client"
 import { Course } from "@/types/Courses"
-import { getAllUserNotes, getUserAssignments, getUserCourses } from "../../lib/supabase/database-client"
+import { getAllUserNotes, getUserAssignments, getUserCourses } from "@/lib/supabase/database-client"
 import { Assignment } from "@/types/Assignments"
 import { schema } from "@/components/data-table"
 import { z } from "zod"

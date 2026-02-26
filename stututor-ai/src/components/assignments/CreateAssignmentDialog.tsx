@@ -10,7 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Calendar } from '../ui/calendar'
 import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
-import { createAssignment } from "../../../lib/supabase/database-client"
+import { createAssignment } from "@/lib/supabase/database-client"
 import { toast } from 'sonner'
 
 

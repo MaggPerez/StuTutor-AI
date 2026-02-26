@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Course, CourseIcon, DayOfWeek } from '@/types/Courses'
 import { toast } from 'sonner'
 import { IconMath, IconAtom, IconFlask, IconBook, IconPalette, IconMusic, IconRun, IconLanguage, IconBrain, IconCode } from '@tabler/icons-react'
-import { updateCourse } from '../../../lib/supabase/database-client'
+import { updateCourse } from '@/lib/supabase/database-client'
 import DaySelector from './DaySelector'
 import TimeRangeInput from './TimeRangeInput'
 

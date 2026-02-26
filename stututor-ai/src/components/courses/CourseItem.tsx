@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { Course, CourseIcon } from '@/types/Courses'
-import { deleteCourse } from '../../../lib/supabase/database-client'
+import { deleteCourse } from '@/lib/supabase/database-client'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 import { format } from 'date-fns'
 import { IconMath, IconBook, IconAtom, IconFlask, IconPalette, IconMusic, IconRun, IconLanguage, IconBrain, IconCode, Icon, IconDotsVertical, IconEdit, IconTrash } from '@tabler/icons-react'
