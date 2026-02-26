@@ -1,8 +1,9 @@
 "use client"
 
-import React, { createContext, useContext, useEffect, useState } from "react"
+import React, { createContext, useContext, useEffect, useCallback, useState } from "react"
 import { User } from "@supabase/supabase-js"
 import { createClient } from "@/lib/supabase/client"
+import { usePathname } from "next/navigation"
 import { Course } from "@/types/Courses"
 import { getAllUserNotes, getUserAssignments, getUserCourses } from "@/lib/supabase/database-client"
 import { Assignment } from "@/types/Assignments"
@@ -36,36 +37,41 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   // State for the loading state of the user's data
   const [loading, setLoading] = useState(true)
 
+  const pathname = usePathname()
 
+  /**
+   * Fetches the user's data from the database
+   */
+  const fetchUserData = useCallback(async () => {
+    try {
+      await Promise.all([
+        getUserCourses().then(setCourses),
+        getUserAssignments().then((assignments) => {
+          setAssignments(assignments)
+          setAssignmentTableData(convertAssignmentsToTableData(assignments))
+        }),
+        getAllUserNotes().then(setUserNotes),
+      ])
+    } catch (error) {
+      console.error("Error fetching user data:", error)
+    } finally {
+      setLoading(false)
+    }
+  }, [])
 
-  // Fetch the user's data when the component mounts
+  // Subscribe to auth state changes on mount
   useEffect(() => {
     const supabase = createClient()
 
-    const fetchUserData = async (userId: string) => {
-      try {
-        await Promise.all([
-          getUserCourses().then(setCourses),
-          getUserAssignments().then((assignments) => {
-            setAssignments(assignments)
-            setAssignmentTableData(convertAssignmentsToTableData(assignments))
-          }),
-          getAllUserNotes().then(setUserNotes),
-        ])
-      } catch (error) {
-        console.error("Error fetching user data:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
+
+        // Set the user to the current user
         const currentUser = session?.user ?? null
         setUser(currentUser)
 
         if (currentUser) {
-          fetchUserData(currentUser.id)
+          fetchUserData()
         } else {
           setCourses([])
           setAssignments([])
@@ -79,7 +85,26 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     return () => {
       subscription.unsubscribe()
     }
-  }, [])
+  }, [fetchUserData])
+
+  // Re-check auth on route changes (handles server-side login redirects)
+  useEffect(() => {
+    const supabase = createClient()
+
+    supabase.auth.getUser().then(({ data: { user: currentUser } }) => {
+      if (currentUser && !user) {
+        setUser(currentUser)
+        fetchUserData()
+      } else if (!currentUser && user) {
+        setUser(null)
+        setCourses([])
+        setAssignments([])
+        setAssignmentTableData([])
+        setUserNotes([])
+        setLoading(false)
+      }
+    })
+  }, [pathname])
 
 
 
