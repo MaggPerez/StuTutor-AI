@@ -372,13 +372,13 @@ export function DataTable({
     pageIndex: 0,
     pageSize: 10,
   })
-  const [activeRowSelection, setActiveRowSelection] = React.useState({})
-  const [activePagination, setActivePagination] = React.useState({ pageIndex: 0, pageSize: 10 })
+  const [inProgressRowSelection, setInProgressRowSelection] = React.useState({})
+  const [inProgressPagination, setInProgressPagination] = React.useState({ pageIndex: 0, pageSize: 10 })
   const [completedRowSelection, setCompletedRowSelection] = React.useState({})
   const [completedPagination, setCompletedPagination] = React.useState({ pageIndex: 0, pageSize: 10 })
 
   const sortableId = React.useId()
-  const activeSortableId = React.useId()
+  const inProgressSortableId = React.useId()
   const completedSortableId = React.useId()
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
@@ -391,7 +391,7 @@ export function DataTable({
     setData(initialData)
   }, [initialData])
 
-  const activeData = React.useMemo(
+  const inProgressData = React.useMemo(
     () => data.filter((item) => item.status === "In Progress"),
     [data]
   )
@@ -406,9 +406,9 @@ export function DataTable({
     [data]
   )
 
-  const activeDataIds = React.useMemo<UniqueIdentifier[]>(
-    () => activeData.map(({ id }) => id),
-    [activeData]
+  const inProgressDataIds = React.useMemo<UniqueIdentifier[]>(
+    () => inProgressData.map(({ id }) => id),
+    [inProgressData]
   )
 
   const completedDataIds = React.useMemo<UniqueIdentifier[]>(
@@ -441,23 +441,23 @@ export function DataTable({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   })
 
-  const activeTable = useReactTable({
-    data: activeData,
+  const inProgressTable = useReactTable({
+    data: inProgressData,
     columns,
     state: {
       sorting,
       columnVisibility,
-      rowSelection: activeRowSelection,
+      rowSelection: inProgressRowSelection,
       columnFilters,
-      pagination: activePagination,
+      pagination: inProgressPagination,
     },
     getRowId: (row) => row.id.toString(),
     enableRowSelection: true,
-    onRowSelectionChange: setActiveRowSelection,
+    onRowSelectionChange: setInProgressRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
-    onPaginationChange: setActivePagination,
+    onPaginationChange: setInProgressPagination,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -510,8 +510,8 @@ export function DataTable({
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
          <TabsList className="bg-muted/50 p-1">
           <TabsTrigger value="all-assignments" className="rounded-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">All Assignments</TabsTrigger>
-          <TabsTrigger value="active" className="rounded-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">
-            Active <Badge variant="secondary" className="ml-2 h-5 bg-primary/10 text-primary">{activeData.length}</Badge>
+          <TabsTrigger value="in-progress" className="rounded-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">
+            In Progress <Badge variant="secondary" className="ml-2 h-5 bg-primary/10 text-primary">{inProgressData.length}</Badge>
           </TabsTrigger>
           <TabsTrigger value="completed" className="rounded-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">
             Completed <Badge variant="secondary" className="ml-2 h-5 bg-green-500/10 text-green-600 dark:text-green-400">{completedData.length}</Badge>
@@ -650,7 +650,7 @@ export function DataTable({
         {/* Placeholders for other tabs to prevent errors if clicked */}
 
       <TabsContent
-        value="active"
+        value="in-progress"
         className="relative flex flex-col gap-4 overflow-auto"
       >
         <div className="overflow-hidden rounded-xl border bg-card/50 shadow-sm">
@@ -659,11 +659,11 @@ export function DataTable({
             modifiers={[restrictToVerticalAxis]}
             onDragEnd={handleDragEnd}
             sensors={sensors}
-            id={activeSortableId}
+            id={inProgressSortableId}
           >
             <Table>
               <TableHeader className="bg-muted/50 sticky top-0 z-10">
-                {activeTable.getHeaderGroups().map((headerGroup) => (
+                {inProgressTable.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id} className="border-b border-border/40 hover:bg-transparent">
                     {headerGroup.headers.map((header) => {
                       return (
@@ -681,12 +681,12 @@ export function DataTable({
                 ))}
               </TableHeader>
               <TableBody className="**:data-[slot=table-cell]:first:w-8">
-                {activeTable.getRowModel().rows?.length ? (
+                {inProgressTable.getRowModel().rows?.length ? (
                   <SortableContext
-                    items={activeDataIds}
+                    items={inProgressDataIds}
                     strategy={verticalListSortingStrategy}
                   >
-                    {activeTable.getRowModel().rows.map((row) => (
+                    {inProgressTable.getRowModel().rows.map((row) => (
                       <DraggableRow key={row.id} row={row} />
                     ))}
                   </SortableContext>
@@ -706,20 +706,20 @@ export function DataTable({
         </div>
         <div className="flex items-center justify-between px-2">
           <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
-            {activeTable.getFilteredSelectedRowModel().rows.length} of{" "}
-            {activeTable.getFilteredRowModel().rows.length} selected
+            {inProgressTable.getFilteredSelectedRowModel().rows.length} of{" "}
+            {inProgressTable.getFilteredRowModel().rows.length} selected
           </div>
           <div className="flex w-full items-center gap-8 lg:w-fit">
             <div className="flex w-fit items-center justify-center text-sm font-medium text-muted-foreground">
-              Page {activeTable.getState().pagination.pageIndex + 1} of{" "}
-              {activeTable.getPageCount()}
+              Page {inProgressTable.getState().pagination.pageIndex + 1} of{" "}
+              {inProgressTable.getPageCount()}
             </div>
             <div className="ml-auto flex items-center gap-2 lg:ml-0">
               <Button
                 variant="outline"
                 className="size-8 p-0"
-                onClick={() => activeTable.previousPage()}
-                disabled={!activeTable.getCanPreviousPage()}
+                onClick={() => inProgressTable.previousPage()}
+                disabled={!inProgressTable.getCanPreviousPage()}
               >
                 <span className="sr-only">Go to previous page</span>
                 <ChevronLeft className="size-4" />
@@ -727,8 +727,8 @@ export function DataTable({
               <Button
                 variant="outline"
                 className="size-8 p-0"
-                onClick={() => activeTable.nextPage()}
-                disabled={!activeTable.getCanNextPage()}
+                onClick={() => inProgressTable.nextPage()}
+                disabled={!inProgressTable.getCanNextPage()}
               >
                 <span className="sr-only">Go to next page</span>
                 <ChevronRight className="size-4" />
