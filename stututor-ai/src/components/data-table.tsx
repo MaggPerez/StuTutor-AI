@@ -95,9 +95,25 @@ import {
 } from "@/components/ui/tabs"
 import CreateAssignmentDialog from "./assignments/CreateAssignmentDialog"
 import { Assignment } from "@/types/Assignments"
+import { updateAssignment } from "@/lib/supabase/database-client"
+
+async function onHandleUpdateAssignment(event: React.FormEvent<HTMLFormElement>, assignmentId: string, assignment_name: string, course: string, type: string, status: string, dueDate: string, priority: string, progress: number) {
+  event.preventDefault()
+  const updates: Partial<Assignment> = {
+    assignment_name: assignment_name,
+    course: course,
+    type: type,
+    status: status,
+    dueDate: dueDate,
+    priority: priority,
+    progress: progress,
+  }
+  await updateAssignment(assignmentId, updates)
+}
 
 export const schema = z.object({
   id: z.number(),
+  assignmentId: z.string(),
   assignment_name: z.string(),
   course: z.string(),
   type: z.string(),
@@ -106,6 +122,12 @@ export const schema = z.object({
   priority: z.string(),
   progress: z.number(),
 })
+
+function toDateTimeLocalValue(dateStr: string): string {
+  const d = new Date(dateStr)
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
 
 // Create a separate component for the drag handle
 function DragHandle({ id }: { id: number }) {
@@ -207,12 +229,16 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     accessorKey: "dueDate",
     header: "Due Date",
     cell: ({ row }) => (
-      <div className="w-28 text-muted-foreground">
-        {new Date(row.original.dueDate).toLocaleDateString('en-US', {
+      <div className="w-36 text-muted-foreground">
+        <div>{new Date(row.original.dueDate).toLocaleDateString('en-US', {
           month: 'short',
           day: 'numeric',
           year: 'numeric'
-        })}
+        })}</div>
+        <div className="text-xs">{new Date(row.original.dueDate).toLocaleTimeString('en-US', {
+          hour: 'numeric',
+          minute: '2-digit',
+        })}</div>
       </div>
     ),
   },
@@ -250,27 +276,32 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
   },
   {
     id: "actions",
-    cell: () => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="data-[state=open]:bg-muted text-muted-foreground flex size-8 hover:text-foreground"
-            size="icon"
-          >
-            <MoreVertical className="size-4" />
-            <span className="sr-only">Open menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-32">
-          <DropdownMenuItem>Edit</DropdownMenuItem>
-          <DropdownMenuItem>Mark Complete</DropdownMenuItem>
-          <DropdownMenuItem>Duplicate</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
+    cell: ({ row }) => {
+      const [drawerOpen, setDrawerOpen] = React.useState(false)
+      return (
+        <>
+          <TableCellViewer item={row.original} open={drawerOpen} onOpenChange={setDrawerOpen} />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="data-[state=open]:bg-muted text-muted-foreground flex size-8 hover:text-foreground"
+                size="icon"
+              >
+                <MoreVertical className="size-4" />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-32">
+              <DropdownMenuItem onClick={() => setDrawerOpen(true)}>Edit</DropdownMenuItem>
+              <DropdownMenuItem>Mark Complete</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </>
+      )
+    },
   },
 ]
 
@@ -525,16 +556,31 @@ export function DataTable({
   )
 }
 
-function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
+function TableCellViewer({
+  item,
+  open,
+  onOpenChange,
+}: {
+  item: z.infer<typeof schema>
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+}) {
   const isMobile = useIsMobile()
+  const controlled = open !== undefined && onOpenChange !== undefined
+  const [dueDate, setDueDate] = React.useState(toDateTimeLocalValue(item.dueDate))
 
   return (
-    <Drawer direction={isMobile ? "bottom" : "right"}>
-      <DrawerTrigger asChild>
-        <Button variant="link" className="text-foreground hover:text-primary w-fit px-0 text-left font-medium">
-          {item.assignment_name}
-        </Button>
-      </DrawerTrigger>
+    <Drawer
+      direction={isMobile ? "bottom" : "right"}
+      {...(controlled ? { open, onOpenChange } : {})}
+    >
+      {!controlled && (
+        <DrawerTrigger asChild>
+          <Button variant="link" className="text-foreground hover:text-primary w-fit px-0 text-left font-medium">
+            {item.assignment_name}
+          </Button>
+        </DrawerTrigger>
+      )}
       <DrawerContent>
         <DrawerHeader className="gap-1 border-b pb-4">
           <DrawerTitle className="text-2xl">{item.assignment_name}</DrawerTitle>
@@ -545,6 +591,9 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
               month: 'long',
               day: 'numeric',
               year: 'numeric'
+            })} at {new Date(item.dueDate).toLocaleTimeString('en-US', {
+              hour: 'numeric',
+              minute: '2-digit',
             })}</span>
           </DrawerDescription>
         </DrawerHeader>
@@ -565,7 +614,7 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
               </div>
             </>
           )}
-          <form className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <form id="update-assignment-form" onSubmit={(event) => onHandleUpdateAssignment(event, item.assignmentId, item.assignment_name, item.course, item.type, item.status, new Date(dueDate).toISOString(), item.priority, item.progress)} className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="flex flex-col gap-3">
               <Label htmlFor="assignment_name">Assignment Name</Label>
               <Input id="assignment_name" defaultValue={item.assignment_name} className="bg-muted/50" />
@@ -606,9 +655,9 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                   </SelectContent>
                 </Select>
               </div>
-            <div className="flex flex-col gap-3">
-                <Label htmlFor="dueDate">Due Date</Label>
-                <Input id="dueDate" type="date" defaultValue={item.dueDate} className="bg-muted/50" />
+            <div className="flex flex-col gap-3 col-span-1 md:col-span-2">
+                <Label htmlFor="dueDate">Due Date & Time</Label>
+                <Input id="dueDate" type="datetime-local" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className="bg-muted/50" />
               </div>
               <div className="flex flex-col gap-3">
                 <Label htmlFor="priority">Priority</Label>
@@ -623,7 +672,7 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                   </SelectContent>
                 </Select>
               </div>
-            <div className="flex flex-col gap-3 col-span-1 md:col-span-2">
+            <div className="flex flex-col gap-3">
               <Label htmlFor="progress">Progress (%)</Label>
               <Input
                 id="progress"
@@ -637,7 +686,7 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
           </form>
         </div>
         <DrawerFooter className="border-t pt-4">
-          <Button className="shadow-lg shadow-primary/20">Save Changes</Button>
+          <Button type="submit" form="update-assignment-form" className="shadow-lg shadow-primary/20">Save Changes</Button>
           <DrawerClose asChild>
             <Button variant="outline">Cancel</Button>
           </DrawerClose>

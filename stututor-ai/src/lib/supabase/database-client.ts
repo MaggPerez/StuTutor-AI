@@ -442,6 +442,22 @@ export async function getUserAssignments() {
     return data.map(transformAssignmentFromDB)
 }
 
+/**
+ * Updates an assignment
+ * 
+ * @param assignmentId 
+ * @param updates 
+ * @returns The updated assignment
+ */
+export async function updateAssignment(assignmentId: string, updates: Partial<Assignment>) {
+    const supabase = createClient()
+    const { data, error } = await supabase.from('assignments').update(updates).eq('id', assignmentId).select().single()
+    if (error) {
+        throw new Error('Failed to update assignment: ' + error.message)
+    }
+    return transformAssignmentFromDB(data)
+}
+
 
 
 // =============================== STUDY NOTES OPERATIONS ===============================

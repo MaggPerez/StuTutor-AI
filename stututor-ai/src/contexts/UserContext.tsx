@@ -123,11 +123,12 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
       return {
         id: index + 1, // Sequential ID starting from 1
+        assignmentId: assignment.id,
         assignment_name: assignment.assignment_name,
         course: assignment.course,
         type: assignment.type,
         status: assignment.status,
-        dueDate: dueDateStr, // Simple date format like "2025-11-15"
+        dueDate: assignment.dueDate, // Simple date format like "2025-11-15"
         priority: assignment.priority,
         progress: assignment.progress,
       }

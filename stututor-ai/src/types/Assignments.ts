@@ -10,7 +10,7 @@ export interface AssignmentCardProps {
 }
 
 export interface Assignment {
-    id?: string,
+    id: string,
     assignment_name: string,
     course: string,
     type: string,
