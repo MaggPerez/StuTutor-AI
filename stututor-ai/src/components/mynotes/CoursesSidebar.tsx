@@ -18,7 +18,7 @@ import {
     Icon,
 } from '@tabler/icons-react'
 import { BookOpen } from 'lucide-react'
-import { useUser } from '@/contexts/UserContext'
+
 
 const courseIcons: Record<CourseIcon, { name: string; icon: Icon }> = {
     math: { name: 'Mathematics', icon: IconMath },
@@ -34,15 +34,14 @@ const courseIcons: Record<CourseIcon, { name: string; icon: Icon }> = {
 }
 
 
-
 interface CoursesSidebarProps {
     selectedCourseId: string | null
     onSelectCourse: (courseId: string) => void
+    courses: Course[]
 }
 
-export default function CoursesSidebar({ selectedCourseId, onSelectCourse }: CoursesSidebarProps) {
-    const { courses } = useUser()
-    // TODO: Replace with actual user courses from Supabase
+export default function CoursesSidebar({ selectedCourseId, onSelectCourse, courses }: CoursesSidebarProps) {
+    
     return (
         <div className="flex flex-col h-full border rounded-md bg-background">
             <div className="p-4 border-b shrink-0">

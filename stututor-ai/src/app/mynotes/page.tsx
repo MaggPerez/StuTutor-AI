@@ -53,6 +53,7 @@ export default function MyNotes() {
                                     <CoursesSidebar
                                         selectedCourseId={selectedCourseId}
                                         onSelectCourse={handleSelectCourse}
+                                        courses={courses}
                                     />
                                 </ResizablePanel>
 
@@ -80,6 +81,7 @@ export default function MyNotes() {
                                 <CoursesSidebar
                                     selectedCourseId={selectedCourseId}
                                     onSelectCourse={handleSelectCourse}
+                                    courses={courses}
                                 />
                             </div>
                             <div className="h-72">
