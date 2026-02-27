@@ -7,28 +7,12 @@ import React, { useState, useEffect } from 'react'
 import { WeekView } from '@/components/calendar/week-view'
 import { MiniCalendarCard } from '@/components/calendar/mini-calendar-card'
 import { UpcomingAssignmentsCard } from '@/components/calendar/upcoming-assignments-card'
-import { Assignment } from '@/types/Assignments'
-import { getUserAssignments } from '@/lib/supabase/database-client'
+import { useUser } from '@/contexts/UserContext'
 
 export default function Calendar() {
+    const { assignments, loading } = useUser()
     const [currentDate, setCurrentDate] = useState(new Date())
     const [selectedDate, setSelectedDate] = useState<Date>(new Date())
-    const [assignments, setAssignments] = useState<Assignment[]>([])
-    const [isLoading, setIsLoading] = useState(true)
-
-    useEffect(() => {
-        const fetchAssignments = async () => {
-            try {
-                const data = await getUserAssignments()
-                setAssignments(data)
-            } catch (error) {
-                console.error('Failed to fetch assignments:', error)
-            } finally {
-                setIsLoading(false)
-            }
-        }
-        fetchAssignments()
-    }, [])
 
     const handlePreviousWeek = () => {
         setCurrentDate(prev => {
@@ -100,7 +84,7 @@ export default function Calendar() {
                             />
                             <UpcomingAssignmentsCard
                                 assignments={assignments}
-                                isLoading={isLoading}
+                                isLoading={loading}
                             />
                         </div>
                     </div>
