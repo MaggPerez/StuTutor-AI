@@ -28,7 +28,7 @@ export default function AssignmentStatsCards() {
     },
     {
         title: "Overdue Assignments",
-        total: assignments.filter((assignment) => assignment.dueDate < new Date().toISOString()).length,
+        total: assignments.filter((assignment) => assignment.due_date < new Date().toISOString()).length,
         icon: <AlertCircle className="h-8 w-8 text-red-500" />,
     },
     ]

@@ -58,11 +58,11 @@ export function UpcomingAssignmentsCard({ assignments, isLoading }: UpcomingAssi
     // Filter and sort assignments by due date (upcoming first)
     const upcomingAssignments = assignments
         .filter(a => {
-            if (!a.dueDate) return false
-            const dueDate = new Date(a.dueDate)
+            if (!a.due_date) return false
+            const dueDate = new Date(a.due_date)
             return dueDate >= new Date(new Date().setHours(0, 0, 0, 0))
         })
-        .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
+        .sort((a, b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime())
         .slice(0, 10) // Show max 10 upcoming
 
     return (
@@ -92,7 +92,7 @@ export function UpcomingAssignmentsCard({ assignments, isLoading }: UpcomingAssi
                         <div className="space-y-2">
                             {upcomingAssignments.map((assignment, index) => {
                                 const priority = getPriorityIndicator(assignment.priority)
-                                const dueText = formatDueDate(assignment.dueDate)
+                                const dueText = formatDueDate(assignment.due_date)
                                 const isOverdue = dueText === 'Overdue'
                                 const isDueToday = dueText === 'Due today'
 

@@ -117,18 +117,18 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     // Transform assignments to table data with sequential numeric IDs
     const transformedData: z.infer<typeof schema>[] = assignments.map((assignment, index) => {
       // Convert ISO timestamp to simple date string (YYYY-MM-DD)
-      const dueDateStr = assignment.dueDate
-        ? new Date(assignment.dueDate).toISOString().split('T')[0]
+      const dueDateStr = assignment.due_date
+        ? new Date(assignment.due_date).toISOString().split('T')[0]
         : ''
 
       return {
         id: index + 1, // Sequential ID starting from 1
-        assignmentId: assignment.id,
+        assignmentId: assignment.id ?? '',
         assignment_name: assignment.assignment_name,
         course: assignment.course,
         type: assignment.type,
         status: assignment.status,
-        dueDate: assignment.dueDate, // Simple date format like "2025-11-15"
+        due_date: assignment.due_date, // Simple date format like "2025-11-15"
         priority: assignment.priority,
         progress: assignment.progress,
       }

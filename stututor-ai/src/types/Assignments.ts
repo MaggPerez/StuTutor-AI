@@ -10,12 +10,12 @@ export interface AssignmentCardProps {
 }
 
 export interface Assignment {
-    id: string,
+    id?: string,
     assignment_name: string,
     course: string,
     type: string,
     status: string,
-    dueDate: string,
+    due_date: string,
     priority: string,
     progress: number,
 }

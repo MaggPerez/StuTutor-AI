@@ -55,7 +55,7 @@ export default function CreateAssignmentDialog() {
                 course: course,
                 type: type,
                 status: status,
-                dueDate: finalDateTime?.toISOString() || '',
+                due_date: finalDateTime?.toISOString() || '',
                 priority: priority,
                 progress: progress
             }

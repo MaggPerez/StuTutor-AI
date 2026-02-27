@@ -96,6 +96,7 @@ import {
 import CreateAssignmentDialog from "./assignments/CreateAssignmentDialog"
 import { Assignment } from "@/types/Assignments"
 import { updateAssignment } from "@/lib/supabase/database-client"
+import { toast } from "sonner"
 
 async function onHandleUpdateAssignment(event: React.FormEvent<HTMLFormElement>, assignmentId: string, assignment_name: string, course: string, type: string, status: string, dueDate: string, priority: string, progress: number) {
   event.preventDefault()
@@ -104,9 +105,22 @@ async function onHandleUpdateAssignment(event: React.FormEvent<HTMLFormElement>,
     course: course,
     type: type,
     status: status,
-    dueDate: dueDate,
+    due_date: dueDate,
     priority: priority,
     progress: progress,
+  }
+  await updateAssignment(assignmentId, updates)
+  .then(() => {
+    toast.success("Assignment updated successfully")
+  })
+  .catch((error) => {
+    toast.error("Failed to update assignment")
+  })
+}
+
+async function onHandleMarkComplete(assignmentId: string) {
+  const updates: Partial<Assignment> = {
+    status: "Completed",
   }
   await updateAssignment(assignmentId, updates)
 }
@@ -118,7 +132,7 @@ export const schema = z.object({
   course: z.string(),
   type: z.string(),
   status: z.string(),
-  dueDate: z.string(),
+  due_date: z.string(),
   priority: z.string(),
   progress: z.number(),
 })
@@ -230,12 +244,12 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     header: "Due Date",
     cell: ({ row }) => (
       <div className="w-36 text-muted-foreground">
-        <div>{new Date(row.original.dueDate).toLocaleDateString('en-US', {
+        <div>{new Date(row.original.due_date).toLocaleDateString('en-US', {
           month: 'short',
           day: 'numeric',
           year: 'numeric'
         })}</div>
-        <div className="text-xs">{new Date(row.original.dueDate).toLocaleTimeString('en-US', {
+        <div className="text-xs">{new Date(row.original.due_date).toLocaleTimeString('en-US', {
           hour: 'numeric',
           minute: '2-digit',
         })}</div>
@@ -294,7 +308,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-32">
               <DropdownMenuItem onClick={() => setDrawerOpen(true)}>Edit</DropdownMenuItem>
-              <DropdownMenuItem>Mark Complete</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onHandleMarkComplete(row.original.assignmentId)}>Mark Complete</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
             </DropdownMenuContent>
@@ -567,7 +581,13 @@ function TableCellViewer({
 }) {
   const isMobile = useIsMobile()
   const controlled = open !== undefined && onOpenChange !== undefined
-  const [dueDate, setDueDate] = React.useState(toDateTimeLocalValue(item.dueDate))
+  const [assignmentName, setAssignmentName] = React.useState(item.assignment_name)
+  const [course, setCourse] = React.useState(item.course)
+  const [type, setType] = React.useState(item.type)
+  const [status, setStatus] = React.useState(item.status)
+  const [dueDate, setDueDate] = React.useState(toDateTimeLocalValue(item.due_date))
+  const [priority, setPriority] = React.useState(item.priority)
+  const [progress, setProgress] = React.useState(item.progress)
 
   return (
     <Drawer
@@ -587,11 +607,11 @@ function TableCellViewer({
           <DrawerDescription className="flex items-center gap-2">
             <span className="font-semibold text-foreground">{item.course}</span>
             <span>•</span>
-            <span>Due {new Date(item.dueDate).toLocaleDateString('en-US', {
+            <span>Due {new Date(item.due_date).toLocaleDateString('en-US', {
               month: 'long',
               day: 'numeric',
               year: 'numeric'
-            })} at {new Date(item.dueDate).toLocaleTimeString('en-US', {
+            })} at {new Date(item.due_date).toLocaleTimeString('en-US', {
               hour: 'numeric',
               minute: '2-digit',
             })}</span>
@@ -614,18 +634,18 @@ function TableCellViewer({
               </div>
             </>
           )}
-          <form id="update-assignment-form" onSubmit={(event) => onHandleUpdateAssignment(event, item.assignmentId, item.assignment_name, item.course, item.type, item.status, new Date(dueDate).toISOString(), item.priority, item.progress)} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <form id="update-assignment-form" onSubmit={(event) => onHandleUpdateAssignment(event, item.assignmentId, assignmentName, course, type, status, dueDate, priority, progress)} className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="flex flex-col gap-3">
               <Label htmlFor="assignment_name">Assignment Name</Label>
-              <Input id="assignment_name" defaultValue={item.assignment_name} className="bg-muted/50" />
+              <Input id="assignment_name" value={assignmentName} onChange={(e) => setAssignmentName(e.target.value)} className="bg-muted/50" />
             </div>
             <div className="flex flex-col gap-3">
               <Label htmlFor="course">Course</Label>
-              <Input id="course" defaultValue={item.course} className="bg-muted/50" />
+              <Input id="course" value={course} onChange={(e) => setCourse(e.target.value)} className="bg-muted/50" />
             </div>
              <div className="flex flex-col gap-3">
                 <Label htmlFor="type">Type</Label>
-                <Select defaultValue={item.type}>
+                <Select value={type} onValueChange={setType}>
                   <SelectTrigger id="type" className="w-full bg-muted/50">
                     <SelectValue placeholder="Select a type" />
                   </SelectTrigger>
@@ -644,7 +664,7 @@ function TableCellViewer({
               </div>
               <div className="flex flex-col gap-3">
                 <Label htmlFor="status">Status</Label>
-                <Select defaultValue={item.status}>
+                <Select value={status} onValueChange={setStatus}>
                   <SelectTrigger id="status" className="w-full bg-muted/50">
                     <SelectValue placeholder="Select a status" />
                   </SelectTrigger>
@@ -661,7 +681,7 @@ function TableCellViewer({
               </div>
               <div className="flex flex-col gap-3">
                 <Label htmlFor="priority">Priority</Label>
-                <Select defaultValue={item.priority}>
+                <Select value={priority} onValueChange={setPriority}>
                   <SelectTrigger id="priority" className="w-full bg-muted/50">
                     <SelectValue placeholder="Select priority" />
                   </SelectTrigger>
@@ -679,7 +699,8 @@ function TableCellViewer({
                 type="number"
                 min="0"
                 max="100"
-                defaultValue={item.progress}
+                value={progress}
+                onChange={(e) => setProgress(Number(e.target.value))}
                 className="bg-muted/50"
               />
             </div>

@@ -416,7 +416,7 @@ export async function createAssignment(assignment: Assignment) {
         course: assignment.course,
         type: assignment.type,
         status: assignment.status,
-        due_date: assignment.dueDate,
+        due_date: assignment.due_date,
         priority: assignment.priority,
         progress: assignment.progress,
     }).select().single()
@@ -624,7 +624,7 @@ function transformAssignmentFromDB(data: any): Assignment {
         course: data.course,
         type: data.type,
         status: data.status,
-        dueDate: data.due_date,
+        due_date: data.due_date,
         priority: data.priority,
         progress: data.progress,
     }
