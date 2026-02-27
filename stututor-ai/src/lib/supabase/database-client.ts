@@ -416,7 +416,7 @@ export async function createAssignment(assignment: Assignment) {
         course: assignment.course,
         type: assignment.type,
         status: assignment.status,
-        due_date: assignment.dueDate,
+        due_date: assignment.due_date,
         priority: assignment.priority,
         progress: assignment.progress,
     }).select().single()
@@ -440,6 +440,31 @@ export async function getUserAssignments() {
         throw new Error('Failed to get assignments: ' + error.message)
     }
     return data.map(transformAssignmentFromDB)
+}
+
+/**
+ * Updates an assignment
+ * 
+ * @param assignmentId 
+ * @param updates 
+ * @returns The updated assignment
+ */
+export async function updateAssignment(assignmentId: string, updates: Partial<Assignment>) {
+    const supabase = createClient()
+    const { data, error } = await supabase.from('assignments').update(updates).eq('id', assignmentId).select().single()
+    if (error) {
+        throw new Error('Failed to update assignment: ' + error.message)
+    }
+    return transformAssignmentFromDB(data)
+}
+
+
+export async function deleteAssignment(assignmentId: string) {
+    const supabase = createClient()
+    const { error } = await supabase.from('assignments').delete().eq('id', assignmentId)
+    if (error) {
+        throw new Error('Failed to delete assignment: ' + error.message)
+    }
 }
 
 
@@ -608,7 +633,7 @@ function transformAssignmentFromDB(data: any): Assignment {
         course: data.course,
         type: data.type,
         status: data.status,
-        dueDate: data.due_date,
+        due_date: data.due_date,
         priority: data.priority,
         progress: data.progress,
     }

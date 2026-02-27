@@ -28,7 +28,7 @@ export function SectionCards() {
         <CardHeader className="pb-2">
           <CardDescription>Assignments Due</CardDescription>
           <CardTitle className="text-3xl font-bold tabular-nums text-foreground">
-            {assignments.filter((assignment) => assignment.dueDate && new Date(assignment.dueDate) > new Date()).length}
+            {assignments.filter((assignment) => assignment.due_date && new Date(assignment.due_date) > new Date()).length}
           </CardTitle>
           <CardAction>
             <Badge variant="secondary" className="gap-1 bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300">

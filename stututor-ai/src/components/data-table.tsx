@@ -95,17 +95,64 @@ import {
 } from "@/components/ui/tabs"
 import CreateAssignmentDialog from "./assignments/CreateAssignmentDialog"
 import { Assignment } from "@/types/Assignments"
+import { deleteAssignment, updateAssignment } from "@/lib/supabase/database-client"
+import { toast } from "sonner"
+
+async function onHandleUpdateAssignment(event: React.FormEvent<HTMLFormElement>, assignmentId: string, assignment_name: string, course: string, type: string, status: string, dueDate: string, priority: string, progress: number) {
+  event.preventDefault()
+  const updates: Partial<Assignment> = {
+    assignment_name: assignment_name,
+    course: course,
+    type: type,
+    status: status,
+    due_date: new Date(dueDate).toISOString(),
+    priority: priority,
+    progress: progress,
+  }
+  await updateAssignment(assignmentId, updates)
+  .then(() => {
+    toast.success("Assignment updated successfully")
+  })
+  .catch((error) => {
+    toast.error("Failed to update assignment")
+  })
+}
+
+async function onHandleMarkComplete(assignmentId: string) {
+  const updates: Partial<Assignment> = {
+    status: "Completed",
+  }
+  await updateAssignment(assignmentId, updates)
+}
+
+
+async function onHandleDeleteAssignment(assignmentId: string) {
+  await deleteAssignment(assignmentId)
+  .then(() => {
+    toast.success("Assignment deleted successfully")
+  })
+  .catch((error) => {
+    toast.error("Failed to delete assignment")
+  })
+}
 
 export const schema = z.object({
   id: z.number(),
+  assignmentId: z.string(),
   assignment_name: z.string(),
   course: z.string(),
   type: z.string(),
   status: z.string(),
-  dueDate: z.string(),
+  due_date: z.string(),
   priority: z.string(),
   progress: z.number(),
 })
+
+function toDateTimeLocalValue(dateStr: string): string {
+  const d = new Date(dateStr)
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
 
 // Create a separate component for the drag handle
 function DragHandle({ id }: { id: number }) {
@@ -207,12 +254,16 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     accessorKey: "dueDate",
     header: "Due Date",
     cell: ({ row }) => (
-      <div className="w-28 text-muted-foreground">
-        {new Date(row.original.dueDate).toLocaleDateString('en-US', {
+      <div className="w-36 text-muted-foreground">
+        <div>{new Date(row.original.due_date).toLocaleDateString('en-US', {
           month: 'short',
           day: 'numeric',
           year: 'numeric'
-        })}
+        })}</div>
+        <div className="text-xs">{new Date(row.original.due_date).toLocaleTimeString('en-US', {
+          hour: 'numeric',
+          minute: '2-digit',
+        })}</div>
       </div>
     ),
   },
@@ -250,27 +301,32 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
   },
   {
     id: "actions",
-    cell: () => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="data-[state=open]:bg-muted text-muted-foreground flex size-8 hover:text-foreground"
-            size="icon"
-          >
-            <MoreVertical className="size-4" />
-            <span className="sr-only">Open menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-32">
-          <DropdownMenuItem>Edit</DropdownMenuItem>
-          <DropdownMenuItem>Mark Complete</DropdownMenuItem>
-          <DropdownMenuItem>Duplicate</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
+    cell: ({ row }) => {
+      const [drawerOpen, setDrawerOpen] = React.useState(false)
+      return (
+        <>
+          <TableCellViewer item={row.original} open={drawerOpen} onOpenChange={setDrawerOpen} />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="data-[state=open]:bg-muted text-muted-foreground flex size-8 hover:text-foreground"
+                size="icon"
+              >
+                <MoreVertical className="size-4" />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-32">
+              <DropdownMenuItem onClick={() => setDrawerOpen(true)}>Edit</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onHandleMarkComplete(row.original.assignmentId)}>Mark Complete</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem variant="destructive" onClick={() => onHandleDeleteAssignment(row.original.assignmentId)}>Delete</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </>
+      )
+    },
   },
 ]
 
@@ -316,7 +372,14 @@ export function DataTable({
     pageIndex: 0,
     pageSize: 10,
   })
+  const [inProgressRowSelection, setInProgressRowSelection] = React.useState({})
+  const [inProgressPagination, setInProgressPagination] = React.useState({ pageIndex: 0, pageSize: 10 })
+  const [completedRowSelection, setCompletedRowSelection] = React.useState({})
+  const [completedPagination, setCompletedPagination] = React.useState({ pageIndex: 0, pageSize: 10 })
+
   const sortableId = React.useId()
+  const inProgressSortableId = React.useId()
+  const completedSortableId = React.useId()
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
     useSensor(TouchSensor, {}),
@@ -328,9 +391,29 @@ export function DataTable({
     setData(initialData)
   }, [initialData])
 
+  const inProgressData = React.useMemo(
+    () => data.filter((item) => item.status === "In Progress"),
+    [data]
+  )
+
+  const completedData = React.useMemo(
+    () => data.filter((item) => item.status === "Completed"),
+    [data]
+  )
+
   const dataIds = React.useMemo<UniqueIdentifier[]>(
     () => data?.map(({ id }) => id) || [],
     [data]
+  )
+
+  const inProgressDataIds = React.useMemo<UniqueIdentifier[]>(
+    () => inProgressData.map(({ id }) => id),
+    [inProgressData]
+  )
+
+  const completedDataIds = React.useMemo<UniqueIdentifier[]>(
+    () => completedData.map(({ id }) => id),
+    [completedData]
   )
 
   const table = useReactTable({
@@ -358,6 +441,56 @@ export function DataTable({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   })
 
+  const inProgressTable = useReactTable({
+    data: inProgressData,
+    columns,
+    state: {
+      sorting,
+      columnVisibility,
+      rowSelection: inProgressRowSelection,
+      columnFilters,
+      pagination: inProgressPagination,
+    },
+    getRowId: (row) => row.id.toString(),
+    enableRowSelection: true,
+    onRowSelectionChange: setInProgressRowSelection,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: setColumnVisibility,
+    onPaginationChange: setInProgressPagination,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+  })
+
+  const completedTable = useReactTable({
+    data: completedData,
+    columns,
+    state: {
+      sorting,
+      columnVisibility,
+      rowSelection: completedRowSelection,
+      columnFilters,
+      pagination: completedPagination,
+    },
+    getRowId: (row) => row.id.toString(),
+    enableRowSelection: true,
+    onRowSelectionChange: setCompletedRowSelection,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: setColumnVisibility,
+    onPaginationChange: setCompletedPagination,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+  })
+
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event
     if (active && over && active.id !== over.id) {
@@ -377,11 +510,11 @@ export function DataTable({
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
          <TabsList className="bg-muted/50 p-1">
           <TabsTrigger value="all-assignments" className="rounded-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">All Assignments</TabsTrigger>
-          <TabsTrigger value="active" className="rounded-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">
-            Active <Badge variant="secondary" className="ml-2 h-5 bg-primary/10 text-primary">8</Badge>
+          <TabsTrigger value="in-progress" className="rounded-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">
+            In Progress <Badge variant="secondary" className="ml-2 h-5 bg-primary/10 text-primary">{inProgressData.length}</Badge>
           </TabsTrigger>
           <TabsTrigger value="completed" className="rounded-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">
-            Completed <Badge variant="secondary" className="ml-2 h-5 bg-green-500/10 text-green-600 dark:text-green-400">5</Badge>
+            Completed <Badge variant="secondary" className="ml-2 h-5 bg-green-500/10 text-green-600 dark:text-green-400">{completedData.length}</Badge>
           </TabsTrigger>
         </TabsList>
         <div className="flex items-center gap-2 ml-auto">
@@ -515,36 +648,232 @@ export function DataTable({
         </div>
       </TabsContent>
         {/* Placeholders for other tabs to prevent errors if clicked */}
-      <TabsContent value="active">
-         <div className="h-24 flex items-center justify-center border rounded-lg border-dashed text-muted-foreground">Active assignments view placeholder</div>
+
+      <TabsContent
+        value="in-progress"
+        className="relative flex flex-col gap-4 overflow-auto"
+      >
+        <div className="overflow-hidden rounded-xl border bg-card/50 shadow-sm">
+          <DndContext
+            collisionDetection={closestCenter}
+            modifiers={[restrictToVerticalAxis]}
+            onDragEnd={handleDragEnd}
+            sensors={sensors}
+            id={inProgressSortableId}
+          >
+            <Table>
+              <TableHeader className="bg-muted/50 sticky top-0 z-10">
+                {inProgressTable.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id} className="border-b border-border/40 hover:bg-transparent">
+                    {headerGroup.headers.map((header) => {
+                      return (
+                        <TableHead key={header.id} colSpan={header.colSpan} className="text-xs uppercase tracking-wider font-semibold text-muted-foreground h-10">
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                        </TableHead>
+                      )
+                    })}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody className="**:data-[slot=table-cell]:first:w-8">
+                {inProgressTable.getRowModel().rows?.length ? (
+                  <SortableContext
+                    items={inProgressDataIds}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {inProgressTable.getRowModel().rows.map((row) => (
+                      <DraggableRow key={row.id} row={row} />
+                    ))}
+                  </SortableContext>
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-24 text-center text-muted-foreground"
+                    >
+                      No active assignments found.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </DndContext>
+        </div>
+        <div className="flex items-center justify-between px-2">
+          <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
+            {inProgressTable.getFilteredSelectedRowModel().rows.length} of{" "}
+            {inProgressTable.getFilteredRowModel().rows.length} selected
+          </div>
+          <div className="flex w-full items-center gap-8 lg:w-fit">
+            <div className="flex w-fit items-center justify-center text-sm font-medium text-muted-foreground">
+              Page {inProgressTable.getState().pagination.pageIndex + 1} of{" "}
+              {inProgressTable.getPageCount()}
+            </div>
+            <div className="ml-auto flex items-center gap-2 lg:ml-0">
+              <Button
+                variant="outline"
+                className="size-8 p-0"
+                onClick={() => inProgressTable.previousPage()}
+                disabled={!inProgressTable.getCanPreviousPage()}
+              >
+                <span className="sr-only">Go to previous page</span>
+                <ChevronLeft className="size-4" />
+              </Button>
+              <Button
+                variant="outline"
+                className="size-8 p-0"
+                onClick={() => inProgressTable.nextPage()}
+                disabled={!inProgressTable.getCanNextPage()}
+              >
+                <span className="sr-only">Go to next page</span>
+                <ChevronRight className="size-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
       </TabsContent>
-      <TabsContent value="completed">
-         <div className="h-24 flex items-center justify-center border rounded-lg border-dashed text-muted-foreground">Completed assignments view placeholder</div>
+
+      <TabsContent
+        value="completed"
+        className="relative flex flex-col gap-4 overflow-auto"
+      >
+        <div className="overflow-hidden rounded-xl border bg-card/50 shadow-sm">
+          <DndContext
+            collisionDetection={closestCenter}
+            modifiers={[restrictToVerticalAxis]}
+            onDragEnd={handleDragEnd}
+            sensors={sensors}
+            id={completedSortableId}
+          >
+            <Table>
+              <TableHeader className="bg-muted/50 sticky top-0 z-10">
+                {completedTable.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id} className="border-b border-border/40 hover:bg-transparent">
+                    {headerGroup.headers.map((header) => {
+                      return (
+                        <TableHead key={header.id} colSpan={header.colSpan} className="text-xs uppercase tracking-wider font-semibold text-muted-foreground h-10">
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                        </TableHead>
+                      )
+                    })}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody className="**:data-[slot=table-cell]:first:w-8">
+                {completedTable.getRowModel().rows?.length ? (
+                  <SortableContext
+                    items={completedDataIds}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {completedTable.getRowModel().rows.map((row) => (
+                      <DraggableRow key={row.id} row={row} />
+                    ))}
+                  </SortableContext>
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-24 text-center text-muted-foreground"
+                    >
+                      No completed assignments found.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </DndContext>
+        </div>
+        <div className="flex items-center justify-between px-2">
+          <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
+            {completedTable.getFilteredSelectedRowModel().rows.length} of{" "}
+            {completedTable.getFilteredRowModel().rows.length} selected
+          </div>
+          <div className="flex w-full items-center gap-8 lg:w-fit">
+            <div className="flex w-fit items-center justify-center text-sm font-medium text-muted-foreground">
+              Page {completedTable.getState().pagination.pageIndex + 1} of{" "}
+              {completedTable.getPageCount()}
+            </div>
+            <div className="ml-auto flex items-center gap-2 lg:ml-0">
+              <Button
+                variant="outline"
+                className="size-8 p-0"
+                onClick={() => completedTable.previousPage()}
+                disabled={!completedTable.getCanPreviousPage()}
+              >
+                <span className="sr-only">Go to previous page</span>
+                <ChevronLeft className="size-4" />
+              </Button>
+              <Button
+                variant="outline"
+                className="size-8 p-0"
+                onClick={() => completedTable.nextPage()}
+                disabled={!completedTable.getCanNextPage()}
+              >
+                <span className="sr-only">Go to next page</span>
+                <ChevronRight className="size-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
       </TabsContent>
     </Tabs>
   )
 }
 
-function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
+function TableCellViewer({
+  item,
+  open,
+  onOpenChange,
+}: {
+  item: z.infer<typeof schema>
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+}) {
   const isMobile = useIsMobile()
+  const controlled = open !== undefined && onOpenChange !== undefined
+  const [assignmentName, setAssignmentName] = React.useState(item.assignment_name)
+  const [course, setCourse] = React.useState(item.course)
+  const [type, setType] = React.useState(item.type)
+  const [status, setStatus] = React.useState(item.status)
+  const [dueDate, setDueDate] = React.useState(toDateTimeLocalValue(item.due_date))
+  const [priority, setPriority] = React.useState(item.priority)
+  const [progress, setProgress] = React.useState(item.progress)
 
   return (
-    <Drawer direction={isMobile ? "bottom" : "right"}>
-      <DrawerTrigger asChild>
-        <Button variant="link" className="text-foreground hover:text-primary w-fit px-0 text-left font-medium">
-          {item.assignment_name}
-        </Button>
-      </DrawerTrigger>
+    <Drawer
+      direction={isMobile ? "bottom" : "right"}
+      {...(controlled ? { open, onOpenChange } : {})}
+    >
+      {!controlled && (
+        <DrawerTrigger asChild>
+          <Button variant="link" className="text-foreground hover:text-primary w-fit px-0 text-left font-medium">
+            {item.assignment_name}
+          </Button>
+        </DrawerTrigger>
+      )}
       <DrawerContent>
         <DrawerHeader className="gap-1 border-b pb-4">
           <DrawerTitle className="text-2xl">{item.assignment_name}</DrawerTitle>
           <DrawerDescription className="flex items-center gap-2">
             <span className="font-semibold text-foreground">{item.course}</span>
             <span>•</span>
-            <span>Due {new Date(item.dueDate).toLocaleDateString('en-US', {
+            <span>Due {new Date(item.due_date).toLocaleDateString('en-US', {
               month: 'long',
               day: 'numeric',
               year: 'numeric'
+            })} at {new Date(item.due_date).toLocaleTimeString('en-US', {
+              hour: 'numeric',
+              minute: '2-digit',
             })}</span>
           </DrawerDescription>
         </DrawerHeader>
@@ -565,18 +894,18 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
               </div>
             </>
           )}
-          <form className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <form id="update-assignment-form" onSubmit={(event) => onHandleUpdateAssignment(event, item.assignmentId, assignmentName, course, type, status, dueDate, priority, progress)} className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="flex flex-col gap-3">
               <Label htmlFor="assignment_name">Assignment Name</Label>
-              <Input id="assignment_name" defaultValue={item.assignment_name} className="bg-muted/50" />
+              <Input id="assignment_name" value={assignmentName} onChange={(e) => setAssignmentName(e.target.value)} className="bg-muted/50" />
             </div>
             <div className="flex flex-col gap-3">
               <Label htmlFor="course">Course</Label>
-              <Input id="course" defaultValue={item.course} className="bg-muted/50" />
+              <Input id="course" value={course} onChange={(e) => setCourse(e.target.value)} className="bg-muted/50" />
             </div>
              <div className="flex flex-col gap-3">
                 <Label htmlFor="type">Type</Label>
-                <Select defaultValue={item.type}>
+                <Select value={type} onValueChange={setType}>
                   <SelectTrigger id="type" className="w-full bg-muted/50">
                     <SelectValue placeholder="Select a type" />
                   </SelectTrigger>
@@ -595,7 +924,7 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
               </div>
               <div className="flex flex-col gap-3">
                 <Label htmlFor="status">Status</Label>
-                <Select defaultValue={item.status}>
+                <Select value={status} onValueChange={setStatus}>
                   <SelectTrigger id="status" className="w-full bg-muted/50">
                     <SelectValue placeholder="Select a status" />
                   </SelectTrigger>
@@ -606,13 +935,13 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                   </SelectContent>
                 </Select>
               </div>
-            <div className="flex flex-col gap-3">
-                <Label htmlFor="dueDate">Due Date</Label>
-                <Input id="dueDate" type="date" defaultValue={item.dueDate} className="bg-muted/50" />
+            <div className="flex flex-col gap-3 col-span-1 md:col-span-2">
+                <Label htmlFor="dueDate">Due Date & Time</Label>
+                <Input id="dueDate" type="datetime-local" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className="bg-muted/50" />
               </div>
               <div className="flex flex-col gap-3">
                 <Label htmlFor="priority">Priority</Label>
-                <Select defaultValue={item.priority}>
+                <Select value={priority} onValueChange={setPriority}>
                   <SelectTrigger id="priority" className="w-full bg-muted/50">
                     <SelectValue placeholder="Select priority" />
                   </SelectTrigger>
@@ -623,21 +952,22 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                   </SelectContent>
                 </Select>
               </div>
-            <div className="flex flex-col gap-3 col-span-1 md:col-span-2">
+            <div className="flex flex-col gap-3">
               <Label htmlFor="progress">Progress (%)</Label>
               <Input
                 id="progress"
                 type="number"
                 min="0"
                 max="100"
-                defaultValue={item.progress}
+                value={progress}
+                onChange={(e) => setProgress(Number(e.target.value))}
                 className="bg-muted/50"
               />
             </div>
           </form>
         </div>
         <DrawerFooter className="border-t pt-4">
-          <Button className="shadow-lg shadow-primary/20">Save Changes</Button>
+          <Button type="submit" form="update-assignment-form" className="shadow-lg shadow-primary/20">Save Changes</Button>
           <DrawerClose asChild>
             <Button variant="outline">Cancel</Button>
           </DrawerClose>

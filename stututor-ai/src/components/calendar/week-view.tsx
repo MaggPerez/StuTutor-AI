@@ -49,8 +49,8 @@ function formatHour(hour: number): string {
 
 function getAssignmentsForDay(assignments: Assignment[], date: Date): Assignment[] {
     return assignments.filter(assignment => {
-        if (!assignment.dueDate) return false
-        const dueDate = new Date(assignment.dueDate)
+        if (!assignment.due_date) return false
+        const dueDate = new Date(assignment.due_date)
         return (
             dueDate.getFullYear() === date.getFullYear() &&
             dueDate.getMonth() === date.getMonth() &&
@@ -181,7 +181,7 @@ export function WeekView({ currentDate, onPreviousWeek, onNextWeek, assignments 
 
                                 {/* Assignment indicators */}
                                 {dayAssignments.map((assignment, idx) => {
-                                    const dueDate = new Date(assignment.dueDate)
+                                    const dueDate = new Date(assignment.due_date)
                                     const hour = dueDate.getHours()
                                     const topOffset = hour * 48 // 48px = 12 (h-12) * 4 (tailwind unit)
 

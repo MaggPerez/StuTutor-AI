@@ -35,10 +35,10 @@ export default function UpcomingTasks() {
           ) : (
             assignments
               .filter(assignment => assignment.status !== "Completed")
-              .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
+              .sort((a, b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime())
               .slice(0, 5)
               .map((assignment) => {
-                const dueDate = new Date(assignment.dueDate)
+                const dueDate = new Date(assignment.due_date)
                 const today = new Date()
                 const isOverdue = dueDate < today && assignment.status !== "Completed"
                 const daysUntilDue = Math.ceil((dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
