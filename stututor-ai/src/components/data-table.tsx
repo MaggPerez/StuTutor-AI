@@ -95,7 +95,7 @@ import {
 } from "@/components/ui/tabs"
 import CreateAssignmentDialog from "./assignments/CreateAssignmentDialog"
 import { Assignment } from "@/types/Assignments"
-import { updateAssignment } from "@/lib/supabase/database-client"
+import { deleteAssignment, updateAssignment } from "@/lib/supabase/database-client"
 import { toast } from "sonner"
 
 async function onHandleUpdateAssignment(event: React.FormEvent<HTMLFormElement>, assignmentId: string, assignment_name: string, course: string, type: string, status: string, dueDate: string, priority: string, progress: number) {
@@ -123,6 +123,17 @@ async function onHandleMarkComplete(assignmentId: string) {
     status: "Completed",
   }
   await updateAssignment(assignmentId, updates)
+}
+
+
+async function onHandleDeleteAssignment(assignmentId: string) {
+  await deleteAssignment(assignmentId)
+  .then(() => {
+    toast.success("Assignment deleted successfully")
+  })
+  .catch((error) => {
+    toast.error("Failed to delete assignment")
+  })
 }
 
 export const schema = z.object({
@@ -310,7 +321,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
               <DropdownMenuItem onClick={() => setDrawerOpen(true)}>Edit</DropdownMenuItem>
               <DropdownMenuItem onClick={() => onHandleMarkComplete(row.original.assignmentId)}>Mark Complete</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
+              <DropdownMenuItem variant="destructive" onClick={() => onHandleDeleteAssignment(row.original.assignmentId)}>Delete</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </>

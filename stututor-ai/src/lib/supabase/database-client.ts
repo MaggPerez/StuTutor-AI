@@ -459,6 +459,15 @@ export async function updateAssignment(assignmentId: string, updates: Partial<As
 }
 
 
+export async function deleteAssignment(assignmentId: string) {
+    const supabase = createClient()
+    const { error } = await supabase.from('assignments').delete().eq('id', assignmentId)
+    if (error) {
+        throw new Error('Failed to delete assignment: ' + error.message)
+    }
+}
+
+
 
 // =============================== STUDY NOTES OPERATIONS ===============================
 
