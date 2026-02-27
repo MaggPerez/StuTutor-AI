@@ -372,7 +372,14 @@ export function DataTable({
     pageIndex: 0,
     pageSize: 10,
   })
+  const [activeRowSelection, setActiveRowSelection] = React.useState({})
+  const [activePagination, setActivePagination] = React.useState({ pageIndex: 0, pageSize: 10 })
+  const [completedRowSelection, setCompletedRowSelection] = React.useState({})
+  const [completedPagination, setCompletedPagination] = React.useState({ pageIndex: 0, pageSize: 10 })
+
   const sortableId = React.useId()
+  const activeSortableId = React.useId()
+  const completedSortableId = React.useId()
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
     useSensor(TouchSensor, {}),
@@ -384,9 +391,29 @@ export function DataTable({
     setData(initialData)
   }, [initialData])
 
+  const activeData = React.useMemo(
+    () => data.filter((item) => item.status === "In Progress"),
+    [data]
+  )
+
+  const completedData = React.useMemo(
+    () => data.filter((item) => item.status === "Completed"),
+    [data]
+  )
+
   const dataIds = React.useMemo<UniqueIdentifier[]>(
     () => data?.map(({ id }) => id) || [],
     [data]
+  )
+
+  const activeDataIds = React.useMemo<UniqueIdentifier[]>(
+    () => activeData.map(({ id }) => id),
+    [activeData]
+  )
+
+  const completedDataIds = React.useMemo<UniqueIdentifier[]>(
+    () => completedData.map(({ id }) => id),
+    [completedData]
   )
 
   const table = useReactTable({
@@ -406,6 +433,56 @@ export function DataTable({
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     onPaginationChange: setPagination,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+  })
+
+  const activeTable = useReactTable({
+    data: activeData,
+    columns,
+    state: {
+      sorting,
+      columnVisibility,
+      rowSelection: activeRowSelection,
+      columnFilters,
+      pagination: activePagination,
+    },
+    getRowId: (row) => row.id.toString(),
+    enableRowSelection: true,
+    onRowSelectionChange: setActiveRowSelection,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: setColumnVisibility,
+    onPaginationChange: setActivePagination,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+  })
+
+  const completedTable = useReactTable({
+    data: completedData,
+    columns,
+    state: {
+      sorting,
+      columnVisibility,
+      rowSelection: completedRowSelection,
+      columnFilters,
+      pagination: completedPagination,
+    },
+    getRowId: (row) => row.id.toString(),
+    enableRowSelection: true,
+    onRowSelectionChange: setCompletedRowSelection,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: setColumnVisibility,
+    onPaginationChange: setCompletedPagination,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -434,10 +511,10 @@ export function DataTable({
          <TabsList className="bg-muted/50 p-1">
           <TabsTrigger value="all-assignments" className="rounded-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">All Assignments</TabsTrigger>
           <TabsTrigger value="active" className="rounded-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">
-            Active <Badge variant="secondary" className="ml-2 h-5 bg-primary/10 text-primary">8</Badge>
+            Active <Badge variant="secondary" className="ml-2 h-5 bg-primary/10 text-primary">{activeData.length}</Badge>
           </TabsTrigger>
           <TabsTrigger value="completed" className="rounded-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">
-            Completed <Badge variant="secondary" className="ml-2 h-5 bg-green-500/10 text-green-600 dark:text-green-400">5</Badge>
+            Completed <Badge variant="secondary" className="ml-2 h-5 bg-green-500/10 text-green-600 dark:text-green-400">{completedData.length}</Badge>
           </TabsTrigger>
         </TabsList>
         <div className="flex items-center gap-2 ml-auto">
@@ -571,11 +648,183 @@ export function DataTable({
         </div>
       </TabsContent>
         {/* Placeholders for other tabs to prevent errors if clicked */}
-      <TabsContent value="active">
-         <div className="h-24 flex items-center justify-center border rounded-lg border-dashed text-muted-foreground">Active assignments view placeholder</div>
+
+      <TabsContent
+        value="active"
+        className="relative flex flex-col gap-4 overflow-auto"
+      >
+        <div className="overflow-hidden rounded-xl border bg-card/50 shadow-sm">
+          <DndContext
+            collisionDetection={closestCenter}
+            modifiers={[restrictToVerticalAxis]}
+            onDragEnd={handleDragEnd}
+            sensors={sensors}
+            id={activeSortableId}
+          >
+            <Table>
+              <TableHeader className="bg-muted/50 sticky top-0 z-10">
+                {activeTable.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id} className="border-b border-border/40 hover:bg-transparent">
+                    {headerGroup.headers.map((header) => {
+                      return (
+                        <TableHead key={header.id} colSpan={header.colSpan} className="text-xs uppercase tracking-wider font-semibold text-muted-foreground h-10">
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                        </TableHead>
+                      )
+                    })}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody className="**:data-[slot=table-cell]:first:w-8">
+                {activeTable.getRowModel().rows?.length ? (
+                  <SortableContext
+                    items={activeDataIds}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {activeTable.getRowModel().rows.map((row) => (
+                      <DraggableRow key={row.id} row={row} />
+                    ))}
+                  </SortableContext>
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-24 text-center text-muted-foreground"
+                    >
+                      No active assignments found.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </DndContext>
+        </div>
+        <div className="flex items-center justify-between px-2">
+          <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
+            {activeTable.getFilteredSelectedRowModel().rows.length} of{" "}
+            {activeTable.getFilteredRowModel().rows.length} selected
+          </div>
+          <div className="flex w-full items-center gap-8 lg:w-fit">
+            <div className="flex w-fit items-center justify-center text-sm font-medium text-muted-foreground">
+              Page {activeTable.getState().pagination.pageIndex + 1} of{" "}
+              {activeTable.getPageCount()}
+            </div>
+            <div className="ml-auto flex items-center gap-2 lg:ml-0">
+              <Button
+                variant="outline"
+                className="size-8 p-0"
+                onClick={() => activeTable.previousPage()}
+                disabled={!activeTable.getCanPreviousPage()}
+              >
+                <span className="sr-only">Go to previous page</span>
+                <ChevronLeft className="size-4" />
+              </Button>
+              <Button
+                variant="outline"
+                className="size-8 p-0"
+                onClick={() => activeTable.nextPage()}
+                disabled={!activeTable.getCanNextPage()}
+              >
+                <span className="sr-only">Go to next page</span>
+                <ChevronRight className="size-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
       </TabsContent>
-      <TabsContent value="completed">
-         <div className="h-24 flex items-center justify-center border rounded-lg border-dashed text-muted-foreground">Completed assignments view placeholder</div>
+
+      <TabsContent
+        value="completed"
+        className="relative flex flex-col gap-4 overflow-auto"
+      >
+        <div className="overflow-hidden rounded-xl border bg-card/50 shadow-sm">
+          <DndContext
+            collisionDetection={closestCenter}
+            modifiers={[restrictToVerticalAxis]}
+            onDragEnd={handleDragEnd}
+            sensors={sensors}
+            id={completedSortableId}
+          >
+            <Table>
+              <TableHeader className="bg-muted/50 sticky top-0 z-10">
+                {completedTable.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id} className="border-b border-border/40 hover:bg-transparent">
+                    {headerGroup.headers.map((header) => {
+                      return (
+                        <TableHead key={header.id} colSpan={header.colSpan} className="text-xs uppercase tracking-wider font-semibold text-muted-foreground h-10">
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                        </TableHead>
+                      )
+                    })}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody className="**:data-[slot=table-cell]:first:w-8">
+                {completedTable.getRowModel().rows?.length ? (
+                  <SortableContext
+                    items={completedDataIds}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {completedTable.getRowModel().rows.map((row) => (
+                      <DraggableRow key={row.id} row={row} />
+                    ))}
+                  </SortableContext>
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-24 text-center text-muted-foreground"
+                    >
+                      No completed assignments found.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </DndContext>
+        </div>
+        <div className="flex items-center justify-between px-2">
+          <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
+            {completedTable.getFilteredSelectedRowModel().rows.length} of{" "}
+            {completedTable.getFilteredRowModel().rows.length} selected
+          </div>
+          <div className="flex w-full items-center gap-8 lg:w-fit">
+            <div className="flex w-fit items-center justify-center text-sm font-medium text-muted-foreground">
+              Page {completedTable.getState().pagination.pageIndex + 1} of{" "}
+              {completedTable.getPageCount()}
+            </div>
+            <div className="ml-auto flex items-center gap-2 lg:ml-0">
+              <Button
+                variant="outline"
+                className="size-8 p-0"
+                onClick={() => completedTable.previousPage()}
+                disabled={!completedTable.getCanPreviousPage()}
+              >
+                <span className="sr-only">Go to previous page</span>
+                <ChevronLeft className="size-4" />
+              </Button>
+              <Button
+                variant="outline"
+                className="size-8 p-0"
+                onClick={() => completedTable.nextPage()}
+                disabled={!completedTable.getCanNextPage()}
+              >
+                <span className="sr-only">Go to next page</span>
+                <ChevronRight className="size-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
       </TabsContent>
     </Tabs>
   )
