@@ -7,28 +7,12 @@ import React, { useState, useEffect } from 'react'
 import { WeekView } from '@/components/calendar/week-view'
 import { MiniCalendarCard } from '@/components/calendar/mini-calendar-card'
 import { UpcomingAssignmentsCard } from '@/components/calendar/upcoming-assignments-card'
-import { Assignment } from '@/types/Assignments'
-import { getUserAssignments } from '@/lib/supabase/database-client'
+import { useUser } from '@/contexts/UserContext'
 
 export default function Calendar() {
+    const { assignments, loading } = useUser()
     const [currentDate, setCurrentDate] = useState(new Date())
     const [selectedDate, setSelectedDate] = useState<Date>(new Date())
-    const [assignments, setAssignments] = useState<Assignment[]>([])
-    const [isLoading, setIsLoading] = useState(true)
-
-    useEffect(() => {
-        const fetchAssignments = async () => {
-            try {
-                const data = await getUserAssignments()
-                setAssignments(data)
-            } catch (error) {
-                console.error('Failed to fetch assignments:', error)
-            } finally {
-                setIsLoading(false)
-            }
-        }
-        fetchAssignments()
-    }, [])
 
     const handlePreviousWeek = () => {
         setCurrentDate(prev => {
@@ -65,18 +49,25 @@ export default function Calendar() {
             <AppSidebar variant="inset" />
             <SidebarInset>
                 <SiteHeader />
-                <div className="flex flex-col h-[calc(100vh-var(--header-height))] p-4 lg:p-6">
-                    <div className="mb-6 shrink-0">
-                        <h1 className="text-3xl font-bold">Calendar</h1>
-                        <p className="text-muted-foreground mt-1">
+                <div className="flex flex-col h-[calc(100vh-var(--header-height))] p-4 lg:p-6 relative z-0">
+
+                    <div
+                        className="mb-8 shrink-0"
+                    >
+                        <h1 className="text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-linear-to-r from-white to-white/70">
+                            Calendar
+                        </h1>
+                        <p className="text-muted-foreground mt-2 text-lg">
                             Manage your schedule and view upcoming assignments
                         </p>
                     </div>
 
                     {/* Two-column layout */}
-                    <div className="grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-6 flex-1 min-h-0">
+                    <div
+                        className="grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-6 flex-1 min-h-0"
+                    >
                         {/* Left column - Week View */}
-                        <div className="min-h-0">
+                        <div className="min-h-0 bg-black/20 rounded-2xl border border-white/5 shadow-2xl overflow-hidden flex flex-col">
                             <WeekView
                                 currentDate={currentDate}
                                 onPreviousWeek={handlePreviousWeek}
@@ -86,14 +77,14 @@ export default function Calendar() {
                         </div>
 
                         {/* Right column - Calendar and Upcoming Assignments */}
-                        <div className="grid grid-rows-2 gap-4 h-full min-h-0">
+                        <div className="grid grid-rows-[auto_1fr] gap-6 h-full min-h-0">
                             <MiniCalendarCard
                                 selectedDate={selectedDate}
                                 onDateSelect={handleDateSelect}
                             />
                             <UpcomingAssignmentsCard
                                 assignments={assignments}
-                                isLoading={isLoading}
+                                isLoading={loading}
                             />
                         </div>
                     </div>
