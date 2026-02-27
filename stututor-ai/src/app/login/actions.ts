@@ -70,6 +70,32 @@ export async function signup(prevState: LoginSignUpFormState, formData: FormData
   redirect('/dashboard')
 }
 
+/**
+ * Sign in with Google
+ * @returns redirect to dashboard if successful, otherwise return error
+ */
+export async function signInWithGoogle() {
+  const supabase = await createClient()
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: process.env.ORIGIN_REDIRECT_URL!,
+      queryParams: {
+        access_type: 'offline',
+        prompt: 'consent',
+      }
+    },
+  })
+
+  if (error) {
+    return { error: 'Failed to sign in with Google, please try again.' }
+  }
+
+  if (data.url) {
+    redirect(data.url)
+  }
+}
+
 
 export async function signout() {
   const supabase = await createClient()
