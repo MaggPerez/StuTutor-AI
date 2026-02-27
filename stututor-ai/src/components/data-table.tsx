@@ -105,7 +105,7 @@ async function onHandleUpdateAssignment(event: React.FormEvent<HTMLFormElement>,
     course: course,
     type: type,
     status: status,
-    due_date: dueDate,
+    due_date: new Date(dueDate).toISOString(),
     priority: priority,
     progress: progress,
   }
