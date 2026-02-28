@@ -38,14 +38,14 @@ import { useUser } from "@/contexts/UserContext"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   // Use the user context to get the user
-  const { user } = useUser()
+  const { user, avatarUrl } = useUser()
 
   // Data for the sidebar
   const data = {
     user: {
       name: user?.user_metadata.full_name || "Student",
       email: user?.email || "student@university.edu",
-      avatar: user?.user_metadata.avatar_url || "/avatars/student.jpg",
+      avatar: avatarUrl || "/avatars/student.jpg",
     },
     // Main navigation items
     navMain: [

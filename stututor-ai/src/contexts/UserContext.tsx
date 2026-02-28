@@ -5,7 +5,7 @@ import { User } from "@supabase/supabase-js"
 import { createClient } from "@/lib/supabase/client"
 import { usePathname } from "next/navigation"
 import { Course } from "@/types/Courses"
-import { getAllUserNotes, getUserAssignments, getUserCourses } from "@/lib/supabase/database-client"
+import { getAllUserNotes, getUserAssignments, getUserCourses, getUserAvatarUrl } from "@/lib/supabase/database-client"
 import { Assignment } from "@/types/Assignments"
 import { schema } from "@/components/data-table"
 import { z } from "zod"
@@ -13,6 +13,7 @@ import { Note } from "@/types/StudyNotes"
 
 interface UserContextType {
   user: User | null
+  avatarUrl: string | null
   loading: boolean
   courses: Course[]
   setCourses: (courses: Course[]) => void
@@ -29,6 +30,7 @@ const UserContext = createContext<UserContextType | undefined>(undefined)
 export function UserProvider({ children }: { children: React.ReactNode }) {
   // States for the user's data
   const [user, setUser] = useState<User | null>(null)
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [courses, setCourses] = useState<Course[]>([])
   const [assignments, setAssignments] = useState<Assignment[]>([])
   const [userNotes, setUserNotes] = useState<Note[]>([])
@@ -51,6 +53,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           setAssignmentTableData(convertAssignmentsToTableData(assignments))
         }),
         getAllUserNotes().then(setUserNotes),
+        getUserAvatarUrl().then(setAvatarUrl),
       ])
     } catch (error) {
       console.error("Error fetching user data:", error)
@@ -77,6 +80,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           setAssignments([])
           setAssignmentTableData([])
           setUserNotes([])
+          setAvatarUrl(null)
           setLoading(false)
         }
       }
@@ -101,6 +105,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         setAssignments([])
         setAssignmentTableData([])
         setUserNotes([])
+        setAvatarUrl(null)
         setLoading(false)
       }
     })
@@ -140,7 +145,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
   // Return the user context
   return (
-    <UserContext.Provider value={{ user, loading, courses, setCourses, assignments, assignmentTableData, userNotes, setUserNotes }}>
+    <UserContext.Provider value={{ user, avatarUrl, loading, courses, setCourses, assignments, assignmentTableData, userNotes, setUserNotes }}>
       {children}
     </UserContext.Provider>
   )

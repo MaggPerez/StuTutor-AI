@@ -42,3 +42,4 @@ next-env.d.ts
 /supabase/migrations
 
 GEMINI.md
+/src/lib/supabase/config*
