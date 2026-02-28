@@ -327,6 +327,27 @@ export async function getPDFUrl(chatId: string | null) {
 }
 
 
+// =============================== USER PROFILE OPERATIONS ===============================
+
+/**
+ * Gets the avatar_url from the public.users table for the current user
+ */
+export async function getUserAvatarUrl(): Promise<string | null> {
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return null
+
+    const { data, error } = await supabase
+        .from('users')
+        .select('avatar_url')
+        .eq('auth_id', user.id)
+        .single()
+
+    if (error || !data) return null
+    return data.avatar_url
+}
+
+
 // =============================== COURSE OPERATIONS ===============================
 
 /**
