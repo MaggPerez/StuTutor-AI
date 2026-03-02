@@ -70,11 +70,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: IconCalendar,
       },
       {
-        title: "Study Analytics",
-        url: "#",
-        icon: IconChartBar,
-      },
-      {
         title: "AI Tutor",
         url: "/aitutor",
         icon: IconFileAi,
@@ -148,16 +143,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: "#",
         icon: IconSettings,
       },
-      {
-        title: "Get Help",
-        url: "#",
-        icon: IconHelp,
-      },
-      {
-        title: "Search",
-        url: "#",
-        icon: IconSearch,
-      },
     ],
     // Documents navigation items
     documents: [
@@ -167,19 +152,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: IconNote,
       },
       {
-        name: "Study Groups",
-        url: "#",
-        icon: IconUsers,
-      },
-      {
         name: "Grade Tracker",
         url: "#",
         icon: IconReport,
-      },
-      {
-        name: "Resource Library",
-        url: "#",
-        icon: IconDatabase,
       },
     ],
   }
