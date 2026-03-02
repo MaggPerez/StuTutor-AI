@@ -1,25 +1,25 @@
 'use client'
-import { Upload, Brain, Lightbulb, CheckCircle2 } from 'lucide-react';
+import { UserPlus, LayoutDashboard, Brain, CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const steps = [
   {
-    icon: Upload,
-    title: 'Upload Your Document',
-    description: 'Drag and drop any PDF document into StuTutor. Our system instantly processes and indexes your content for intelligent analysis.',
-    features: ['Supports PDFs up to 50MB', 'Instant processing', 'Secure cloud storage'],
+    icon: UserPlus,
+    title: 'Create Your Account',
+    description: 'Sign up in seconds and land on your dashboard — a central hub showing your courses, upcoming assignments, and everything you need for the semester at a glance.',
+    features: ['Free to get started', 'Google sign-in supported', 'No setup required'],
+  },
+  {
+    icon: LayoutDashboard,
+    title: 'Set Up Your Semester',
+    description: 'Add your courses and track your assignments with due dates. The calendar view keeps your whole schedule visible so nothing slips through the cracks.',
+    features: ['Add and manage courses', 'Track assignments & deadlines', 'Weekly calendar view'],
   },
   {
     icon: Brain,
-    title: 'AI Analyzes Content',
-    description: 'Our advanced AI reads and comprehends your entire document, building a deep understanding of the concepts, structure, and key information.',
-    features: ['Context-aware understanding', 'Concept mapping', 'Key point extraction'],
-  },
-  {
-    icon: Lightbulb,
-    title: 'Learn Interactively',
-    description: 'Ask questions in natural language and receive intelligent, contextual answers. Generate summaries, study notes, and practice questions on demand.',
-    features: ['Natural conversation', 'Instant answers', 'Personalized learning'],
+    title: 'Study Smarter with AI',
+    description: 'Fire up the AI tutor to chat through concepts, generate a quiz on what you\'re studying, or paste your notes and get a clean summary — all without leaving the platform.',
+    features: ['AI chat tutor with PDF support', 'Quiz generator from any topic', 'Instant study note summaries'],
   },
 ];
 
@@ -56,10 +56,10 @@ export const HowItWorks = () => {
             How It Works
           </p>
           <h2 className="mb-6 text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
-            Three steps to smarter studying
+            Up and running in three steps
           </h2>
           <p className="text-lg text-muted-foreground">
-            Transform any PDF into an interactive learning experience in seconds
+            From sign-up to studying with AI — it takes minutes, not hours
           </p>
         </motion.div>
 

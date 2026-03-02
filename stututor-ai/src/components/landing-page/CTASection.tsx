@@ -70,7 +70,7 @@ export const CTASection = () => {
               className="mx-auto mb-8 max-w-2xl text-lg text-muted-foreground"
               variants={itemVariants}
             >
-              Join thousands of students who are already studying smarter with AI-powered tutoring. Upload your first PDF and experience the difference.
+              Join students who are already managing their coursework and studying smarter with AI-powered tools. Sign up and see what you've been missing.
             </motion.p>
 
             {/* CTA Button */}

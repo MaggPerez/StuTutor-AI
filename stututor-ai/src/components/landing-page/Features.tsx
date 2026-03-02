@@ -1,12 +1,12 @@
 'use client'
 import {
   MessageSquare,
-  BookOpen,
   Zap,
   Shield,
   Brain,
-  FileSearch,
+  FileText,
   Clock,
+  Upload,
   Sparkles,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -14,57 +14,57 @@ import { motion } from 'framer-motion';
 const features = [
   {
     icon: MessageSquare,
-    title: 'Natural Conversations',
-    description: 'Chat naturally with AI about your documents. Ask questions the way you would ask a tutor.',
+    title: 'Chat With Your Docs',
+    description: 'Upload any PDF — lecture slides, textbooks, readings — and ask questions about them directly. Your AI tutor reads your material so you don\'t have to start from scratch.',
     size: 'large',
     gradient: 'from-primary/20 to-chart-3/20',
   },
   {
-    icon: BookOpen,
-    title: 'Smart Summaries',
-    description: 'Get concise summaries of any section or the entire document.',
+    icon: Sparkles,
+    title: 'AI-Generated Quizzes',
+    description: 'Test yourself on any topic or document. Get instant feedback to find gaps before your exam does.',
     size: 'small',
     gradient: 'from-chart-2/20 to-chart-5/20',
   },
   {
-    icon: Zap,
-    title: 'Instant Responses',
-    description: 'No waiting. Get answers in real-time.',
+    icon: FileText,
+    title: 'Instant Summaries',
+    description: 'Paste dense notes or upload a PDF and get a clean, concise summary ready to study from.',
     size: 'small',
     gradient: 'from-chart-4/20 to-chart-3/20',
   },
   {
-    icon: Brain,
-    title: 'Deep Understanding',
-    description: 'AI comprehends context, not just keywords. Get answers that truly understand your questions.',
+    icon: Upload,
+    title: 'PDF-Powered Learning',
+    description: 'Every AI tool supports document uploads. Bring your own course materials and let the AI work with what your professor actually assigned.',
     size: 'medium',
     gradient: 'from-chart-3/20 to-primary/20',
   },
   {
-    icon: FileSearch,
-    title: 'Content Analysis',
-    description: 'Automatically extract key concepts, themes, and important information from your documents.',
+    icon: Brain,
+    title: 'Built to Help You Think',
+    description: 'The AI doesn\'t just give you answers — it explains concepts, breaks down problems, and guides you through the reasoning so you actually learn.',
     size: 'medium',
     gradient: 'from-chart-5/20 to-chart-2/20',
   },
   {
     icon: Clock,
     title: 'Chat History',
-    description: 'All conversations saved. Pick up where you left off.',
+    description: 'Every tutoring session is saved. Pick up right where you left off without losing context.',
     size: 'small',
     gradient: 'from-primary/20 to-chart-5/20',
   },
   {
     icon: Shield,
     title: 'Secure & Private',
-    description: 'Your documents are encrypted and protected.',
+    description: 'Your documents and data stay yours. We never train on your uploads.',
     size: 'small',
     gradient: 'from-chart-2/20 to-primary/20',
   },
   {
-    icon: Sparkles,
-    title: 'Study Materials',
-    description: 'Generate practice questions, flashcards, and study guides tailored to your learning needs.',
+    icon: Zap,
+    title: 'One Platform, Everything',
+    description: 'Assignments, calendar, AI tools, and your notes — all in one place so you spend less time switching apps and more time studying.',
     size: 'large',
     gradient: 'from-chart-4/20 to-chart-2/20',
   },
@@ -124,13 +124,13 @@ export const Features = () => {
             variants={headerVariants}
             className="mb-6 text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl"
           >
-            Everything you need to excel
+            Built around how students actually study
           </motion.h2>
           <motion.p
             variants={headerVariants}
             className="text-lg text-muted-foreground"
           >
-            Powerful AI-driven tools designed to accelerate your learning
+            Every feature is designed to save you time, deepen your understanding, and keep you on top of your coursework.
           </motion.p>
         </motion.div>
 

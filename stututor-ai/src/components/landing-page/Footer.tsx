@@ -56,7 +56,7 @@ export const Footer = () => {
               <span className="text-xl font-bold text-foreground">StuTutor</span>
             </div>
             <p className="max-w-xs text-center text-sm text-muted-foreground md:text-left">
-              AI-powered learning platform that transforms your PDFs into interactive study sessions.
+              An AI-powered platform built to help college students stay organized and study smarter.
             </p>
           </motion.div>
 

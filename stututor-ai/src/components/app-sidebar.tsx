@@ -151,11 +151,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: "/mynotes",
         icon: IconNote,
       },
-      {
-        name: "Grade Tracker",
-        url: "#",
-        icon: IconReport,
-      },
     ],
   }
 

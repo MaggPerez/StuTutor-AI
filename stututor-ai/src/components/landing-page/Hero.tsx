@@ -99,19 +99,19 @@ export const Hero = () => {
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-primary"></span>
                 </span>
-                AI-Powered Learning Platform
+                Built for College Students
               </motion.div>
 
               {/* Headline */}
               <motion.div variants={fadeInUp} className="space-y-4">
                 <h1 className="text-4xl font-bold leading-tight tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-                  Learn Smarter with
+                  One platform to manage
                   <span className="mt-2 block bg-gradient-to-r from-primary via-chart-3 to-chart-2 bg-clip-text text-transparent">
-                    Your AI Study Companion
+                    your entire college life
                   </span>
                 </h1>
                 <p className="max-w-lg text-lg leading-relaxed text-muted-foreground sm:text-xl">
-                  Upload any PDF, and let AI transform it into an interactive learning experience. Ask questions, get summaries, and master your material faster.
+                  Track your courses, assignments, and schedule — all in one place. Then study smarter with an AI tutor that can quiz you, summarize your notes, and answer your questions on demand.
                 </p>
               </motion.div>
 
@@ -119,13 +119,12 @@ export const Hero = () => {
               <motion.div variants={fadeInUp} className="flex flex-col gap-4 sm:flex-row">
                 <Link href="/signup">
                   <Button size="lg" className="w-full gap-2 text-base font-semibold sm:w-auto transition-transform hover:scale-105 active:scale-95">
-                    Start Learning Free
+                    Start Learning
                     <ArrowRight className="h-5 w-5" />
                   </Button>
                 </Link>
                 <Link href="#how-it-works">
                   <Button variant="outline" size="lg" className="w-full gap-2 text-base font-semibold sm:w-auto transition-transform hover:scale-105 active:scale-95">
-                    <Play className="h-4 w-4" />
                     See How It Works
                   </Button>
                 </Link>
@@ -134,8 +133,8 @@ export const Hero = () => {
               {/* Stats */}
               <motion.div variants={fadeInUp} className="grid grid-cols-3 gap-4 pt-4">
                 {[
+                  { value: '3', label: 'AI Study Tools' },
                   { value: '100%', label: 'Free to Use' },
-                  { value: 'AI', label: 'Powered Responses' },
                   { value: '24/7', label: 'Always Available' }
                 ].map((stat, index) => (
                   <div key={index} className="space-y-1">
