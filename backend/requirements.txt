@@ -1,6 +1,0 @@
-supabase
-pydantic-settings
-pydantic
-pydantic-core
-pydantic-settings
-google-genai
