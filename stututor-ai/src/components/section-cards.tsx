@@ -1,7 +1,5 @@
 "use client";
-import { useEffect } from "react";
-import { Clock, BookOpen, CalendarDays, Flame } from "lucide-react"
-import { useState } from "react";
+import { BookOpen, CalendarDays, FileText, CheckCircle2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import {
   Card,
@@ -14,12 +12,11 @@ import {
 import { useUser } from "@/contexts/UserContext";
 
 export function SectionCards() {
-  const [studyTime, setStudyTime] = useState(0);
-  const [activeCourses, setActiveCourses] = useState(0);
-  const [assignmentsDue, setAssignmentsDue] = useState(0);
-  const [studyStreak, setStudyStreak] = useState(0);
+  const { courses, assignments, userNotes } = useUser()
 
-  const { courses, assignments } = useUser()
+  const completedAssignments = assignments.filter(a => a.status === "Completed").length
+  const inProgressAssignments = assignments.filter(a => a.status === "In Progress").length
+  const uniqueNotesCourses = new Set(userNotes.map(n => n.courseId)).size
 
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -67,48 +64,46 @@ export function SectionCards() {
       </Card>
 
 
-      {/* Study Time Card */}
+      {/* Notes Generated Card */}
       <Card className="relative overflow-hidden bg-gradient-to-br from-card to-purple-500/5 dark:from-card dark:to-purple-900/10 shadow-sm hover:shadow-md transition-shadow">
         <CardHeader className="pb-2">
-          <CardDescription>Study Time This Week</CardDescription>
+          <CardDescription>Notes Generated</CardDescription>
           <CardTitle className="text-3xl font-bold tabular-nums text-foreground">
-            {studyTime} hrs
+            {userNotes.length}
           </CardTitle>
           <CardAction>
             <Badge variant="secondary" className="gap-1 bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
-              <Clock className="size-3" />
-              +3.5 hrs
+              <FileText className="size-3" />
+              AI Notes
             </Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className="pt-0">
           <p className="text-xs text-muted-foreground">
-            8.5 hours more than last week
+            Across {uniqueNotesCourses} course{uniqueNotesCourses !== 1 ? "s" : ""}
           </p>
         </CardFooter>
       </Card>
 
 
 
-
-
-      {/* Study Streak Card */}
-      <Card className="relative overflow-hidden bg-gradient-to-br from-card to-amber-500/5 dark:from-card dark:to-amber-900/10 shadow-sm hover:shadow-md transition-shadow">
+      {/* Completed Assignments Card */}
+      <Card className="relative overflow-hidden bg-gradient-to-br from-card to-green-500/5 dark:from-card dark:to-green-900/10 shadow-sm hover:shadow-md transition-shadow">
         <CardHeader className="pb-2">
-          <CardDescription>Study Streak</CardDescription>
+          <CardDescription>Completed</CardDescription>
           <CardTitle className="text-3xl font-bold tabular-nums text-foreground">
-            {studyStreak} Days
+            {completedAssignments}
           </CardTitle>
           <CardAction>
-            <Badge variant="secondary" className="gap-1 bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
-              <Flame className="size-3" />
-              On Fire!
+            <Badge variant="secondary" className="gap-1 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">
+              <CheckCircle2 className="size-3" />
+              Done
             </Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className="pt-0">
           <p className="text-xs text-muted-foreground">
-            Personal best: 18 days
+            {inProgressAssignments} still in progress
           </p>
         </CardFooter>
       </Card>

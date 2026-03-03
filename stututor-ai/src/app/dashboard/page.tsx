@@ -9,7 +9,7 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar"
 import { Badge } from "@/components/ui/badge"
-import { Sparkles, Calendar } from "lucide-react"
+import { CheckCircle2, Calendar } from "lucide-react"
 
 import { createClient } from "@/lib/supabase/server"
 
@@ -20,6 +20,18 @@ export default async function Page() {
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+
+  const { data: userData } = await supabase
+    .from('users')
+    .select('id')
+    .eq('auth_id', user?.id)
+    .single()
+
+  const { count: completedCount } = await supabase
+    .from('assignments')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', userData?.id)
+    .eq('status', 'Completed')
 
 
   return (
@@ -65,10 +77,10 @@ export default async function Page() {
             <div className="flex items-center gap-3">
               <Badge
                 variant="secondary"
-                className="gap-1.5 px-4 py-2 bg-amber-500/10 text-amber-500 border border-amber-500/20 shadow-[0_0_15px_-3px_rgba(245,158,11,0.2)] hover:shadow-[0_0_20px_-3px_rgba(245,158,11,0.4)] transition-all"
+                className="gap-1.5 px-4 py-2 bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20 shadow-[0_0_15px_-3px_rgba(34,197,94,0.2)] hover:shadow-[0_0_20px_-3px_rgba(34,197,94,0.4)] transition-all"
               >
-                <Sparkles className="size-4 fill-amber-500 text-amber-500" />
-                <span className="font-semibold">0-Day Streak</span>
+                <CheckCircle2 className="size-4 text-green-600 dark:text-green-400" />
+                <span className="font-semibold">{completedCount ?? 0} Completed</span>
               </Badge>
             </div>
           </div>
